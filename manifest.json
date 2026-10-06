@@ -1,0 +1,10 @@
+{
+  "name": "sticknodes-animation-forge",
+  "version": "1.0.0",
+  "purpose": "Reverse-engineer working Stick Nodes projects and author independent .stknds animations.",
+  "requires": "Python 3 for optional inspection script",
+  "inputs": [
+    ".stknds reference projects",
+    ".nodes assets when available"
+  ]
+}
