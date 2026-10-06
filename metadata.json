@@ -1,0 +1,5 @@
+{
+  "name": "Stick Nodes Animation Forge",
+  "description": "Technical documentation, binary format specification, and interactive .stknds ball bounce animation generator reverse-engineered from the Stick Nodes v334 corpus.",
+  "requestFramePermissions": []
+}
