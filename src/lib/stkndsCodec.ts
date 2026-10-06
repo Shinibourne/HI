@@ -190,51 +190,51 @@ export const STICKFIGURE_BONE_THICKNESS: number[] = [
  * - Act 5 (Frames 22..26, 5 frames): Three-Point Superhero Landing (Fist, Left Knee, Right Foot on Y~754)
  */
 export const CANONICAL_27_SUPERHERO_FRAMES: StickfigureKeyframeSpec[] = [
-  // ACT 1: WALK CYCLE (Frames 00..04)
+  // ACT 1: WALK CYCLE (Frames 00..04) — Rebuilt with Heel-Strike, Flat Lock, Toe-Off & Pelvis Wave
   {
     frame: 0,
     act: 'Act 1: Walk Cycle',
-    phase: 'Walk Stride Contact A',
+    phase: 'Walk Stride Contact A (Heel Strike)',
     isFlightFrame: false,
     sceneX: 260.0,
-    sceneY: 522.0,
-    worldAngles: [0, -62, -88, 0, -115, -135, -35, 86, 82, -125, -95, -90, 84, 86, -55, -20, -15],
+    sceneY: 523.0,
+    worldAngles: [0, -64, -78, 18, -112, -134, -42, 86, 82, -124, -92, -88, 84, 86, -56, -22, -16],
   },
   {
     frame: 1,
     act: 'Act 1: Walk Cycle',
-    phase: 'Walk Passing Pose A',
+    phase: 'Walk Passing Pose A (Weight Transfer)',
     isFlightFrame: false,
     sceneX: 325.0,
-    sceneY: 514.0,
-    worldAngles: [0, -88, -94, 0, -78, -132, -30, 88, 85, -92, -70, -65, 86, 88, -88, -62, -60],
+    sceneY: 511.0,
+    worldAngles: [0, -88, -92, 0, -76, -130, -24, 88, 85, -92, -68, -64, 86, 88, -88, -60, -58],
   },
   {
     frame: 2,
     act: 'Act 1: Walk Cycle',
-    phase: 'Walk Stride Contact B',
+    phase: 'Walk Stride Contact B (Heel Strike)',
     isFlightFrame: false,
     sceneX: 390.0,
-    sceneY: 522.0,
-    worldAngles: [0, -116, -136, -35, -64, -88, 0, 86, 82, -55, -20, -15, 84, 86, -125, -95, -90],
+    sceneY: 523.0,
+    worldAngles: [0, -112, -134, -42, -64, -78, 18, 86, 82, -56, -22, -16, 84, 86, -124, -92, -88],
   },
   {
     frame: 3,
     act: 'Act 1: Walk Cycle',
-    phase: 'Walk Passing Pose B',
+    phase: 'Walk Passing Pose B (Weight Transfer)',
     isFlightFrame: false,
     sceneX: 455.0,
-    sceneY: 514.0,
-    worldAngles: [0, -78, -130, -25, -88, -92, 0, 88, 85, -85, -60, -55, 86, 88, -92, -70, -65],
+    sceneY: 511.0,
+    worldAngles: [0, -76, -130, -24, -88, -92, 0, 88, 85, -86, -58, -54, 86, 88, -92, -68, -64],
   },
   {
     frame: 4,
     act: 'Act 1: Walk Cycle',
-    phase: 'Stop Walk & Plant Feet',
+    phase: 'Stop Walk & Plant Both Feet',
     isFlightFrame: false,
     sceneX: 515.0,
-    sceneY: 518.0,
-    worldAngles: [0, -82, -90, 0, -98, -94, 0, 90, 89, -78, -55, -50, 90, 90, -102, -85, -80],
+    sceneY: 515.0,
+    worldAngles: [0, -82, -90, 0, -98, -100, 0, 90, 89, -78, -55, -50, 90, 90, -102, -85, -80],
   },
 
   // ACT 2: SCRATCHING HEAD (Frames 05..09)
@@ -464,7 +464,7 @@ export const CANONICAL_27_SUPERHERO_FRAMES: StickfigureKeyframeSpec[] = [
  * - Act 6: The Aftermath (Frames 27..35): Lies perfectly still for 1 full second (6 frames), before slowly twitching one leg to show they are still alive.
  */
 export const CANONICAL_36_SNEEZE_FRAMES: StickfigureKeyframeSpec[] = [
-  // ACT 1: THE BUILD-UP (Frames 00..05)
+  // ACT 1: THE BUILD-UP (Frames 00..05) — Both Feet Grounded & Facing Forward
   {
     frame: 0,
     act: 'Act 1: The Build-Up',
@@ -472,7 +472,7 @@ export const CANONICAL_36_SNEEZE_FRAMES: StickfigureKeyframeSpec[] = [
     isFlightFrame: false,
     sceneX: 1120.0,
     sceneY: 509.0,
-    worldAngles: [0, -84, -90, 0, -96, -90, 180, 90, 90, -86, -78, -75, 90, 90, -94, -102, -105],
+    worldAngles: [0, -84, -90, 0, -96, -98, 0, 90, 90, -86, -78, -75, 90, 90, -94, -82, -78],
   },
   {
     frame: 1,
@@ -481,7 +481,7 @@ export const CANONICAL_36_SNEEZE_FRAMES: StickfigureKeyframeSpec[] = [
     isFlightFrame: false,
     sceneX: 1120.0,
     sceneY: 509.0,
-    worldAngles: [0, -84, -90, 0, -96, -90, 180, 90, 90, -86, -78, -75, 90, 90, -94, -102, -105],
+    worldAngles: [0, -84, -90, 0, -96, -98, 0, 90, 90, -86, -78, -75, 90, 90, -94, -82, -78],
   },
   {
     frame: 2,
@@ -490,7 +490,7 @@ export const CANONICAL_36_SNEEZE_FRAMES: StickfigureKeyframeSpec[] = [
     isFlightFrame: false,
     sceneX: 1119.0,
     sceneY: 510.0,
-    worldAngles: [0, -83, -90, 0, -97, -90, 180, 93, 96, -72, -25, -15, 102, 108, -108, -35, -25],
+    worldAngles: [0, -83, -90, 0, -97, -99, 0, 93, 96, -72, -25, -15, 102, 108, -108, -35, -25],
   },
   {
     frame: 3,
@@ -499,7 +499,7 @@ export const CANONICAL_36_SNEEZE_FRAMES: StickfigureKeyframeSpec[] = [
     isFlightFrame: false,
     sceneX: 1117.0,
     sceneY: 511.0,
-    worldAngles: [0, -81, -90, 0, -99, -90, 180, 97, 103, -52, 45, 60, 112, 120, -122, 35, 50],
+    worldAngles: [0, -81, -90, 0, -99, -101, 0, 97, 103, -52, 45, 60, 112, 120, -122, 35, 50],
   },
   {
     frame: 4,
@@ -508,7 +508,7 @@ export const CANONICAL_36_SNEEZE_FRAMES: StickfigureKeyframeSpec[] = [
     isFlightFrame: false,
     sceneX: 1115.0,
     sceneY: 513.0,
-    worldAngles: [0, -79, -91, 0, -101, -90, 180, 103, 112, -38, 82, 95, 122, 132, -135, 74, 88],
+    worldAngles: [0, -79, -91, 0, -101, -103, 0, 103, 112, -38, 82, 95, 122, 132, -135, 74, 88],
   },
   {
     frame: 5,
@@ -517,7 +517,7 @@ export const CANONICAL_36_SNEEZE_FRAMES: StickfigureKeyframeSpec[] = [
     isFlightFrame: false,
     sceneX: 1113.0,
     sceneY: 516.0,
-    worldAngles: [0, -77, -92, 0, -103, -90, 180, 108, 120, -28, 105, 118, 130, 142, -144, 98, 112],
+    worldAngles: [0, -77, -92, 0, -103, -105, 0, 108, 120, -28, 105, 118, 130, 142, -144, 98, 112],
   },
 
   // ACT 2: THE HOLD (Frames 06..10)
@@ -528,7 +528,7 @@ export const CANONICAL_36_SNEEZE_FRAMES: StickfigureKeyframeSpec[] = [
     isFlightFrame: false,
     sceneX: 1108.0,
     sceneY: 521.0,
-    worldAngles: [0, -68, -95, 5, -108, -94, 175, 118, 136, -15, 118, 130, 146, 160, -155, 112, 125],
+    worldAngles: [0, -68, -95, 5, -104, -108, 2, 118, 136, -15, 118, 130, 146, 160, -155, 112, 125],
   },
   {
     frame: 7,
@@ -537,7 +537,7 @@ export const CANONICAL_36_SNEEZE_FRAMES: StickfigureKeyframeSpec[] = [
     isFlightFrame: false,
     sceneX: 1106.0,
     sceneY: 522.0,
-    worldAngles: [0, -65, -98, 8, -105, -97, 172, 122, 142, -11, 124, 136, 152, 166, -151, 118, 132],
+    worldAngles: [0, -65, -98, 8, -102, -110, 4, 122, 142, -11, 124, 136, 152, 166, -151, 118, 132],
   },
   {
     frame: 8,
@@ -546,7 +546,7 @@ export const CANONICAL_36_SNEEZE_FRAMES: StickfigureKeyframeSpec[] = [
     isFlightFrame: false,
     sceneX: 1109.0,
     sceneY: 520.0,
-    worldAngles: [0, -70, -93, 4, -110, -92, 176, 120, 139, -18, 115, 126, 149, 162, -158, 109, 121],
+    worldAngles: [0, -70, -93, 4, -106, -108, 1, 120, 139, -18, 115, 126, 149, 162, -158, 109, 121],
   },
   {
     frame: 9,
@@ -555,7 +555,7 @@ export const CANONICAL_36_SNEEZE_FRAMES: StickfigureKeyframeSpec[] = [
     isFlightFrame: false,
     sceneX: 1105.0,
     sceneY: 523.0,
-    worldAngles: [0, -64, -99, 9, -104, -98, 171, 124, 145, -9, 126, 138, 155, 169, -149, 121, 135],
+    worldAngles: [0, -64, -99, 9, -101, -111, 5, 124, 145, -9, 126, 138, 155, 169, -149, 121, 135],
   },
   {
     frame: 10,
@@ -564,7 +564,7 @@ export const CANONICAL_36_SNEEZE_FRAMES: StickfigureKeyframeSpec[] = [
     isFlightFrame: false,
     sceneX: 1107.0,
     sceneY: 521.0,
-    worldAngles: [0, -67, -96, 6, -107, -95, 174, 126, 148, -14, 122, 134, 158, 172, -154, 116, 129],
+    worldAngles: [0, -67, -96, 6, -104, -109, 3, 126, 148, -14, 122, 134, 158, 172, -154, 116, 129],
   },
 
   // ACT 3: THE EXPLOSION (Frames 11..12)
@@ -575,7 +575,7 @@ export const CANONICAL_36_SNEEZE_FRAMES: StickfigureKeyframeSpec[] = [
     isFlightFrame: false,
     sceneX: 1114.0,
     sceneY: 540.0,
-    worldAngles: [0, -48, -122, 0, -72, -125, 180, -24, -68, 158, 162, 165, -96, -118, 166, 170, 172],
+    worldAngles: [0, -48, -122, 0, -72, -125, -4, -24, -68, 158, 162, 165, -96, -118, 166, 170, 172],
   },
   {
     frame: 12,
@@ -584,7 +584,7 @@ export const CANONICAL_36_SNEEZE_FRAMES: StickfigureKeyframeSpec[] = [
     isFlightFrame: false,
     sceneX: 1104.0,
     sceneY: 558.0,
-    worldAngles: [0, -34, -132, -10, -54, -135, 170, -48, -96, 168, 170, 172, -132, -152, 174, 176, 178],
+    worldAngles: [0, -34, -132, -10, -54, -135, -12, -48, -96, 168, 170, 172, -132, -152, 174, 176, 178],
   },
 
   // ACT 4: THE RECOIL (Frames 13..21 - Airborne Messy Backflip)
@@ -1610,172 +1610,198 @@ export async function synthesizeSneezeStknds(
   return finalStknds;
 }
 
-const RED_SIT_IDLE = [0, 34, -43, -2, 44, -56, 0, 84, 80, -48, 12, 8, 76, 74, -36, 22, 16];
-const RED_SIT_BREATH = [0, 34, -43, -2, 44, -56, 0, 85, 81, -47, 13, 9, 77, 75, -35, 23, 17];
-const RED_NOTICE_1 = [0, 34, -43, -2, 44, -56, 0, 86, 83, -46, 14, 10, 82, 83, -34, 24, 18];
-const RED_NOTICE_2 = [0, 34, -43, -2, 44, -56, 0, 87, 85, -45, 16, 12, 88, 92, -33, 26, 20];
-const RED_NOTICE_3 = [0, 34, -43, -2, 44, -56, 0, 88, 86, -44, 17, 13, 91, 96, -32, 27, 21];
-const RED_NOTICE_HOLD = [0, 34, -43, -2, 44, -56, 0, 88, 86, -44, 17, 13, 92, 97, -32, 27, 21];
-const RED_SENSE_AMB = [0, 33, -43, -2, 44, -56, 0, 90, 90, -56, -4, -6, 98, 106, -30, 28, 22];
-const RED_TWIST_1 = [0, 32, -44, -2, 44, -56, 0, 95, 100, -112, -62, -58, 114, 124, -26, 32, 30];
-const RED_TWIST_2 = [0, 31, -44, -2, 44, -56, 0, 100, 108, 178, -104, -100, 126, 138, -24, 34, 38];
-const RED_BLOCK_LOCK = [0, 30, -44, -2, 44, -56, 0, 102, 112, 172, -124, -120, 132, 144, -22, 36, 42];
-const RED_BLOCK_SHK1 = [0, 30, -44, -2, 44, -56, 0, 103, 113, 173, -125, -121, 133, 145, -21, 37, 43];
-const RED_BLOCK_SHK2 = [0, 30, -44, -2, 44, -56, 0, 102, 112, 172, -124, -120, 132, 144, -22, 36, 42];
+/**
+ * REBUILT VIA THE 33-SKILL HUMAN MOTION & BIOMECHANICS FRAMEWORK:
+ * ================================================================
+ * CHARACTER RED (Figure #1 — Seated Martial Artist at X=440, Y=726):
+ * - Grounded asymmetrical seated guard: Right knee comfortably raised (+16° thigh, -32° shin,
+ *   +14° ankle resting heel on ground Y=755), Left leg folded flat along floor (-11° thigh,
+ *   -176° shin, -178° foot) as a wide triangle of support.
+ * - Natural spinal C-curve: LowerSpine (+88°), UpperChest (+85°), Neck (+84°), Head (+82°).
+ * - In Acts 4–6, Red's eyes/head lead the turn (+104°..+108°), his Left Arm plants behind his
+ *   hip on the floor as a rear structural strut (-62°/-84°), and his Right Arm sweeps continuously
+ *   (-38° -> -78° -> -118° -> -148° -> -156°, zero ±180° seam flip!) to raise a vertical
+ *   Muay-Thai forearm shield (+102°) that catches Blue's shin dead-center at (356, 578).
+ * - On impact (Frames 24–26), momentum transfers into Red (+5.5px braced pelvis slide to X=445.5,
+ *   +1.5px compression, and -5° forearm shock absorption).
+ *
+ * CHARACTER BLUE (Figure #2 — Approach Walk Facing Left, Ambush Strike Facing Right):
+ * - Act 1 Walk (Frames 0–9, Facing Left): Strict Left-facing Knee Hinge Polarity (shin >= thigh
+ *   on every frame — zero reverse flamingo knees!). Full foot cycle: Heel Strike (-154°), Flat
+ *   Plant (-179° with world X pinned), Weight Acceptance knee flexion (+6px pelvis dip), Passing
+ *   swing clearance (52° knee bend), Toe-Off (-128°), opposite arm counter-swing, and braking stop.
+ * - Acts 4–6 Ambush Kick (Frames 19–25, Facing Right): Strict Right-facing Knee Hinge Polarity
+ *   (shin <= thigh on every frame!). Blue shifts weight forward onto his pinned Left support leg
+ *   (X=195..204, Y=755), drops his pelvis, chambers his Right knee tightly (-44° thigh, -136° shin),
+ *   counter-leans his torso (+106°/+112°), counter-whips his right arm (-150°), and whips his
+ *   Right Shin (-10° thigh, -14° shin, -20° pointed instep) into Red's forearm shield.
+ */
+const RED_SIT_IDLE = [0, 16, -32, 14, -11, -176, -178, 88, 85, -38, 12, 4, 84, 82, -74, -18, -12];
+const RED_SIT_BREATH = [0, 16, -32, 14, -11, -176, -178, 89, 86, -37, 13, 5, 85, 83, -73, -17, -11];
+const RED_NOTICE_1 = [0, 16, -32, 14, -11, -176, -178, 89, 87, -36, 14, 6, 86, 86, -72, -16, -10];
+const RED_NOTICE_2 = [0, 16, -32, 14, -11, -176, -178, 90, 88, -35, 16, 8, 88, 90, -71, -15, -9];
+const RED_NOTICE_3 = [0, 16, -32, 14, -11, -176, -178, 90, 88, -34, 17, 9, 89, 92, -70, -14, -8];
+const RED_NOTICE_HOLD = [0, 16, -32, 14, -11, -176, -178, 90, 89, -34, 18, 10, 90, 93, -70, -14, -8];
+const RED_SENSE_AMB = [0, 15, -33, 14, -11, -176, -178, 91, 92, -78, 32, 28, 96, 104, -66, -48, -24];
+const RED_TWIST_1 = [0, 14, -34, 12, -11, -176, -178, 92, 95, -118, 72, 74, 99, 106, -62, -84, -12];
+const RED_TWIST_2 = [0, 13, -35, 12, -11, -176, -178, 94, 97, -148, 98, 98, 101, 108, -60, -86, -10];
+const RED_BLOCK_LOCK = [0, 12, -36, 10, -11, -176, -178, 94, 98, -156, 102, 100, 102, 108, -58, -88, -8];
+const RED_BLOCK_SHK1 = [0, 12, -36, 10, -11, -176, -178, 93, 96, -154, 97, 95, 100, 106, -57, -89, -6];
+const RED_BLOCK_SHK2 = [0, 12, -36, 10, -11, -176, -178, 94, 98, -156, 101, 99, 102, 108, -58, -88, -8];
 
-const BLUE_WALK_0 = [0, -108, -82, -168, -68, -96, -178, 95, 97, -64, -108, -114, 98, 100, -114, -136, -140];
-const BLUE_WALK_1 = [0, -98, -86, -174, -76, -110, -162, 94, 96, -72, -112, -118, 97, 99, -104, -128, -132];
-const BLUE_WALK_2 = [0, -86, -90, -180, -88, -124, -148, 94, 95, -84, -118, -122, 96, 98, -92, -120, -124];
-const BLUE_WALK_3 = [0, -74, -94, -178, -102, -88, -166, 95, 97, -98, -124, -128, 98, 100, -76, -112, -116];
-const BLUE_WALK_4 = [0, -68, -96, -178, -110, -82, -172, 96, 98, -112, -134, -138, 99, 101, -64, -106, -110];
-const BLUE_WALK_5 = [0, -78, -112, -160, -96, -86, -176, 94, 96, -102, -126, -130, 97, 99, -74, -110, -114];
-const BLUE_WALK_6 = [0, -90, -126, -146, -84, -90, -180, 94, 95, -88, -120, -124, 96, 98, -86, -118, -122];
-const BLUE_WALK_7 = [0, -104, -88, -168, -72, -94, -178, 95, 97, -74, -112, -116, 98, 100, -100, -126, -130];
-const BLUE_WALK_8 = [0, -100, -88, -176, -78, -92, -178, 93, 94, -80, -114, -118, 95, 97, -96, -122, -126];
-const BLUE_STAND = [0, -96, -90, -178, -82, -90, -178, 92, 93, -84, -116, -120, 94, 96, -92, -118, -122];
+const BLUE_WALK_0 = [0, -108, -90, -154, -72, -52, -126, 93, 95, -72, -84, -88, 92, 91, -112, -134, -138];
+const BLUE_WALK_1 = [0, -104, -80, -179, -84, -42, -134, 94, 96, -68, -78, -82, 92, 91, -116, -142, -146];
+const BLUE_WALK_2 = [0, -88, -86, -179, -108, -56, -148, 92, 94, -88, -104, -108, 91, 90, -94, -122, -126];
+const BLUE_WALK_3 = [0, -74, -66, -142, -114, -102, -150, 93, 95, -108, -130, -134, 91, 90, -76, -88, -92];
+const BLUE_WALK_4 = [0, -72, -44, -128, -106, -86, -178, 94, 96, -116, -142, -146, 92, 91, -68, -78, -82];
+const BLUE_WALK_5 = [0, -106, -54, -146, -90, -88, -179, 92, 94, -96, -124, -128, 91, 90, -86, -102, -106];
+const BLUE_WALK_6 = [0, -112, -98, -154, -78, -74, -152, 92, 93, -78, -96, -100, 91, 90, -104, -128, -132];
+const BLUE_WALK_7 = [0, -104, -88, -179, -80, -68, -164, 93, 95, -80, -102, -106, 93, 93, -98, -122, -126];
+const BLUE_WALK_8 = [0, -98, -89, -179, -82, -80, -179, 91, 92, -84, -108, -112, 93, 94, -94, -118, -122];
+const BLUE_STAND = [0, -98, -89, -179, -82, -80, -179, 91, 92, -84, -108, -112, 94, 95, -94, -118, -122];
 
-const BLUE_AMB_0 = [0, -72, -94, 4, -102, -88, -6, 84, 82, -122, -96, -90, 86, 84, -52, -32, -26];
-const BLUE_AMB_1 = [0, -68, -98, 6, -96, -92, -4, 82, 78, -128, -102, -96, 84, 80, -48, -28, -22];
-const BLUE_DROP_1 = [0, -112, -148, -110, -68, -118, -2, 96, 102, -136, -108, -102, 92, 86, -18, 12, 18];
-const BLUE_DROP_2 = [0, -64, -118, -68, -52, -134, 0, 110, 118, -142, -114, -106, 100, 92, 8, 36, 42];
-const BLUE_SWEEP = [0, -32, -28, 34, -49, -142, 0, 118, 128, -146, -116, -108, 104, 96, 22, 48, 54];
-const BLUE_CLASH = [0, -18, -4, 68, -48, -146, 0, 122, 134, -148, -118, -110, 108, 98, 28, 56, 62];
-const BLUE_CLASH_S = [0, -17, -3, 69, -48, -146, 0, 123, 135, -149, -119, -111, 109, 99, 29, 57, 63];
+const BLUE_AMB_0 = [0, -102, -114, -18, -76, -96, 0, 86, 82, -112, -24, -18, 84, 82, -36, 42, 48];
+const BLUE_AMB_1 = [0, -98, -122, -26, -72, -100, 0, 84, 79, -118, -32, -24, 82, 80, -32, 46, 52];
+const BLUE_DROP_1 = [0, -44, -136, -148, -64, -114, 1, 94, 98, -132, -118, -114, 90, 86, -12, 56, 62];
+const BLUE_DROP_2 = [0, -18, -62, -72, -60, -122, 2, 102, 108, -144, -148, -150, 96, 90, 12, 74, 78];
+const BLUE_SWEEP = [0, -12, -22, -30, -58, -126, 2, 106, 112, -150, -160, -162, 100, 94, 24, 82, 86];
+const BLUE_CLASH = [0, -10, -14, -20, -58, -126, 2, 108, 114, -152, -164, -166, 102, 96, 28, 86, 90];
+const BLUE_CLASH_S = [0, -11, -17, -23, -58, -126, 2, 109, 115, -154, -166, -168, 103, 97, 30, 88, 92];
 
 export const CANONICAL_36_TELEPORT_FRAMES: TeleportAmbushKeyframeSpec[] = [
   {
     frame: 0,
     act: 'Act 1: The Approach',
-    phase: 'Wide Shot — Red Seated, Blue Enters Right',
+    phase: 'Wide Shot — Red Seated, Blue Enters Right (Heel Strike)',
     camX: 0.0,
     camY: 0.0,
     camZoom: 1.0,
     redX: 440.0,
-    redY: 742.0,
+    redY: 726.0,
     redAngles: RED_SIT_IDLE,
     bluePresent: true,
-    blueX: 960.0,
-    blueY: 517.0,
+    blueX: 948.0,
+    blueY: 512.0,
     blueAngles: BLUE_WALK_0,
   },
   {
     frame: 1,
     act: 'Act 1: The Approach',
-    phase: 'Blue Casual Step 1 (Contact)',
+    phase: 'Blue Step 1 — Weight Acceptance & Knee Flex',
     camX: 0.0,
     camY: 0.0,
     camZoom: 1.0,
     redX: 440.0,
-    redY: 742.0,
+    redY: 726.0,
     redAngles: RED_SIT_IDLE,
     bluePresent: true,
-    blueX: 936.0,
-    blueY: 519.0,
+    blueX: 918.0,
+    blueY: 511.0,
     blueAngles: BLUE_WALK_1,
   },
   {
     frame: 2,
     act: 'Act 1: The Approach',
-    phase: 'Blue Casual Step 1 (Down/Weight)',
+    phase: 'Blue Step 1 — Passing Pose (Foot Pinned, Swing Clearance)',
     camX: 0.0,
     camY: 0.0,
     camZoom: 1.0,
     redX: 440.0,
-    redY: 742.0,
+    redY: 726.0,
     redAngles: RED_SIT_BREATH,
     bluePresent: true,
-    blueX: 910.0,
-    blueY: 521.0,
+    blueX: 896.0,
+    blueY: 507.0,
     blueAngles: BLUE_WALK_2,
   },
   {
     frame: 3,
     act: 'Act 1: The Approach',
-    phase: 'Blue Casual Step 1 (Passing)',
+    phase: 'Blue Step 1 — Heel-to-Toe Roll & Left Leg Reach',
     camX: 0.0,
     camY: 0.0,
     camZoom: 1.0,
     redX: 440.0,
-    redY: 742.0,
+    redY: 726.0,
     redAngles: RED_SIT_BREATH,
     bluePresent: true,
-    blueX: 882.0,
-    blueY: 517.0,
+    blueX: 868.0,
+    blueY: 508.0,
     blueAngles: BLUE_WALK_3,
   },
   {
     frame: 4,
     act: 'Act 1: The Approach',
-    phase: 'Blue Casual Step 2 (Reach)',
+    phase: 'Blue Step 2 — Left Heel Contact & Right Toe-Off',
     camX: 0.0,
     camY: 0.0,
     camZoom: 1.0,
     redX: 440.0,
-    redY: 742.0,
+    redY: 726.0,
     redAngles: RED_SIT_IDLE,
     bluePresent: true,
-    blueX: 854.0,
-    blueY: 516.0,
+    blueX: 840.0,
+    blueY: 513.0,
     blueAngles: BLUE_WALK_4,
   },
   {
     frame: 5,
     act: 'Act 1: The Approach',
-    phase: 'Blue Casual Step 2 (Down/Weight)',
+    phase: 'Blue Step 2 — Passing Pose Over Left Support Leg',
     camX: 0.0,
     camY: 0.0,
     camZoom: 1.0,
     redX: 440.0,
-    redY: 742.0,
+    redY: 726.0,
     redAngles: RED_SIT_IDLE,
     bluePresent: true,
-    blueX: 826.0,
-    blueY: 520.0,
+    blueX: 812.0,
+    blueY: 507.0,
     blueAngles: BLUE_WALK_5,
   },
   {
     frame: 6,
     act: 'Act 1: The Approach',
-    phase: 'Blue Casual Step 2 (Passing)',
+    phase: 'Blue Step 3 — Braking Reach & Deceleration',
     camX: 0.0,
     camY: 0.0,
     camZoom: 1.0,
     redX: 440.0,
-    redY: 742.0,
+    redY: 726.0,
     redAngles: RED_SIT_BREATH,
     bluePresent: true,
-    blueX: 798.0,
-    blueY: 517.0,
+    blueX: 788.0,
+    blueY: 509.0,
     blueAngles: BLUE_WALK_6,
   },
   {
     frame: 7,
     act: 'Act 1: The Approach',
-    phase: 'Blue Casual Step 3 (Plant)',
+    phase: 'Blue Step 3 — Braking Plant & Weight Absorption',
     camX: 0.0,
     camY: 0.0,
     camZoom: 1.0,
     redX: 440.0,
-    redY: 742.0,
+    redY: 726.0,
     redAngles: RED_SIT_BREATH,
     bluePresent: true,
-    blueX: 774.0,
-    blueY: 518.0,
+    blueX: 770.0,
+    blueY: 513.0,
     blueAngles: BLUE_WALK_7,
   },
   {
     frame: 8,
     act: 'Act 1: The Approach',
-    phase: 'Blue Settles Into Stance',
+    phase: 'Blue Settles Weight Into Grounded Stance',
     camX: 0.0,
     camY: 0.0,
     camZoom: 1.0,
     redX: 440.0,
-    redY: 742.0,
+    redY: 726.0,
     redAngles: RED_SIT_IDLE,
     bluePresent: true,
-    blueX: 760.0,
-    blueY: 517.5,
+    blueX: 762.0,
+    blueY: 511.0,
     blueAngles: BLUE_WALK_8,
   },
   {
@@ -1786,11 +1812,11 @@ export const CANONICAL_36_TELEPORT_FRAMES: TeleportAmbushKeyframeSpec[] = [
     camY: 0.0,
     camZoom: 1.0,
     redX: 440.0,
-    redY: 742.0,
+    redY: 726.0,
     redAngles: RED_SIT_IDLE,
     bluePresent: true,
-    blueX: 756.0,
-    blueY: 517.0,
+    blueX: 760.0,
+    blueY: 510.0,
     blueAngles: BLUE_STAND,
   },
   {
@@ -1801,11 +1827,11 @@ export const CANONICAL_36_TELEPORT_FRAMES: TeleportAmbushKeyframeSpec[] = [
     camY: 22.0,
     camZoom: 1.55,
     redX: 440.0,
-    redY: 742.0,
+    redY: 726.0,
     redAngles: RED_NOTICE_1,
     bluePresent: true,
-    blueX: 756.0,
-    blueY: 517.0,
+    blueX: 760.0,
+    blueY: 510.0,
     blueAngles: BLUE_STAND,
   },
   {
@@ -1816,26 +1842,26 @@ export const CANONICAL_36_TELEPORT_FRAMES: TeleportAmbushKeyframeSpec[] = [
     camY: 46.0,
     camZoom: 2.25,
     redX: 440.0,
-    redY: 742.0,
+    redY: 726.0,
     redAngles: RED_NOTICE_2,
     bluePresent: true,
-    blueX: 756.0,
-    blueY: 517.0,
+    blueX: 760.0,
+    blueY: 510.0,
     blueAngles: BLUE_STAND,
   },
   {
     frame: 12,
     act: 'Act 2: The Close-Up',
-    phase: 'Red Tilts Head Up Noticing Blue',
+    phase: 'Red Lifts Gaze & Tilts Head Up Noticing Blue',
     camX: -158.0,
     camY: 52.0,
     camZoom: 2.35,
     redX: 440.0,
-    redY: 742.0,
+    redY: 726.0,
     redAngles: RED_NOTICE_3,
     bluePresent: true,
-    blueX: 756.0,
-    blueY: 517.0,
+    blueX: 760.0,
+    blueY: 510.0,
     blueAngles: BLUE_STAND,
   },
   {
@@ -1846,11 +1872,11 @@ export const CANONICAL_36_TELEPORT_FRAMES: TeleportAmbushKeyframeSpec[] = [
     camY: 52.0,
     camZoom: 2.35,
     redX: 440.0,
-    redY: 742.0,
+    redY: 726.0,
     redAngles: RED_NOTICE_HOLD,
     bluePresent: true,
-    blueX: 756.0,
-    blueY: 517.0,
+    blueX: 760.0,
+    blueY: 510.0,
     blueAngles: BLUE_STAND,
   },
   {
@@ -1861,11 +1887,11 @@ export const CANONICAL_36_TELEPORT_FRAMES: TeleportAmbushKeyframeSpec[] = [
     camY: 52.0,
     camZoom: 2.35,
     redX: 440.0,
-    redY: 742.0,
+    redY: 726.0,
     redAngles: RED_NOTICE_HOLD,
     bluePresent: true,
-    blueX: 756.0,
-    blueY: 517.0,
+    blueX: 760.0,
+    blueY: 510.0,
     blueAngles: BLUE_STAND,
   },
   {
@@ -1876,11 +1902,11 @@ export const CANONICAL_36_TELEPORT_FRAMES: TeleportAmbushKeyframeSpec[] = [
     camY: 18.0,
     camZoom: 2.05,
     redX: 440.0,
-    redY: 742.0,
+    redY: 726.0,
     redAngles: RED_NOTICE_HOLD,
     bluePresent: false,
-    blueX: 756.0,
-    blueY: 517.0,
+    blueX: 760.0,
+    blueY: 510.0,
     blueAngles: BLUE_STAND,
   },
   {
@@ -1891,11 +1917,11 @@ export const CANONICAL_36_TELEPORT_FRAMES: TeleportAmbushKeyframeSpec[] = [
     camY: -14.0,
     camZoom: 1.85,
     redX: 440.0,
-    redY: 742.0,
+    redY: 726.0,
     redAngles: RED_NOTICE_HOLD,
     bluePresent: false,
-    blueX: 756.0,
-    blueY: 517.0,
+    blueX: 760.0,
+    blueY: 510.0,
     blueAngles: BLUE_STAND,
   },
   {
@@ -1906,161 +1932,161 @@ export const CANONICAL_36_TELEPORT_FRAMES: TeleportAmbushKeyframeSpec[] = [
     camY: -14.0,
     camZoom: 1.85,
     redX: 440.0,
-    redY: 742.0,
+    redY: 726.0,
     redAngles: RED_NOTICE_HOLD,
     bluePresent: false,
-    blueX: 756.0,
-    blueY: 517.0,
+    blueX: 760.0,
+    blueY: 510.0,
     blueAngles: BLUE_STAND,
   },
   {
     frame: 18,
     act: 'Act 3: The Swish (Whip Pan)',
-    phase: 'Empty Space Hold — Blue Is Gone (2/2)',
+    phase: 'Empty Space Hold — Red Head Leads Turn (2/2)',
     camX: 124.0,
     camY: -14.0,
     camZoom: 1.85,
     redX: 440.0,
-    redY: 742.0,
+    redY: 726.0,
     redAngles: RED_SENSE_AMB,
     bluePresent: false,
-    blueX: 756.0,
-    blueY: 517.0,
+    blueX: 760.0,
+    blueY: 510.0,
     blueAngles: BLUE_STAND,
   },
   {
     frame: 19,
     act: 'Act 4: The Ambush',
-    phase: 'Camera Snaps Back — Blue Behind Red!',
+    phase: 'Camera Snaps Back — Blue Behind Red in Combat Stance!',
     camX: -220.0,
     camY: 48.0,
     camZoom: 1.28,
     redX: 440.0,
-    redY: 742.0,
+    redY: 726.0,
     redAngles: RED_SENSE_AMB,
     bluePresent: true,
-    blueX: 194.0,
-    blueY: 517.0,
+    blueX: 186.0,
+    blueY: 512.0,
     blueAngles: BLUE_AMB_0,
   },
   {
     frame: 20,
     act: 'Act 4: The Ambush',
-    phase: 'Ambush Realization Beat',
+    phase: 'Ambush Realization & Pre-Strike Weight Compression',
     camX: -220.0,
     camY: 48.0,
     camZoom: 1.28,
     redX: 440.0,
-    redY: 742.0,
+    redY: 726.0,
     redAngles: RED_SENSE_AMB,
     bluePresent: true,
-    blueX: 192.0,
-    blueY: 522.0,
+    blueX: 190.0,
+    blueY: 518.0,
     blueAngles: BLUE_AMB_1,
   },
   {
     frame: 21,
     act: 'Act 5: The Strike',
-    phase: 'Blue Drops Weight & Chambers Kick',
+    phase: 'Blue Shifts Weight to Support Leg & Chambers Knee High',
     camX: -224.0,
     camY: 54.0,
     camZoom: 1.32,
     redX: 440.0,
-    redY: 742.0,
+    redY: 726.0,
     redAngles: RED_TWIST_1,
     bluePresent: true,
-    blueX: 182.0,
-    blueY: 556.0,
+    blueX: 194.0,
+    blueY: 532.0,
     blueAngles: BLUE_DROP_1,
   },
   {
     frame: 22,
     act: 'Act 5: The Strike',
-    phase: 'Blue Coils Hip & Begins Low Sweep',
+    phase: 'Blue Drives Hip & Uncoils Kick; Red Raises Forearm Shield',
     camX: -228.0,
     camY: 58.0,
     camZoom: 1.35,
     redX: 440.0,
-    redY: 742.0,
+    redY: 726.0,
     redAngles: RED_TWIST_2,
     bluePresent: true,
-    blueX: 174.0,
-    blueY: 580.0,
+    blueX: 196.0,
+    blueY: 540.0,
     blueAngles: BLUE_DROP_2,
   },
   {
     frame: 23,
     act: 'Act 5: The Strike',
-    phase: 'Blue Whips Heavy Sweeping Kick Forward',
+    phase: 'Blue Whips Sweeping Roundhouse Kick Along Arc',
     camX: -230.0,
     camY: 62.0,
     camZoom: 1.38,
     redX: 440.0,
-    redY: 742.0,
+    redY: 726.0,
     redAngles: RED_TWIST_2,
     bluePresent: true,
-    blueX: 170.0,
-    blueY: 590.0,
+    blueX: 198.0,
+    blueY: 544.0,
     blueAngles: BLUE_SWEEP,
   },
   {
     frame: 24,
     act: 'Act 6: The Block & Impact',
-    phase: 'CLASH! Red Rigid Forearm Catches Blue Shin',
+    phase: 'CLASH! Red Vertical Forearm Shield Catches Blue Shin',
     camX: -232.0,
     camY: 64.0,
     camZoom: 1.42,
-    redX: 440.0,
-    redY: 742.0,
+    redX: 443.0,
+    redY: 727.0,
     redAngles: RED_BLOCK_LOCK,
     bluePresent: true,
-    blueX: 168.0,
-    blueY: 594.0,
+    blueX: 198.0,
+    blueY: 545.0,
     blueAngles: BLUE_CLASH,
   },
   {
     frame: 25,
     act: 'Act 6: The Block & Impact',
-    phase: 'Hit-Stop Freeze On Heavy Impact',
+    phase: 'Hit-Stop & Momentum Transfer (+5.5px Braced Slide)',
     camX: -232.0,
     camY: 64.0,
     camZoom: 1.42,
-    redX: 440.0,
-    redY: 742.0,
-    redAngles: RED_BLOCK_LOCK,
+    redX: 445.5,
+    redY: 727.5,
+    redAngles: RED_BLOCK_SHK1,
     bluePresent: true,
-    blueX: 168.0,
-    blueY: 594.0,
-    blueAngles: BLUE_CLASH,
+    blueX: 199.0,
+    blueY: 546.0,
+    blueAngles: BLUE_CLASH_S,
   },
   {
     frame: 26,
     act: 'Act 7: The Screen Shake',
-    phase: 'Violent Screen Shake 1 (Up-Left)',
+    phase: 'Violent Screen Shake 1 (Up-Left + Guard Compression)',
     camX: -252.0,
     camY: 46.0,
     camZoom: 1.45,
-    redX: 440.0,
-    redY: 742.0,
+    redX: 445.5,
+    redY: 727.5,
     redAngles: RED_BLOCK_SHK1,
     bluePresent: true,
-    blueX: 168.0,
-    blueY: 594.0,
+    blueX: 199.0,
+    blueY: 546.0,
     blueAngles: BLUE_CLASH_S,
   },
   {
     frame: 27,
     act: 'Act 7: The Screen Shake',
-    phase: 'Violent Screen Shake 2 (Down-Right)',
+    phase: 'Violent Screen Shake 2 (Down-Right + Rebound)',
     camX: -212.0,
     camY: 82.0,
     camZoom: 1.45,
-    redX: 440.0,
-    redY: 742.0,
+    redX: 444.5,
+    redY: 727.0,
     redAngles: RED_BLOCK_SHK2,
     bluePresent: true,
-    blueX: 168.0,
-    blueY: 594.0,
+    blueX: 198.0,
+    blueY: 545.0,
     blueAngles: BLUE_CLASH,
   },
   {
@@ -2070,12 +2096,12 @@ export const CANONICAL_36_TELEPORT_FRAMES: TeleportAmbushKeyframeSpec[] = [
     camX: -216.0,
     camY: 48.0,
     camZoom: 1.44,
-    redX: 440.0,
-    redY: 742.0,
+    redX: 445.0,
+    redY: 727.2,
     redAngles: RED_BLOCK_SHK1,
     bluePresent: true,
-    blueX: 168.0,
-    blueY: 594.0,
+    blueX: 198.5,
+    blueY: 545.5,
     blueAngles: BLUE_CLASH_S,
   },
   {
@@ -2085,27 +2111,27 @@ export const CANONICAL_36_TELEPORT_FRAMES: TeleportAmbushKeyframeSpec[] = [
     camX: -248.0,
     camY: 78.0,
     camZoom: 1.43,
-    redX: 440.0,
-    redY: 742.0,
+    redX: 444.0,
+    redY: 727.0,
     redAngles: RED_BLOCK_SHK2,
     bluePresent: true,
-    blueX: 168.0,
-    blueY: 594.0,
+    blueX: 198.0,
+    blueY: 545.0,
     blueAngles: BLUE_CLASH,
   },
   {
     frame: 30,
     act: 'Act 7: The Screen Shake',
-    phase: 'Violent Screen Shake 5 (Damping)',
+    phase: 'Violent Screen Shake 5 (Damping Settle)',
     camX: -226.0,
     camY: 58.0,
     camZoom: 1.42,
-    redX: 440.0,
-    redY: 742.0,
+    redX: 444.0,
+    redY: 727.0,
     redAngles: RED_BLOCK_LOCK,
     bluePresent: true,
-    blueX: 168.0,
-    blueY: 594.0,
+    blueX: 198.0,
+    blueY: 545.0,
     blueAngles: BLUE_CLASH,
   },
   {
@@ -2115,12 +2141,12 @@ export const CANONICAL_36_TELEPORT_FRAMES: TeleportAmbushKeyframeSpec[] = [
     camX: -232.0,
     camY: 64.0,
     camZoom: 1.42,
-    redX: 440.0,
-    redY: 742.0,
+    redX: 444.0,
+    redY: 727.0,
     redAngles: RED_BLOCK_LOCK,
     bluePresent: true,
-    blueX: 168.0,
-    blueY: 594.0,
+    blueX: 198.0,
+    blueY: 545.0,
     blueAngles: BLUE_CLASH,
   },
   {
@@ -2130,12 +2156,12 @@ export const CANONICAL_36_TELEPORT_FRAMES: TeleportAmbushKeyframeSpec[] = [
     camX: -232.0,
     camY: 64.0,
     camZoom: 1.42,
-    redX: 440.0,
-    redY: 742.0,
+    redX: 444.0,
+    redY: 727.0,
     redAngles: RED_BLOCK_LOCK,
     bluePresent: true,
-    blueX: 168.0,
-    blueY: 594.0,
+    blueX: 198.0,
+    blueY: 545.0,
     blueAngles: BLUE_CLASH,
   },
   {
@@ -2145,12 +2171,12 @@ export const CANONICAL_36_TELEPORT_FRAMES: TeleportAmbushKeyframeSpec[] = [
     camX: -232.0,
     camY: 64.0,
     camZoom: 1.42,
-    redX: 440.0,
-    redY: 742.0,
+    redX: 444.0,
+    redY: 727.0,
     redAngles: RED_BLOCK_LOCK,
     bluePresent: true,
-    blueX: 168.0,
-    blueY: 594.0,
+    blueX: 198.0,
+    blueY: 545.0,
     blueAngles: BLUE_CLASH,
   },
   {
@@ -2160,12 +2186,12 @@ export const CANONICAL_36_TELEPORT_FRAMES: TeleportAmbushKeyframeSpec[] = [
     camX: -232.0,
     camY: 64.0,
     camZoom: 1.42,
-    redX: 440.0,
-    redY: 742.0,
+    redX: 444.0,
+    redY: 727.0,
     redAngles: RED_BLOCK_LOCK,
     bluePresent: true,
-    blueX: 168.0,
-    blueY: 594.0,
+    blueX: 198.0,
+    blueY: 545.0,
     blueAngles: BLUE_CLASH,
   },
   {
@@ -2175,12 +2201,12 @@ export const CANONICAL_36_TELEPORT_FRAMES: TeleportAmbushKeyframeSpec[] = [
     camX: -232.0,
     camY: 64.0,
     camZoom: 1.42,
-    redX: 440.0,
-    redY: 742.0,
+    redX: 444.0,
+    redY: 727.0,
     redAngles: RED_BLOCK_LOCK,
     bluePresent: true,
-    blueX: 168.0,
-    blueY: 594.0,
+    blueX: 198.0,
+    blueY: 545.0,
     blueAngles: BLUE_CLASH,
   },
 ];
@@ -2289,8 +2315,8 @@ export async function synthesizeTeleportStknds(
     defA3.push(baseDv.getFloat32(off + 32, false));
   }
 
-  const redArgb = hexToArgbUint32(config.redColorHex);
-  const blueArgb = hexToArgbUint32(config.blueColorHex);
+  const redArgb = hexColorToArgbUint32(config.redColorHex);
+  const blueArgb = hexColorToArgbUint32(config.blueColorHex);
 
   let totalBytes = prefixHdr.length + ptrlTmpl.length;
   for (const spec of framesSpec) {
@@ -2302,7 +2328,7 @@ export async function synthesizeTeleportStknds(
   const dv = new DataView(buf.buffer, buf.byteOffset, buf.byteLength);
 
   buf.set(prefixHdr, 0);
-  dv.setInt32(27, config.targetFps, false);
+  buf[30] = config.targetFps;
   dv.setInt32(2587, nFrames, false);
 
   let cursor = prefixHdr.length;

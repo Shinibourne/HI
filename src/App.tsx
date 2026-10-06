@@ -14,6 +14,7 @@ import {
   BookOpen,
   Wind,
   Camera,
+  ShieldCheck,
 } from 'lucide-react';
 import {
   BounceGeneratorConfig,
@@ -35,6 +36,11 @@ import {
   synthesizeSuperheroStknds,
   synthesizeTeleportStknds,
 } from './lib/stkndsCodec';
+import {
+  UNIVERSAL_33_MOTION_SKILLS,
+  AUTOMATIC_15_STEP_PIPELINE,
+  evaluateTeleportAmbushQuality,
+} from './lib/humanMotionSkills';
 
 interface CorpusPreset {
   label: string;
@@ -280,7 +286,10 @@ export function App() {
   const [showOnionSkin, setShowOnionSkin] = useState<boolean>(true);
   const [showTrajectoryArc, setShowTrajectoryArc] = useState<boolean>(true);
   const [vcamFollow, setVcamFollow] = useState<boolean>(true);
-  const [activeDocTab, setActiveDocTab] = useState<'frames' | 'hierarchy' | 'methodology'>('frames');
+  const [activeDocTab, setActiveDocTab] = useState<
+    'skills' | 'frames' | 'hierarchy' | 'methodology'
+  >('skills');
+  const [selectedSkillCategory, setSelectedSkillCategory] = useState<string>('ALL');
   const [synthesizing, setSynthesizing] = useState<boolean>(false);
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -353,6 +362,12 @@ export function App() {
   const superheroFrames = useMemo(
     () => buildAdjustedSuperheroFrames(heroConfig),
     [heroConfig]
+  );
+
+  // Automatic 10-Domain Biomechanical Quality-Control Gate (Evaluated across every frame)
+  const liveBiomechanicsAudit = useMemo(
+    () => evaluateTeleportAmbushQuality(teleportFrames),
+    [teleportFrames]
   );
 
   const computedBounceFrames = useMemo(
@@ -644,9 +659,9 @@ export function App() {
           activeSpec.act.includes('End Scene')) &&
         blueJoints
       ) {
-        // Draw Clash Impact Starburst at intersection of Blue R_Shin (Node 2) and Red R_Forearm (Node 10)
-        const clashX = 318 * scaleX;
-        const clashY = 638 * scaleY;
+        // Draw Clash Impact Starburst at true biomechanical contact point between Blue R_Shin (Node 2) and Red R_Forearm (Node 10)
+        const clashX = ((redJoints[10].endX + blueJoints[2].endX) * 0.5) * scaleX;
+        const clashY = ((redJoints[10].endY + blueJoints[2].endY) * 0.5) * scaleY;
         ctx.save();
         ctx.strokeStyle = '#F59E0B';
         ctx.lineWidth = 2.5;
@@ -1407,18 +1422,46 @@ export function App() {
   };
 
   const safeTeleportFrame = teleportFrames[currentFrame % teleportFrames.length];
+  const [selectedBoneFigure, setSelectedBoneFigure] = useState<'red' | 'blue'>('red');
+
   const activeStickfigureFrames =
-    activeAnimationMode === 'sneeze' ? sneezeFrames : superheroFrames;
+    activeAnimationMode === 'teleport'
+      ? []
+      : activeAnimationMode === 'sneeze'
+      ? sneezeFrames
+      : superheroFrames;
   const safeHeroFrame =
-    activeStickfigureFrames[currentFrame % activeStickfigureFrames.length];
+    activeStickfigureFrames[currentFrame % Math.max(1, activeStickfigureFrames.length)] ||
+    superheroFrames[0];
+
+  const safeTeleportRedJoints = useMemo(
+    () =>
+      computeForwardKinematics(
+        safeTeleportFrame.redX,
+        safeTeleportFrame.redY,
+        safeTeleportFrame.redAngles,
+        0.5
+      ),
+    [safeTeleportFrame]
+  );
+  const safeTeleportBlueJoints = useMemo(
+    () =>
+      safeTeleportFrame.bluePresent
+        ? computeForwardKinematics(
+            safeTeleportFrame.blueX,
+            safeTeleportFrame.blueY,
+            safeTeleportFrame.blueAngles,
+            0.5
+          )
+        : null,
+    [safeTeleportFrame]
+  );
+
   const safeHeroJoints =
     activeAnimationMode === 'teleport'
-      ? computeForwardKinematics(
-          safeTeleportFrame.redX,
-          safeTeleportFrame.redY,
-          safeTeleportFrame.redAngles,
-          0.5
-        )
+      ? selectedBoneFigure === 'red' || !safeTeleportBlueJoints
+        ? safeTeleportRedJoints
+        : safeTeleportBlueJoints
       : computeForwardKinematics(
           safeHeroFrame.sceneX,
           safeHeroFrame.sceneY,
@@ -1934,7 +1977,38 @@ export function App() {
             </div>
 
             {/* Live Byte-Level Telemetry Strip for Active Frame */}
-            {activeAnimationMode !== 'bounce' ? (
+            {activeAnimationMode === 'teleport' ? (
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-3 border-t border-[#E2E8F0] text-xs">
+                <div>
+                  <div className="text-[#64748B]">Act / Camera View</div>
+                  <div className="font-semibold text-[#0F172A] mt-0.5 truncate">
+                    {safeTeleportFrame.act}
+                  </div>
+                </div>
+                <div>
+                  <div className="text-[#64748B]">Camera Zoom / Pan (@+42..+50)</div>
+                  <div className="font-mono font-semibold text-[#0284C7] mt-0.5">
+                    {safeTeleportFrame.camZoom.toFixed(2)}x · ({safeTeleportFrame.camX.toFixed(0)},{' '}
+                    {safeTeleportFrame.camY.toFixed(0)})
+                  </div>
+                </div>
+                <div>
+                  <div className="text-[#64748B]">Figure Positions (@+75/+79)</div>
+                  <div className="font-mono font-semibold text-[#0F172A] mt-0.5 truncate">
+                    Red ({safeTeleportFrame.redX.toFixed(0)}, {safeTeleportFrame.redY.toFixed(0)}) ·{' '}
+                    {safeTeleportFrame.bluePresent
+                      ? `Blue (${safeTeleportFrame.blueX.toFixed(0)}, ${safeTeleportFrame.blueY.toFixed(0)})`
+                      : 'Blue (VANISHED)'}
+                  </div>
+                </div>
+                <div>
+                  <div className="text-[#64748B]">Active Frame Rate (@byte 30)</div>
+                  <div className="font-mono font-semibold text-[#059669] mt-0.5">
+                    {globalFps} FPS ({teleportFrames.length} Total Frames)
+                  </div>
+                </div>
+              </div>
+            ) : activeAnimationMode !== 'bounce' ? (
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-3 border-t border-[#E2E8F0] text-xs">
                 <div>
                   <div className="text-[#64748B]">Act / Keyframe Stage</div>
@@ -2043,7 +2117,161 @@ export function App() {
               </p>
             </div>
 
-            {activeAnimationMode === 'sneeze' ? (
+            {activeAnimationMode === 'teleport' ? (
+              <div className="space-y-4 text-xs">
+                {globalFps === 24 && (
+                  <div className="flex items-center justify-between p-2.5 rounded-lg bg-[#F1F5F9]">
+                    <label
+                      htmlFor="bake-teleport-24fps"
+                      className="font-medium text-[#0F172A] cursor-pointer"
+                    >
+                      Bake 24 FPS In-Betweens (71 Frames Total)
+                    </label>
+                    <input
+                      id="bake-teleport-24fps"
+                      type="checkbox"
+                      checked={teleportConfig.interpolate24FpsFrames}
+                      onChange={(e) => {
+                        setTeleportConfig((c) => ({
+                          ...c,
+                          interpolate24FpsFrames: e.target.checked,
+                        }));
+                        setCurrentFrame(0);
+                      }}
+                      className="accent-[#0284C7]"
+                    />
+                  </div>
+                )}
+
+                <div className="space-y-1">
+                  <div className="flex justify-between font-medium">
+                    <label htmlFor="teleport-closeup">Act 2 Close-Up Camera Zoom</label>
+                    <span className="font-mono text-[#0F172A]">
+                      {teleportConfig.closeUpZoom.toFixed(2)}x
+                    </span>
+                  </div>
+                  <input
+                    id="teleport-closeup"
+                    type="range"
+                    min={1.5}
+                    max={3.5}
+                    step={0.05}
+                    value={teleportConfig.closeUpZoom}
+                    onChange={(e) =>
+                      setTeleportConfig((c) => ({
+                        ...c,
+                        closeUpZoom: Number(e.target.value),
+                      }))
+                    }
+                    className="w-full accent-[#0284C7]"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <div className="flex justify-between font-medium">
+                    <label htmlFor="teleport-whippan">Act 3 Whip-Pan Right Offset</label>
+                    <span className="font-mono text-[#0F172A]">
+                      +{teleportConfig.whipPanOffsetX} px
+                    </span>
+                  </div>
+                  <input
+                    id="teleport-whippan"
+                    type="range"
+                    min={40}
+                    max={240}
+                    step={4}
+                    value={teleportConfig.whipPanOffsetX}
+                    onChange={(e) =>
+                      setTeleportConfig((c) => ({
+                        ...c,
+                        whipPanOffsetX: Number(e.target.value),
+                      }))
+                    }
+                    className="w-full accent-[#0284C7]"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <div className="flex justify-between font-medium">
+                    <label htmlFor="teleport-screenshake">Act 7 Impact Screen Shake Amplitude</label>
+                    <span className="font-mono text-[#0F172A]">
+                      ±{teleportConfig.screenShakeAmplitudePx} px
+                    </span>
+                  </div>
+                  <input
+                    id="teleport-screenshake"
+                    type="range"
+                    min={4}
+                    max={40}
+                    step={2}
+                    value={teleportConfig.screenShakeAmplitudePx}
+                    onChange={(e) =>
+                      setTeleportConfig((c) => ({
+                        ...c,
+                        screenShakeAmplitudePx: Number(e.target.value),
+                      }))
+                    }
+                    className="w-full accent-[#0284C7]"
+                  />
+                </div>
+
+                <div className="pt-2 border-t border-[#E2E8F0] space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="font-medium text-[#0F172A]">Character Red (Fig #1)</span>
+                    <div className="flex items-center gap-2">
+                      {['#DC2626', '#EF4444', '#991B1B', '#EA580C', '#7C3AED'].map((hex) => (
+                        <button
+                          key={hex}
+                          type="button"
+                          onClick={() => setTeleportConfig((c) => ({ ...c, redColorHex: hex }))}
+                          aria-label={`Select Red color ${hex}`}
+                          className={`w-5 h-5 rounded-full border transition-transform ${
+                            teleportConfig.redColorHex === hex
+                              ? 'scale-110 ring-2 ring-[#0F172A] border-white'
+                              : 'border-[#CBD5E1]'
+                          }`}
+                          style={{ backgroundColor: hex }}
+                        />
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <span className="font-medium text-[#0F172A]">Character Blue (Fig #2)</span>
+                    <div className="flex items-center gap-2">
+                      {['#2563EB', '#0284C7', '#1D4ED8', '#059669', '#1F2937'].map((hex) => (
+                        <button
+                          key={hex}
+                          type="button"
+                          onClick={() => setTeleportConfig((c) => ({ ...c, blueColorHex: hex }))}
+                          aria-label={`Select Blue color ${hex}`}
+                          className={`w-5 h-5 rounded-full border transition-transform ${
+                            teleportConfig.blueColorHex === hex
+                              ? 'scale-110 ring-2 ring-[#0F172A] border-white'
+                              : 'border-[#CBD5E1]'
+                          }`}
+                          style={{ backgroundColor: hex }}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="pt-3 space-y-2">
+                  <button
+                    type="button"
+                    disabled={!baseTemplate27 || synthesizing}
+                    onClick={handleSynthesizeAndDownload}
+                    className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-semibold text-white bg-[#0284C7] hover:bg-[#0369A1] disabled:opacity-50 rounded-lg transition-colors whitespace-nowrap shadow-xs"
+                  >
+                    <Download className="w-4 h-4" />
+                    {synthesizing
+                      ? 'Synthesizing GZIP Container...'
+                      : `Compile & Download Teleport Ambush (${globalFps} FPS · ${teleportFrames.length}f .stknds)`}
+                  </button>
+                </div>
+              </div>
+            ) : activeAnimationMode === 'sneeze' ? (
               <div className="space-y-4 text-xs">
                 {globalFps === 24 && (
                   <div className="flex items-center justify-between p-2.5 rounded-lg bg-[#F1F5F9]">
@@ -2409,14 +2637,26 @@ export function App() {
           <div className="border-b border-[#E2E8F0] pb-4 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
             <div>
               <h2 className="font-display text-2xl font-semibold text-[#0F172A]">
-                03. Natural Movement Body Mechanics &amp; v334 Binary Specification
+                03. Universal 33-Skill Human Motion Framework &amp; Biomechanics Gate
               </h2>
               <p className="text-sm text-[#475569] mt-1">
-                How the <strong>Natural Movement</strong> skill (<code className="font-mono">NATURAL_MOVEMENT_SKILL.md</code>) governs anticipation, extreme holds, explosive recoil, and overlapping follow-through in <code className="font-mono">.stknds</code>.
+                Medium-independent animation intelligence system (<code className="font-mono">src/lib/humanMotionSkills.ts</code> &amp; <code className="font-mono">NATURAL_MOVEMENT_SKILL.md</code>) automatically evaluating every character through all 33 biomechanical skills, the 15-step execution pipeline, and the 10-domain quality-control gate.
               </p>
             </div>
 
-            <div className="flex items-center gap-1 p-1 bg-[#E2E8F0]/70 rounded-lg self-start">
+            <div className="flex flex-wrap items-center gap-1 p-1 bg-[#E2E8F0]/70 rounded-lg self-start">
+              <button
+                type="button"
+                onClick={() => setActiveDocTab('skills')}
+                className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap ${
+                  activeDocTab === 'skills'
+                    ? 'bg-white text-[#0F172A] shadow-xs'
+                    : 'text-[#475569] hover:text-[#0F172A]'
+                }`}
+              >
+                <ShieldCheck className="w-3.5 h-3.5 text-[#059669]" />
+                1. 33-Skill Library &amp; 10-Domain QC Gate
+              </button>
               <button
                 type="button"
                 onClick={() => setActiveDocTab('frames')}
@@ -2426,7 +2666,11 @@ export function App() {
                     : 'text-[#475569] hover:text-[#0F172A]'
                 }`}
               >
-                1. 6-Act Epic Sneeze Mechanics
+                {activeAnimationMode === 'teleport'
+                  ? '2. 8-Act Teleport Ambush Mechanics'
+                  : activeAnimationMode === 'superhero'
+                  ? '2. 5-Act Sky Flight Mechanics'
+                  : '2. 6-Act Epic Sneeze Mechanics'}
               </button>
               <button
                 type="button"
@@ -2437,7 +2681,7 @@ export function App() {
                     : 'text-[#475569] hover:text-[#0F172A]'
                 }`}
               >
-                2. Active Frame Bone Table
+                3. Active Frame Bone Table
               </button>
               <button
                 type="button"
@@ -2448,61 +2692,334 @@ export function App() {
                     : 'text-[#475569] hover:text-[#0F172A]'
                 }`}
               >
-                3. 12 FPS vs 24 FPS Serialization
+                4. 12 FPS vs 24 FPS Serialization
               </button>
             </div>
           </div>
 
-          {activeDocTab === 'frames' && (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="bg-white border border-[#E2E8F0] rounded-xl p-5 space-y-3">
-                <div className="text-xs font-mono text-[#D97706] font-semibold">
-                  ACTS 01–02 · ANTICIPATION &amp; HOLD TREMBLE
+          {activeDocTab === 'skills' && (
+            <div className="space-y-6">
+              {/* Live 10-Domain Biomechanical Quality-Control Gate Card */}
+              <div className="bg-white border border-[#E2E8F0] rounded-xl p-5 space-y-4">
+                <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#E2E8F0] pb-3">
+                  <div>
+                    <div className="text-xs font-mono text-[#059669] font-semibold">
+                      AUTOMATIC 10-DOMAIN QUALITY-CONTROL GATE (SKILL #33)
+                    </div>
+                    <h3 className="text-base font-semibold text-[#0F172A]">
+                      {liveBiomechanicsAudit.animationTitle} ({liveBiomechanicsAudit.frameCount} Frames Audited)
+                    </h3>
+                  </div>
+                  <span
+                    className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-mono font-semibold ${
+                      liveBiomechanicsAudit.overallPassed
+                        ? 'bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0]'
+                        : 'bg-[#FEF2F2] text-[#DC2626] border border-[#FECACA]'
+                    }`}
+                  >
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                    {liveBiomechanicsAudit.overallScore}% BIOMECHANICAL PASS
+                  </span>
                 </div>
-                <h3 className="text-base font-semibold text-[#0F172A]">
-                  The Build-Up &amp; Stuck Sneeze Hold (Frames 00–10)
-                </h3>
-                <p className="text-sm text-[#475569] leading-relaxed">
-                  Starts from a balanced standing equilibrium (<code className="font-mono text-xs">X=1120, Y=509</code>). As the massive breath builds, the head tilts back (<code className="font-mono text-xs">+90° → +142°</code>), the chest rises, and elbows bend up to the chest. When the sneeze gets stuck (F06–F10), the spine arches completely backward (<code className="font-mono text-xs">UpperChest +136°..+148°</code>) with a high-frequency tension tremble across the arms and legs while the feet stay planted on the ground (<code className="font-mono text-xs">Y ≈ 758</code>).
-                </p>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                  {liveBiomechanicsAudit.domains.map((dom) => (
+                    <div
+                      key={dom.domain}
+                      className="p-3 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] space-y-1.5"
+                    >
+                      <div className="flex items-center justify-between font-semibold text-[#0F172A]">
+                        <span>{dom.domain}</span>
+                        <span className="font-mono text-[#059669]">{dom.score}% · {dom.skillsChecked}</span>
+                      </div>
+                      <p className="text-xs text-[#475569] leading-relaxed">{dom.summary}</p>
+                      <div className="font-mono text-[11px] text-[#0284C7] pt-0.5">
+                        {dom.technicalProof}
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
 
+              {/* Mandatory 15-Step Automatic Execution Pipeline */}
               <div className="bg-white border border-[#E2E8F0] rounded-xl p-5 space-y-3">
-                <div className="text-xs font-mono text-[#E11D48] font-semibold">
-                  ACTS 03–04 · EXPLOSION &amp; THRUSTER BACKFLIP
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#E2E8F0] pb-3">
+                  <div>
+                    <div className="text-xs font-mono text-[#0284C7] font-semibold">
+                      PERSISTENT EXECUTION PIPELINE (AUTOMATIC ON EVERY ANIMATION)
+                    </div>
+                    <h3 className="text-base font-semibold text-[#0F172A]">
+                      15-Step Causal Biomechanical Authoring Workflow
+                    </h3>
+                  </div>
+                  <a
+                    href="/NATURAL_MOVEMENT_SKILL.md"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-xs font-mono text-[#0284C7] hover:underline"
+                  >
+                    View Full NATURAL_MOVEMENT_SKILL.md (v2.0) →
+                  </a>
                 </div>
-                <h3 className="text-base font-semibold text-[#0F172A]">
-                  2-Frame Whip &amp; Mid-Air Backflip Recoil (Frames 11–21)
-                </h3>
-                <p className="text-sm text-[#475569] leading-relaxed">
-                  In just 2 frames (F11–F12), the character snaps violently forward: the spine curls into a tight ball (<code className="font-mono text-xs">-96°</code>), the head whips down past the knees (<code className="font-mono text-xs">-152°</code>), and both arms throw straight backward (<code className="font-mono text-xs">+172°..+178°</code>). The sneeze acts like a thruster (F13–F21), ripping the feet off the floor and launching the character backward (<code className="font-mono text-xs">X: 1104 → 512</code>) through a full 360° messy mid-air backflip (<code className="font-mono text-xs">Spine: -48° → +468°</code>).
-                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 text-xs">
+                  {AUTOMATIC_15_STEP_PIPELINE.map((p) => (
+                    <div
+                      key={p.step}
+                      className="p-2.5 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] space-y-1"
+                    >
+                      <div className="font-mono text-[11px] font-bold text-[#0284C7]">
+                        STEP {p.step.toString().padStart(2, '0')} · {p.title}
+                      </div>
+                      <p className="text-[11px] text-[#475569] leading-snug">{p.detail}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
 
-              <div className="bg-white border border-[#E2E8F0] rounded-xl p-5 space-y-3">
-                <div className="text-xs font-mono text-[#059669] font-semibold">
-                  ACTS 05–06 · FLAT BACK CRASH &amp; LEG TWITCH
+              {/* Interactive 33-Skill Universal Library Explorer */}
+              <div className="bg-white border border-[#E2E8F0] rounded-xl p-5 space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#E2E8F0] pb-3">
+                  <div>
+                    <div className="text-xs font-mono text-[#0F172A] font-semibold">
+                      REUSABLE MEDIUM-INDEPENDENT SKILL LIBRARY (33 SKILLS)
+                    </div>
+                    <h3 className="text-base font-semibold text-[#0F172A]">
+                      All 33 Human Biomechanics, Timing, Locomotion &amp; Combat Skills
+                    </h3>
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-1 bg-[#F1F5F9] p-1 rounded-lg text-xs">
+                    {[
+                      'ALL',
+                      'Master & Foundation',
+                      'Anatomical & Skeletal',
+                      'Physics, Timing & Arcs',
+                      'Locomotion & Action Mechanics',
+                      'Expressive & Continuity',
+                      'Quality Assurance',
+                    ].map((cat) => (
+                      <button
+                        key={cat}
+                        type="button"
+                        onClick={() => setSelectedSkillCategory(cat)}
+                        className={`px-2.5 py-1 rounded font-medium transition-colors ${
+                          selectedSkillCategory === cat
+                            ? 'bg-white text-[#0F172A] shadow-xs'
+                            : 'text-[#475569] hover:text-[#0F172A]'
+                        }`}
+                      >
+                        {cat}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-                <h3 className="text-base font-semibold text-[#0F172A]">
-                  Secondary Limb Bounce &amp; 1s Stillness (Frames 22–35)
-                </h3>
-                <p className="text-sm text-[#475569] leading-relaxed">
-                  At F22, the character crashes flat on their back (<code className="font-mono text-xs">Spine 538° ≡ 178°</code>). Impact momentum causes both arms and legs to bounce skyward once (F23–F24) before dropping flat at F26. The character then lies completely motionless for 1 full second (F27–F32, zero delta) before slowly twitching the right leg (F33–F35) to show they are still alive.
-                </p>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 max-h-[520px] overflow-y-auto pr-1">
+                  {UNIVERSAL_33_MOTION_SKILLS.filter(
+                    (s) =>
+                      selectedSkillCategory === 'ALL' || s.category === selectedSkillCategory
+                  ).map((skill) => (
+                    <div
+                      key={skill.id}
+                      className="p-3.5 rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] space-y-2 flex flex-col justify-between"
+                    >
+                      <div className="space-y-1.5">
+                        <div className="flex items-center justify-between gap-2">
+                          <span className="font-mono text-xs font-bold text-[#0284C7]">
+                            SKILL #{skill.id.toString().padStart(2, '0')}
+                          </span>
+                          <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#E2E8F0] text-[#0F172A]">
+                            {skill.category}
+                          </span>
+                        </div>
+                        <h4 className="text-sm font-semibold text-[#0F172A]">{skill.name}</h4>
+                        <p className="text-xs text-[#475569] leading-relaxed">
+                          <strong>Causal Principle:</strong> {skill.causalQuestion}
+                        </p>
+                      </div>
+                      <ul className="space-y-1 pt-2 border-t border-[#E2E8F0]/80 text-[11px] text-[#334155]">
+                        {skill.biomechanicalRules.slice(0, 3).map((rule) => (
+                          <li key={rule} className="flex items-start gap-1.5">
+                            <span className="text-[#0284C7] font-bold">·</span>
+                            <span>{rule}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
+          )}
+
+          {activeDocTab === 'frames' && (
+            activeAnimationMode === 'teleport' ? (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="bg-white border border-[#E2E8F0] rounded-xl p-5 space-y-3">
+                  <div className="text-xs font-mono text-[#2563EB] font-semibold">
+                    ACTS 01–03 · APPROACH, ZOOM &amp; WHIP-PAN
+                  </div>
+                  <h3 className="text-base font-semibold text-[#0F172A]">
+                    The Standoff, Close-Up &amp; Vanish (Frames 00–16)
+                  </h3>
+                  <p className="text-sm text-[#475569] leading-relaxed">
+                    Wide establishing shot as Character Blue walks calmly toward seated Character Red (<code className="font-mono text-xs">X: 960 → 756</code>). At F10, the camera zooms aggressively (<code className="font-mono text-xs">2.35x</code>) into Red’s face as he notices Blue and tilts his head up. In just 2 frames (F15–F16), a violent whip-pan pans to Blue’s spot — <em>Blue is completely gone</em>!
+                  </p>
+                </div>
+
+                <div className="bg-white border border-[#E2E8F0] rounded-xl p-5 space-y-3">
+                  <div className="text-xs font-mono text-[#DC2626] font-semibold">
+                    ACTS 04–05 · TELEPORT &amp; SWEEPING KICK
+                  </div>
+                  <h3 className="text-base font-semibold text-[#0F172A]">
+                    Behind-the-Back Strike (Frames 17–23)
+                  </h3>
+                  <p className="text-sm text-[#475569] leading-relaxed">
+                    The camera snaps wide as Blue instantly materializes behind seated Red at <code className="font-mono text-xs">X=168</code>. Blue immediately drops body weight (<code className="font-mono text-xs">Y=594</code>) and whips a heavy roundhouse kick directly targeting Red’s upper body with maximum momentum.
+                  </p>
+                </div>
+
+                <div className="bg-white border border-[#E2E8F0] rounded-xl p-5 space-y-3">
+                  <div className="text-xs font-mono text-[#D97706] font-semibold">
+                    ACTS 06–08 · FOREARM BLOCK &amp; SCREEN SHAKE
+                  </div>
+                  <h3 className="text-base font-semibold text-[#0F172A]">
+                    Seated Block, Hit-Stop &amp; Standoff (Frames 24–35)
+                  </h3>
+                  <p className="text-sm text-[#475569] leading-relaxed">
+                    Without standing up, Red twists sharply and catches Blue’s shin with a rigid forearm block (<code className="font-mono text-xs">Forearm +172° / -124°</code>). An intense hit-stop freeze triggers a 5-frame screen shake (F26–F30) before settling into a 5-frame locked martial arts standoff hold.
+                  </p>
+                </div>
+              </div>
+            ) : activeAnimationMode === 'superhero' ? (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="bg-white border border-[#E2E8F0] rounded-xl p-5 space-y-3">
+                  <div className="text-xs font-mono text-[#475569] font-semibold">
+                    ACTS 01–02 · STRIDE &amp; SCRATCH
+                  </div>
+                  <h3 className="text-base font-semibold text-[#0F172A]">
+                    Walk Cycle &amp; Thoughtful Pause (Frames 00–09)
+                  </h3>
+                  <p className="text-sm text-[#475569] leading-relaxed">
+                    Character walks along the ground from <code className="font-mono text-xs">X=260 → 515</code>, stops, and reaches up to scratch their head with forearm oscillation (<code className="font-mono text-xs">±18°</code>) before taking flight.
+                  </p>
+                </div>
+
+                <div className="bg-white border border-[#E2E8F0] rounded-xl p-5 space-y-3">
+                  <div className="text-xs font-mono text-[#0284C7] font-semibold">
+                    ACTS 03–04 · SKY FLIGHT CORRIDOR
+                  </div>
+                  <h3 className="text-base font-semibold text-[#0F172A]">
+                    12 Dedicated Sky-Flight Frames (Frames 10–21)
+                  </h3>
+                  <p className="text-sm text-[#475569] leading-relaxed">
+                    Zero-G levitation liftoff, sonic pitch-out, horizontal stratosphere cruise at <code className="font-mono text-xs">Y=144px</code> with supersonic wind speed-lines, and vertical meteor air brake.
+                  </p>
+                </div>
+
+                <div className="bg-white border border-[#E2E8F0] rounded-xl p-5 space-y-3">
+                  <div className="text-xs font-mono text-[#059669] font-semibold">
+                    ACT 05 · THREE-POINT LANDING
+                  </div>
+                  <h3 className="text-base font-semibold text-[#0F172A]">
+                    Superhero Impact Compression (Frames 22–26)
+                  </h3>
+                  <p className="text-sm text-[#475569] leading-relaxed">
+                    Impact compression with fist, left knee, and right foot planted on ground plane (<code className="font-mono text-xs">Y ≈ 754</code>) with shockwave damping.
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="bg-white border border-[#E2E8F0] rounded-xl p-5 space-y-3">
+                  <div className="text-xs font-mono text-[#D97706] font-semibold">
+                    ACTS 01–02 · ANTICIPATION &amp; HOLD TREMBLE
+                  </div>
+                  <h3 className="text-base font-semibold text-[#0F172A]">
+                    The Build-Up &amp; Stuck Sneeze Hold (Frames 00–10)
+                  </h3>
+                  <p className="text-sm text-[#475569] leading-relaxed">
+                    Starts from a balanced standing equilibrium (<code className="font-mono text-xs">X=1120, Y=509</code>). As the massive breath builds, the head tilts back (<code className="font-mono text-xs">+90° → +142°</code>), the chest rises, and elbows bend up to the chest. When the sneeze gets stuck (F06–F10), the spine arches completely backward (<code className="font-mono text-xs">UpperChest +136°..+148°</code>) with a high-frequency tension tremble across the arms and legs while the feet stay planted on the ground (<code className="font-mono text-xs">Y ≈ 758</code>).
+                  </p>
+                </div>
+
+                <div className="bg-white border border-[#E2E8F0] rounded-xl p-5 space-y-3">
+                  <div className="text-xs font-mono text-[#E11D48] font-semibold">
+                    ACTS 03–04 · EXPLOSION &amp; THRUSTER BACKFLIP
+                  </div>
+                  <h3 className="text-base font-semibold text-[#0F172A]">
+                    2-Frame Whip &amp; Mid-Air Backflip Recoil (Frames 11–21)
+                  </h3>
+                  <p className="text-sm text-[#475569] leading-relaxed">
+                    In just 2 frames (F11–F12), the character snaps violently forward: the spine curls into a tight ball (<code className="font-mono text-xs">-96°</code>), the head whips down past the knees (<code className="font-mono text-xs">-152°</code>), and both arms throw straight backward (<code className="font-mono text-xs">+172°..+178°</code>). The sneeze acts like a thruster (F13–F21), ripping the feet off the floor and launching the character backward (<code className="font-mono text-xs">X: 1104 → 512</code>) through a full 360° messy mid-air backflip (<code className="font-mono text-xs">Spine: -48° → +468°</code>).
+                  </p>
+                </div>
+
+                <div className="bg-white border border-[#E2E8F0] rounded-xl p-5 space-y-3">
+                  <div className="text-xs font-mono text-[#059669] font-semibold">
+                    ACTS 05–06 · FLAT BACK CRASH &amp; LEG TWITCH
+                  </div>
+                  <h3 className="text-base font-semibold text-[#0F172A]">
+                    Secondary Limb Bounce &amp; 1s Stillness (Frames 22–35)
+                  </h3>
+                  <p className="text-sm text-[#475569] leading-relaxed">
+                    At F22, the character crashes flat on their back (<code className="font-mono text-xs">Spine 538° ≡ 178°</code>). Impact momentum causes both arms and legs to bounce skyward once (F23–F24) before dropping flat at F26. The character then lies completely motionless for 1 full second (F27–F32, zero delta) before slowly twitching the right leg (F33–F35) to show they are still alive.
+                  </p>
+                </div>
+              </div>
+            )
           )}
 
           {activeDocTab === 'hierarchy' && (
             <div className="bg-white border border-[#E2E8F0] rounded-xl p-5 space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                <h3 className="text-base font-semibold text-[#0F172A]">
-                  Active Frame #{(currentFrame % totalModeFrames).toString().padStart(2, '0')} — All
-                  17 Bone Angles &amp; Joint Coordinates
-                </h3>
-                <span className="text-xs font-mono text-[#475569]">
-                  a1(i) = world_angle(i) − world_angle(parent(i))
-                </span>
+                <div>
+                  <h3 className="text-base font-semibold text-[#0F172A]">
+                    Active Frame #{(currentFrame % totalModeFrames).toString().padStart(2, '0')} —{' '}
+                    {activeAnimationMode === 'teleport'
+                      ? selectedBoneFigure === 'red'
+                        ? 'Character Red (Figure #1 Seated Guard)'
+                        : 'Character Blue (Figure #2 Ambush Attacker)'
+                      : 'All 17 Bone Angles & Joint Coordinates'}
+                  </h3>
+                  {activeAnimationMode === 'teleport' && !safeTeleportFrame.bluePresent && selectedBoneFigure === 'blue' && (
+                    <p className="text-xs text-[#DC2626] font-mono mt-0.5">
+                      Note: Character Blue has vanished from the scene during this whip-pan frame (F15–F16).
+                    </p>
+                  )}
+                </div>
+
+                <div className="flex items-center gap-3">
+                  {activeAnimationMode === 'teleport' && (
+                    <div className="flex items-center gap-1 p-0.5 bg-[#F1F5F9] rounded-md text-xs">
+                      <button
+                        type="button"
+                        onClick={() => setSelectedBoneFigure('red')}
+                        className={`px-2.5 py-1 rounded font-medium transition-colors ${
+                          selectedBoneFigure === 'red'
+                            ? 'bg-[#DC2626] text-white'
+                            : 'text-[#475569] hover:text-[#0F172A]'
+                        }`}
+                      >
+                        Red (Fig #1)
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setSelectedBoneFigure('blue')}
+                        className={`px-2.5 py-1 rounded font-medium transition-colors ${
+                          selectedBoneFigure === 'blue'
+                            ? 'bg-[#2563EB] text-white'
+                            : 'text-[#475569] hover:text-[#0F172A]'
+                        }`}
+                      >
+                        Blue (Fig #2)
+                      </button>
+                    </div>
+                  )}
+                  <span className="text-xs font-mono text-[#475569]">
+                    a1(i) = world_angle(i) − world_angle(parent(i))
+                  </span>
+                </div>
               </div>
               <div className="overflow-x-auto max-h-80 overflow-y-auto border border-[#E2E8F0] rounded-lg">
                 <table className="w-full text-left border-collapse text-xs font-mono">
@@ -2597,79 +3114,149 @@ export function App() {
             <div>
               <h2 className="font-display text-xl font-semibold text-[#0F172A]">
                 04. Complete Keyframe Schedule —{' '}
-                {activeAnimationMode === 'sneeze'
+                {activeAnimationMode === 'teleport'
+                  ? `The Teleport Ambush (${teleportFrames.length} Frames · 2 Figures + Camera)`
+                  : activeAnimationMode === 'sneeze'
                   ? `The Epic Sneeze (${sneezeFrames.length} Frames)`
                   : `Walk, Scratch & 12f Sky Flight (${superheroFrames.length} Frames)`}
               </h2>
               <p className="text-xs text-[#475569] mt-0.5">
-                Click any row to scrub the viewport to that keyframe and inspect its joint angles.
+                Click any row to scrub the viewport to that keyframe and inspect its joint angles and camera parameters.
               </p>
             </div>
             <span className="text-xs font-mono text-[#475569]">
               Target Rate: {globalFps} FPS (@byte 30) · Total Frames:{' '}
-              {activeStickfigureFrames.length}
+              {activeAnimationMode === 'teleport'
+                ? teleportFrames.length
+                : activeAnimationMode === 'sneeze'
+                ? sneezeFrames.length
+                : superheroFrames.length}
             </span>
           </div>
 
           <div className="overflow-x-auto max-h-[440px] overflow-y-auto">
-            <table className="w-full text-left border-collapse text-xs font-mono">
-              <thead className="sticky top-0 bg-[#F8FAFC] border-b border-[#E2E8F0] text-[#475569]">
-                <tr>
-                  <th className="py-2.5 px-3">Frame</th>
-                  <th className="py-2.5 px-3">Byte Offset</th>
-                  <th className="py-2.5 px-3 font-sans">Narrative Act</th>
-                  <th className="py-2.5 px-3 font-sans">Keyframe Pose</th>
-                  <th className="py-2.5 px-3">Scene X (@+130)</th>
-                  <th className="py-2.5 px-3">Scene Y (@+134)</th>
-                  <th className="py-2.5 px-3">Spine (N07)</th>
-                  <th className="py-2.5 px-3">R_Arm (N09/N10)</th>
-                  <th className="py-2.5 px-3">Head (N13)</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[#E2E8F0]">
-                {activeStickfigureFrames.map((row, idx) => {
-                  const isCurrent =
-                    activeAnimationMode !== 'bounce' &&
-                    currentFrame % activeStickfigureFrames.length === idx;
-                  const byteOff = 2594 + idx * 1197;
-                  return (
-                    <tr
-                      key={idx}
-                      onClick={() => {
-                        if (activeAnimationMode === 'bounce') {
-                          setActiveAnimationMode('sneeze');
-                        }
-                        setIsPlaying(false);
-                        setCurrentFrame(idx);
-                      }}
-                      className={`cursor-pointer transition-colors ${
-                        isCurrent
-                          ? 'bg-[#0284C7]/15 font-semibold'
-                          : row.act.includes('Explosion')
-                          ? 'bg-[#FEF2F2]/70 hover:bg-[#FEE2E2]/70'
-                          : row.isFlightFrame
-                          ? 'bg-[#E0F2FE]/40 hover:bg-[#E0F2FE]/70'
-                          : 'hover:bg-[#F8FAFC]'
-                      }`}
-                    >
-                      <td className="py-2 px-3 text-[#0284C7]">
-                        #{idx.toString().padStart(2, '0')}
-                      </td>
-                      <td className="py-2 px-3 text-[#64748B]">{byteOff}</td>
-                      <td className="py-2 px-3 font-sans text-[#475569]">{row.act}</td>
-                      <td className="py-2 px-3 font-sans text-[#0F172A]">{row.phase}</td>
-                      <td className="py-2 px-3">{row.sceneX.toFixed(1)}</td>
-                      <td className="py-2 px-3">{row.sceneY.toFixed(1)}</td>
-                      <td className="py-2 px-3">{row.worldAngles[7].toFixed(0)}°</td>
-                      <td className="py-2 px-3">
-                        {row.worldAngles[9].toFixed(0)}° / {row.worldAngles[10].toFixed(0)}°
-                      </td>
-                      <td className="py-2 px-3">{row.worldAngles[13].toFixed(0)}°</td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+            {activeAnimationMode === 'teleport' ? (
+              <table className="w-full text-left border-collapse text-xs font-mono">
+                <thead className="sticky top-0 bg-[#F8FAFC] border-b border-[#E2E8F0] text-[#475569]">
+                  <tr>
+                    <th className="py-2.5 px-3">Frame</th>
+                    <th className="py-2.5 px-3 font-sans">Narrative Act</th>
+                    <th className="py-2.5 px-3 font-sans">Keyframe Stage</th>
+                    <th className="py-2.5 px-3">Camera (@+42..+50)</th>
+                    <th className="py-2.5 px-3 text-[#DC2626]">Red Seated (X, Y)</th>
+                    <th className="py-2.5 px-3 text-[#2563EB]">Blue Ambush (X, Y)</th>
+                    <th className="py-2.5 px-3">Red Spine / Forearm</th>
+                    <th className="py-2.5 px-3">Blue Shin / Kick</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[#E2E8F0]">
+                  {teleportFrames.map((row, idx) => {
+                    const isCurrent = currentFrame % teleportFrames.length === idx;
+                    return (
+                      <tr
+                        key={idx}
+                        onClick={() => {
+                          setIsPlaying(false);
+                          setCurrentFrame(idx);
+                        }}
+                        className={`cursor-pointer transition-colors ${
+                          isCurrent
+                            ? 'bg-[#0284C7]/15 font-semibold'
+                            : row.act.includes('Screen Shake') || row.act.includes('Block')
+                            ? 'bg-[#FEF2F2]/70 hover:bg-[#FEE2E2]/70'
+                            : row.act.includes('Whip Pan')
+                            ? 'bg-[#EFF6FF]/70 hover:bg-[#DBEAFE]/70'
+                            : row.act.includes('Ambush')
+                            ? 'bg-[#FEF9C3]/50 hover:bg-[#FEF08A]/60'
+                            : 'hover:bg-[#F8FAFC]'
+                        }`}
+                      >
+                        <td className="py-2 px-3 text-[#0284C7]">
+                          #{idx.toString().padStart(2, '0')}
+                        </td>
+                        <td className="py-2 px-3 font-sans text-[#475569]">{row.act}</td>
+                        <td className="py-2 px-3 font-sans text-[#0F172A]">{row.phase}</td>
+                        <td className="py-2 px-3 text-[#0284C7]">
+                          {row.camZoom.toFixed(2)}x ({row.camX.toFixed(0)}, {row.camY.toFixed(0)})
+                        </td>
+                        <td className="py-2 px-3 text-[#DC2626]">
+                          ({row.redX.toFixed(0)}, {row.redY.toFixed(0)})
+                        </td>
+                        <td className="py-2 px-3 text-[#2563EB]">
+                          {row.bluePresent
+                            ? `(${row.blueX.toFixed(0)}, ${row.blueY.toFixed(0)})`
+                            : 'VANISHED (0 FIG)'}
+                        </td>
+                        <td className="py-2 px-3">
+                          {row.redAngles[7].toFixed(0)}° / {row.redAngles[10].toFixed(0)}°
+                        </td>
+                        <td className="py-2 px-3">
+                          {row.bluePresent
+                            ? `${row.blueAngles[2].toFixed(0)}° / ${row.blueAngles[3].toFixed(0)}°`
+                            : '—'}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            ) : (
+              <table className="w-full text-left border-collapse text-xs font-mono">
+                <thead className="sticky top-0 bg-[#F8FAFC] border-b border-[#E2E8F0] text-[#475569]">
+                  <tr>
+                    <th className="py-2.5 px-3">Frame</th>
+                    <th className="py-2.5 px-3">Byte Offset</th>
+                    <th className="py-2.5 px-3 font-sans">Narrative Act</th>
+                    <th className="py-2.5 px-3 font-sans">Keyframe Pose</th>
+                    <th className="py-2.5 px-3">Scene X (@+130)</th>
+                    <th className="py-2.5 px-3">Scene Y (@+134)</th>
+                    <th className="py-2.5 px-3">Spine (N07)</th>
+                    <th className="py-2.5 px-3">R_Arm (N09/N10)</th>
+                    <th className="py-2.5 px-3">Head (N13)</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[#E2E8F0]">
+                  {(activeAnimationMode === 'sneeze' ? sneezeFrames : superheroFrames).map((row, idx) => {
+                    const isCurrent =
+                      activeAnimationMode !== 'bounce' &&
+                      currentFrame % (activeAnimationMode === 'sneeze' ? sneezeFrames.length : superheroFrames.length) === idx;
+                    const byteOff = 2594 + idx * 1197;
+                    return (
+                      <tr
+                        key={idx}
+                        onClick={() => {
+                          setIsPlaying(false);
+                          setCurrentFrame(idx);
+                        }}
+                        className={`cursor-pointer transition-colors ${
+                          isCurrent
+                            ? 'bg-[#0284C7]/15 font-semibold'
+                            : row.act.includes('Explosion')
+                            ? 'bg-[#FEF2F2]/70 hover:bg-[#FEE2E2]/70'
+                            : row.isFlightFrame
+                            ? 'bg-[#E0F2FE]/40 hover:bg-[#E0F2FE]/70'
+                            : 'hover:bg-[#F8FAFC]'
+                        }`}
+                      >
+                        <td className="py-2 px-3 text-[#0284C7]">
+                          #{idx.toString().padStart(2, '0')}
+                        </td>
+                        <td className="py-2 px-3 text-[#64748B]">{byteOff}</td>
+                        <td className="py-2 px-3 font-sans text-[#475569]">{row.act}</td>
+                        <td className="py-2 px-3 font-sans text-[#0F172A]">{row.phase}</td>
+                        <td className="py-2 px-3">{row.sceneX.toFixed(1)}</td>
+                        <td className="py-2 px-3">{row.sceneY.toFixed(1)}</td>
+                        <td className="py-2 px-3">{row.worldAngles[7].toFixed(0)}°</td>
+                        <td className="py-2 px-3">
+                          {row.worldAngles[9].toFixed(0)}° / {row.worldAngles[10].toFixed(0)}°
+                        </td>
+                        <td className="py-2 px-3">{row.worldAngles[13].toFixed(0)}°</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            )}
           </div>
         </section>
 
