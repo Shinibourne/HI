@@ -113,6 +113,36 @@ import {
   buildCanonicalSitWalkKickFrames,
   validateSitWalkKickBiomechanics,
 } from '../src/lib/sitWalkKickBallFrames';
+import {
+  buildCanonicalBasketballFrames,
+  validateBasketballBiomechanics,
+} from '../src/lib/basketballChoreographyFrames';
+
+export function runBasketballAudit(): boolean {
+  console.log('\n================================================================');
+  console.log('RUNNING BASKETBALL 24-FRAME MASTER BIOMECHANICS & PHYSICS AUDIT');
+  console.log('================================================================\n');
+
+  const frames = buildCanonicalBasketballFrames();
+  const audit = validateBasketballBiomechanics(frames);
+
+  console.log('\n--- 20-RULE VALIDATION SUITE METRICS & MEASURED VALUES ---');
+  for (const item of audit.items) {
+    const icon = item.passed ? '✓ PASS' : '✗ FAIL';
+    console.log(`[${icon}] #${item.ruleNumber} ${item.label}`);
+    console.log(`       Measured: ${item.metric} | Required: ${item.threshold}`);
+    if (!item.passed) {
+      console.error(`       FAILED CHECK: ${item.id} - ${item.detail}`);
+    }
+  }
+
+  console.log(`\nOverall Basketball Result: ${audit.passedChecks}/${audit.totalChecks} checks passed.`);
+  if (!audit.passed) {
+    console.error('FATAL: Basketball biomechanical validation failed!');
+    return false;
+  }
+  return true;
+}
 
 export function runSitWalkKickAudit(): boolean {
   console.log('\n========================================');
@@ -141,8 +171,9 @@ export function runSitWalkKickAudit(): boolean {
 
 // Run audit if invoked directly
 if (import.meta.url === `file://${process.argv[1]}`) {
-  const success = runSitWalkKickAudit();
-  if (!success) {
+  const basketballSuccess = runBasketballAudit();
+  const sitWalkSuccess = runSitWalkKickAudit();
+  if (!basketballSuccess || !sitWalkSuccess) {
     process.exit(1);
   }
 }

@@ -8,6 +8,7 @@ import {
   synthesizePhantomShadowboxStknds,
 } from '../src/lib/stkndsCodec';
 import { synthesizeSitWalkKickStknds } from '../src/lib/sitWalkKickBallFrames';
+import { synthesizeBasketballStknds } from '../src/lib/basketballChoreographyFrames';
 
 async function main() {
   const compressed27 = fs.readFileSync('public/templates/rpoject5.stknds');
@@ -227,9 +228,19 @@ async function main() {
     enableHitStop: true,
   });
   fs.writeFileSync('public/downloads/sit_stand_kick_12fps_108f.stknds', strollKick12);
-  fs.writeFileSync('public/downloads/sit_stand_kick_12fps.stknds', strollKick12);
+  // 7. Basketball: Walk -> Approach -> Pick Up -> Toss -> Catch -> Dribble (24 Frames Master)
+  const basketball24 = await synthesizeBasketballStknds(raw27, {
+    projectName: 'basketball_walk_pickup_dribble',
+    targetFps: 24,
+    charColorHex: '#0F172A',
+    ballColorHex: '#EA580C',
+    ballRadius: 18,
+    groundY: 755,
+  });
+  fs.writeFileSync('public/downloads/basketball_walk_pickup_dribble_24f.stknds', basketball24);
+  fs.writeFileSync('public/downloads/basketball_walk_pickup_dribble_24fps.stknds', basketball24);
 
-  console.log('Successfully regenerated all .stknds binaries including The Stroll & Kick (216f Master) in public/downloads/!');
+  console.log('Successfully regenerated all .stknds binaries including Basketball (24f Master) in public/downloads/!');
 }
 
 main().catch((err) => {

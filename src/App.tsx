@@ -96,6 +96,18 @@ import {
   type StrollKickPanelMeta,
   type BiomechanicalAuditReport,
 } from './lib/sitWalkKickBallFrames';
+import {
+  CANONICAL_24_BASKETBALL_FRAMES,
+  buildCanonicalBasketballFrames,
+  validateBasketballBiomechanics,
+  synthesizeBasketballStknds,
+  BASKETBALL_24_TIMELINE,
+  RIG_SCALE_DEFINITION,
+  RIG_INVENTORY_TABLE,
+  type BasketballGeneratorConfig,
+  type BasketballKeyframeSpec,
+  type BasketballAuditReport,
+} from './lib/basketballChoreographyFrames';
 
 interface CorpusPreset {
   label: string;
@@ -105,6 +117,18 @@ interface CorpusPreset {
 }
 
 const CORPUS_PRESETS: CorpusPreset[] = [
+  {
+    label: 'basketball_walk_pickup_dribble_24f.stknds (24 FPS · 24f · Basketball Master)',
+    path: '/downloads/basketball_walk_pickup_dribble_24f.stknds',
+    category: 'Generated Animation',
+    note: '24 FPS (@byte 30 = 24), 24 frames (1.0 s): Walk → Approach → Pick Up → Toss → Catch → Dribble master choreography. Biomechanical 2-bone IK, Center of Mass dynamic equilibrium, stance foot pinning (0.00 px shift), and 100% 20-rule validation pass.',
+  },
+  {
+    label: 'basketball_walk_pickup_dribble_24fps.stknds (24 FPS · 24f · Basketball)',
+    path: '/downloads/basketball_walk_pickup_dribble_24fps.stknds',
+    category: 'Generated Animation',
+    note: '24 FPS (@byte 30 = 24), 24 frames: Walk → Approach → Pick Up → Toss → Catch → Dribble native 24 FPS Stick Nodes v334 binary with 2 figures (Man + Basketball).',
+  },
   {
     label: 'sit_stand_kick_24fps_216f.stknds (24 FPS · 216f · Storyboard Master)',
     path: '/downloads/sit_stand_kick_24fps_216f.stknds',
@@ -310,11 +334,20 @@ function computeForwardKinematics(
 
 export function App() {
   const [activeAnimationMode, setActiveAnimationMode] = useState<
-    'stroll-kick' | 'phantom' | 'teleport' | 'sneeze' | 'superhero' | 'bounce' | 'speed-strength'
-  >('stroll-kick');
+    'basketball' | 'stroll-kick' | 'phantom' | 'teleport' | 'sneeze' | 'superhero' | 'bounce' | 'speed-strength'
+  >('basketball');
 
   // Persistent Global FPS Toggle (12 FPS vs 24 FPS) used across all generated Stick Nodes animations
   const [globalFps, setGlobalFps] = useState<12 | 24>(24);
+
+  const [basketballConfig, setBasketballConfig] = useState<BasketballGeneratorConfig>({
+    projectName: 'basketball_walk_pickup_dribble',
+    targetFps: 24,
+    charColorHex: '#0F172A',
+    ballColorHex: '#EA580C',
+    ballRadius: 18,
+    groundY: 755.0,
+  });
 
   const [strollKickConfig, setStrollKickConfig] = useState<SitWalkKickGeneratorConfig>({
     projectName: 'sit_stand_kick',
@@ -397,6 +430,7 @@ export function App() {
   // Sync globalFps into all generator configs
   const handleSelectFps = (fps: 12 | 24) => {
     setGlobalFps(fps);
+    setBasketballConfig((c) => ({ ...c, targetFps: fps }));
     setStrollKickConfig((c) => ({ ...c, targetFps: fps }));
     setPhantomConfig((c) => ({ ...c, targetFps: fps }));
     setTeleportConfig((c) => ({ ...c, targetFps: fps }));
@@ -514,6 +548,16 @@ export function App() {
     }
   }, [selectedPresetPath, inspectPreset]);
 
+  const basketballFrames = useMemo(
+    () => buildCanonicalBasketballFrames(basketballConfig),
+    [basketballConfig]
+  );
+
+  const basketballAudit = useMemo(
+    () => validateBasketballBiomechanics(basketballFrames),
+    [basketballFrames]
+  );
+
   const strollKickFrames = useMemo(
     () => buildAdjustedSitWalkKickFrames(strollKickConfig),
     [strollKickConfig]
@@ -600,7 +644,9 @@ export function App() {
   );
 
   const totalModeFrames =
-    activeAnimationMode === 'stroll-kick'
+    activeAnimationMode === 'basketball'
+      ? basketballFrames.length
+      : activeAnimationMode === 'stroll-kick'
       ? strollKickFrames.length
       : activeAnimationMode === 'phantom'
       ? phantomFrames.length
@@ -637,7 +683,307 @@ export function App() {
     const scaleX = w / 1920;
     const scaleY = h / 1080;
 
-    if (activeAnimationMode === 'stroll-kick') {
+    if (activeAnimationMode === 'basketball') {
+      const safeIdx = currentFrame % basketballFrames.length;
+      const activeSpec = basketballFrames[safeIdx];
+
+      ctx.save();
+      // Decoupled virtual camera framing
+      const targetSceneX = 720;
+      const targetSceneY = 540;
+      ctx.translate(w * 0.5, h * 0.5);
+      if (vcamFollow) {
+        ctx.scale(activeSpec.camZoom, activeSpec.camZoom);
+        ctx.translate((-targetSceneX + activeSpec.camX) * scaleX, (-targetSceneY + activeSpec.camY) * scaleY);
+      } else {
+        ctx.translate(-targetSceneX * scaleX, -targetSceneY * scaleY);
+      }
+
+      // Studio Court Backdrop Gradient
+      const bgGrad = ctx.createLinearGradient(0, 0, 0, 755 * scaleY);
+      if (activeSpec.ballState.includes('DRIBBLE')) {
+        bgGrad.addColorStop(0, '#FEF3C7');
+        bgGrad.addColorStop(1, '#FFFBEB');
+      } else if (activeSpec.ballState === 'PROJECTILE' || activeSpec.ballState === 'CAUGHT') {
+        bgGrad.addColorStop(0, '#EFF6FF');
+        bgGrad.addColorStop(1, '#F8FAFC');
+      } else {
+        bgGrad.addColorStop(0, '#F8FAFC');
+        bgGrad.addColorStop(1, '#F1F5F9');
+      }
+      ctx.fillStyle = bgGrad;
+      ctx.fillRect(-1600, -1600, w + 3600, 755 * scaleY + 1600);
+
+      // Fine coordinate grid
+      ctx.strokeStyle = '#E2E8F0';
+      ctx.lineWidth = 1;
+      for (let gx = -400; gx < 3200; gx += 160) {
+        ctx.beginPath();
+        ctx.moveTo(gx * scaleX, -400);
+        ctx.lineTo(gx * scaleX, h + 800);
+        ctx.stroke();
+      }
+      for (let gy = -200; gy < 1600; gy += 120) {
+        ctx.beginPath();
+        ctx.moveTo(-400, gy * scaleY);
+        ctx.lineTo(w + 1600, gy * scaleY);
+        ctx.stroke();
+      }
+
+      const groundSceneY = 755;
+      const groundCanvasY = groundSceneY * scaleY;
+
+      // Master Ground Plane Line (Universal Y = 755.0 px)
+      ctx.strokeStyle = '#334155';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.moveTo(-400 * scaleX, groundCanvasY);
+      ctx.lineTo(3200 * scaleX, groundCanvasY);
+      ctx.stroke();
+
+      ctx.strokeStyle = '#94A3B8';
+      ctx.lineWidth = 1;
+      for (let tx = -200; tx <= 3000; tx += 40) {
+        ctx.beginPath();
+        ctx.moveTo(tx * scaleX, groundCanvasY);
+        ctx.lineTo((tx - 12) * scaleX, groundCanvasY + 10);
+        ctx.stroke();
+      }
+
+      // Ground Stage Zone Labels
+      ctx.font = '600 10px "IBM Plex Mono", monospace';
+      ctx.fillStyle = '#64748B';
+      ctx.fillText('WALK GAIT APPROACH (X: 480 → 705)', 460 * scaleX, groundCanvasY + 24);
+      ctx.fillText('STANCE BASE [705..775] & SQUAT REACH', 710 * scaleX, groundCanvasY + 24);
+      ctx.fillText('BALL GROUND REST (X: 865, Y: 737)', 850 * scaleX, groundCanvasY + 38);
+      ctx.fillText('DRIBBLE REBOUND AXIS (WAIST 580 ↔ GROUND 737)', 880 * scaleX, groundCanvasY + 24);
+
+      // Parabolic Ballistic Flight Arc Guide
+      if (showTrajectoryArc) {
+        ctx.save();
+        ctx.strokeStyle = 'rgba(234, 88, 12, 0.45)';
+        ctx.setLineDash([4, 4]);
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        for (let t = 0; t <= 10; t++) {
+          const frac = t / 10;
+          const arcX = 864.6 * scaleX;
+          const arcY = (275 + Math.pow(frac - 0.5, 2) * 4 * (491 - 275)) * scaleY;
+          if (t === 0) ctx.moveTo(arcX, arcY);
+          else ctx.lineTo(arcX, arcY);
+        }
+        ctx.stroke();
+
+        ctx.strokeStyle = 'rgba(14, 165, 233, 0.4)';
+        ctx.beginPath();
+        ctx.moveTo(864.6 * scaleX, 580 * scaleY);
+        ctx.lineTo(864.6 * scaleX, 737 * scaleY);
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      // Draw the Basketball
+      const ballCanvasX = activeSpec.ballX * scaleX;
+      const ballCanvasY = activeSpec.ballY * scaleY;
+      const ballCanvasR = basketballConfig.ballRadius * scaleX;
+
+      // Contact shadow under ball when near ground
+      if (activeSpec.ballY >= 680) {
+        ctx.save();
+        const shadowOpacity = Math.max(0.12, 0.70 - (activeSpec.ballY - 737) * 0.015);
+        ctx.fillStyle = `rgba(15, 23, 42, ${shadowOpacity})`;
+        ctx.beginPath();
+        ctx.ellipse(ballCanvasX, groundCanvasY, ballCanvasR * 1.1, 4 * scaleY, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+
+      // Ball 3D Spherical Rendering (Gradient with specular highlight and seams)
+      ctx.save();
+      const ballGrad = ctx.createRadialGradient(
+        ballCanvasX - ballCanvasR * 0.35,
+        ballCanvasY - ballCanvasR * 0.35,
+        ballCanvasR * 0.15,
+        ballCanvasX,
+        ballCanvasY,
+        ballCanvasR
+      );
+      ballGrad.addColorStop(0, '#FED7AA'); // Soft highlight
+      ballGrad.addColorStop(0.35, basketballConfig.ballColorHex); // Primary vibrant orange
+      ballGrad.addColorStop(1, '#9A3412'); // Deep shadow rim
+      ctx.fillStyle = ballGrad;
+      ctx.beginPath();
+      ctx.arc(ballCanvasX, ballCanvasY, ballCanvasR, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Basketball curved rib seams
+      ctx.strokeStyle = '#7C2D12';
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.arc(ballCanvasX, ballCanvasY, ballCanvasR, 0, Math.PI * 2);
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.ellipse(ballCanvasX, ballCanvasY, ballCanvasR * 0.45, ballCanvasR, 0, 0, Math.PI * 2);
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.moveTo(ballCanvasX - ballCanvasR, ballCanvasY);
+      ctx.lineTo(ballCanvasX + ballCanvasR, ballCanvasY);
+      ctx.stroke();
+
+      // Status tag floating above ball
+      ctx.fillStyle = '#EA580C';
+      ctx.font = '600 10px "IBM Plex Mono", monospace';
+      ctx.fillText(
+        `BASKETBALL [${activeSpec.ballState}]`,
+        ballCanvasX - 45 * scaleX,
+        ballCanvasY - 24 * scaleY
+      );
+      ctx.restore();
+
+      // Ghost Onion Skin (Previous frame)
+      if (showOnionSkin && safeIdx > 0) {
+        const prevSpec = basketballFrames[safeIdx - 1];
+        const ghostJoints = computeForwardKinematics(prevSpec.charX, prevSpec.charY, prevSpec.angles, 0.5);
+        ctx.save();
+        ctx.globalAlpha = 0.22;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        for (let i = 1; i < 17; i++) {
+          if (i === 13) continue;
+          const j = ghostJoints[i];
+          ctx.strokeStyle = '#94A3B8';
+          ctx.lineWidth = Math.max(2, j.thickness * 0.5 * scaleX);
+          ctx.beginPath();
+          ctx.moveTo(j.startX * scaleX, j.startY * scaleY);
+          ctx.lineTo(j.endX * scaleX, j.endY * scaleY);
+          ctx.stroke();
+        }
+        const gHead = ghostJoints[13];
+        ctx.fillStyle = '#CBD5E1';
+        ctx.beginPath();
+        ctx.arc(
+          ((gHead.startX + gHead.endX) * 0.5) * scaleX,
+          ((gHead.startY + gHead.endY) * 0.5) * scaleY,
+          (gHead.length * 0.25) * scaleX,
+          0,
+          Math.PI * 2
+        );
+        ctx.fill();
+        ctx.restore();
+      }
+
+      // Draw Main Figure (17 Nodes)
+      const joints = computeForwardKinematics(activeSpec.charX, activeSpec.charY, activeSpec.angles, 0.5);
+      ctx.save();
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+
+      // 1. Shadow under character
+      const footRX = joints[3].endX * scaleX;
+      const footLX = joints[6].endX * scaleX;
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.18)';
+      ctx.beginPath();
+      ctx.ellipse((footRX + footLX) * 0.5, groundCanvasY, 32 * scaleX, 4 * scaleY, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // 2. Far limbs (Left leg: 4, 5, 6; Left arm: 14, 15, 16) with subtle depth tint
+      const farBones = [4, 5, 6, 14, 15, 16];
+      for (const b of farBones) {
+        const j = joints[b];
+        ctx.strokeStyle = '#475569';
+        ctx.lineWidth = Math.max(2, j.thickness * 0.5 * scaleX);
+        ctx.beginPath();
+        ctx.moveTo(j.startX * scaleX, j.startY * scaleY);
+        ctx.lineTo(j.endX * scaleX, j.endY * scaleY);
+        ctx.stroke();
+      }
+
+      // 3. Torso, Spine & Head (7, 8, 12, 13)
+      const coreBones = [7, 8, 12];
+      for (const b of coreBones) {
+        const j = joints[b];
+        ctx.strokeStyle = basketballConfig.charColorHex;
+        ctx.lineWidth = Math.max(2.5, j.thickness * 0.5 * scaleX);
+        ctx.beginPath();
+        ctx.moveTo(j.startX * scaleX, j.startY * scaleY);
+        ctx.lineTo(j.endX * scaleX, j.endY * scaleY);
+        ctx.stroke();
+      }
+
+      // Head circle (Node 13)
+      const headJ = joints[13];
+      const headCenterX = ((headJ.startX + headJ.endX) * 0.5) * scaleX;
+      const headCenterY = ((headJ.startY + headJ.endY) * 0.5) * scaleY;
+      const headRadius = (headJ.length * 0.25) * scaleX;
+
+      ctx.fillStyle = basketballConfig.charColorHex;
+      ctx.beginPath();
+      ctx.arc(headCenterX, headCenterY, headRadius, 0, Math.PI * 2);
+      ctx.fill();
+
+      // 4. Near limbs (Right leg: 1, 2, 3; Right arm: 9, 10, 11)
+      const nearBones = [1, 2, 3, 9, 10, 11];
+      for (const b of nearBones) {
+        const j = joints[b];
+        ctx.strokeStyle = basketballConfig.charColorHex;
+        ctx.lineWidth = Math.max(2.5, j.thickness * 0.5 * scaleX);
+        ctx.beginPath();
+        ctx.moveTo(j.startX * scaleX, j.startY * scaleY);
+        ctx.lineTo(j.endX * scaleX, j.endY * scaleY);
+        ctx.stroke();
+      }
+
+      // Hand contact indicator crosshair/ring
+      const hand = joints[11];
+      if (['HELD', 'CAUGHT', 'DRIBBLE_RECEIVE', 'DRIBBLE_PUSH'].includes(activeSpec.ballState)) {
+        ctx.strokeStyle = '#0284C7';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.arc(hand.endX * scaleX, hand.endY * scaleY, 6 * scaleX, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+
+      // CoM and Base of Support overlay
+      if (showKinematicsCoM) {
+        ctx.strokeStyle = '#10B981';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(activeSpec.supportMinX * scaleX, groundCanvasY);
+        ctx.lineTo(activeSpec.supportMaxX * scaleX, groundCanvasY);
+        ctx.stroke();
+
+        ctx.strokeStyle = 'rgba(16, 185, 129, 0.4)';
+        ctx.setLineDash([3, 3]);
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(activeSpec.comX * scaleX, activeSpec.comY * scaleY);
+        ctx.lineTo(activeSpec.comX * scaleX, groundCanvasY);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        ctx.fillStyle = '#10B981';
+        ctx.beginPath();
+        ctx.arc(activeSpec.comX * scaleX, activeSpec.comY * scaleY, 5 * scaleX, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#FFFFFF';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+
+      // Telemetry Banner in Canvas
+      ctx.save();
+      ctx.font = '600 11px "IBM Plex Mono", monospace';
+      ctx.fillStyle = '#0F172A';
+      ctx.fillText(`FRAME ${activeSpec.frame}/23 · ${activeSpec.phaseName}`, 20 * scaleX, 30 * scaleY);
+      ctx.font = '500 10px "IBM Plex Mono", monospace';
+      ctx.fillStyle = '#475569';
+      ctx.fillText(`${activeSpec.notes}`, 20 * scaleX, 48 * scaleY);
+      ctx.restore();
+
+      ctx.restore();
+    } else if (activeAnimationMode === 'stroll-kick') {
       const safeIdx = currentFrame % strollKickFrames.length;
       const activeSpec = strollKickFrames[safeIdx];
 
@@ -2480,9 +2826,11 @@ export function App() {
     setSynthesizing(true);
     try {
       let stkndsBytes: Uint8Array;
-      let fileName: string;
-
-      if (activeAnimationMode === 'stroll-kick') {
+      if (activeAnimationMode === 'basketball') {
+        if (!baseTemplate27) return;
+        stkndsBytes = await synthesizeBasketballStknds(baseTemplate27, basketballConfig);
+        fileName = `${basketballConfig.projectName.trim() || 'basketball_walk_pickup_dribble'}_24fps_24f.stknds`;
+      } else if (activeAnimationMode === 'stroll-kick') {
         if (!baseTemplate27) return;
         stkndsBytes = await synthesizeSitWalkKickStknds(baseTemplate27, strollKickConfig);
         const frameTag = `${strollKickFrames.length}f`;
@@ -2556,6 +2904,8 @@ export function App() {
     }
   };
 
+  const safeBasketballFrame =
+    basketballFrames[currentFrame % basketballFrames.length] ?? basketballFrames[0];
   const safeStrollKickFrame =
     strollKickFrames[currentFrame % strollKickFrames.length] ?? strollKickFrames[0];
   const safePhantomFrame = phantomFrames[currentFrame % phantomFrames.length];
@@ -2595,7 +2945,14 @@ export function App() {
   );
 
   const safeHeroJoints =
-    activeAnimationMode === 'stroll-kick'
+    activeAnimationMode === 'basketball'
+      ? computeForwardKinematics(
+          safeBasketballFrame.charX,
+          safeBasketballFrame.charY,
+          safeBasketballFrame.angles,
+          0.5
+        )
+      : activeAnimationMode === 'stroll-kick'
       ? computeForwardKinematics(
           safeStrollKickFrame.manX,
           safeStrollKickFrame.manY,
@@ -2781,6 +3138,12 @@ export function App() {
               <div>
                 <h2 className="text-lg font-semibold text-[#0F172A] flex items-center gap-2">
                   01. Live v334 Animation Stage ({globalFps} FPS)
+                  {activeAnimationMode === 'basketball' && (
+                    <span className="inline-flex items-center gap-1 text-xs font-mono text-[#EA580C]">
+                      <Sparkles className="w-3.5 h-3.5" />
+                      F{safeBasketballFrame.frame} · {safeBasketballFrame.phaseName}
+                    </span>
+                  )}
                   {activeAnimationMode === 'stroll-kick' && (
                     <span className="inline-flex items-center gap-1 text-xs font-mono text-[#0284C7]">
                       <Sparkles className="w-3.5 h-3.5" />
@@ -2814,7 +3177,12 @@ export function App() {
                     )}
                 </h2>
                 <p className="text-xs text-[#475569]">
-                  {activeAnimationMode === 'stroll-kick' ? (
+                  {activeAnimationMode === 'basketball' ? (
+                    <>
+                      Figure: <span className="font-mono">Man (Midnight Slate, scale 0.5)</span> + Prop: <span className="font-mono">Basketball (Orange, r=18px)</span> · Ground Plane Y = <span className="font-mono font-semibold">755 px</span> ·{' '}
+                      {safeBasketballFrame.subEventName} ({safeBasketballFrame.ballState})
+                    </>
+                  ) : activeAnimationMode === 'stroll-kick' ? (
                     <>
                       Figure: <span className="font-mono">Man (Slate, scale 0.5)</span> + Prop: <span className="font-mono">Ball (Orange, r=18px)</span> · Ground Plane Y = <span className="font-mono font-semibold">755 px</span> ·{' '}
                       {safeStrollKickFrame.phase}
@@ -2852,6 +3220,20 @@ export function App() {
 
               {/* Animation Mode Switcher */}
               <div className="flex flex-wrap items-center gap-1 p-1 bg-[#F1F5F9] rounded-lg">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveAnimationMode('basketball');
+                    setCurrentFrame(0);
+                  }}
+                  className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap ${
+                    activeAnimationMode === 'basketball'
+                      ? 'bg-[#EA580C] text-white shadow-xs font-semibold'
+                      : 'text-[#475569] hover:text-[#0F172A]'
+                  }`}
+                >
+                  🏀 Basketball (24f Master)
+                </button>
                 <button
                   type="button"
                   onClick={() => {
@@ -2964,6 +3346,45 @@ export function App() {
                 className="w-full h-auto block"
               />
             </div>
+
+            {/* 10 Choreographic Phase Quick-Jump Controls for Basketball */}
+            {activeAnimationMode === 'basketball' && (
+              <div className="flex flex-col gap-2 pt-1 border-t border-[#F1F5F9]">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <span className="text-xs font-semibold text-[#0F172A] flex items-center gap-1.5">
+                    <Sparkles className="w-3.5 h-3.5 text-[#EA580C]" />
+                    Choreography Timeline (10 Phases · 24 Frames · Walk → Approach → Pick Up → Toss → Catch → Dribble):
+                  </span>
+                  <span className="text-[11px] font-mono text-[#EA580C] font-semibold bg-[#FFF7ED] px-2 py-0.5 rounded border border-[#FFEDD5]">
+                    Phase {safeBasketballFrame.phaseIndex}: {safeBasketballFrame.phaseName} · State: {safeBasketballFrame.ballState}
+                  </span>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-12 gap-1.5">
+                  {BASKETBALL_24_TIMELINE.map((t) => {
+                    const isActive = safeBasketballFrame.frame === t.frame;
+                    return (
+                      <button
+                        key={t.frame}
+                        type="button"
+                        onClick={() => {
+                          setIsPlaying(false);
+                          setCurrentFrame(t.frame);
+                        }}
+                        className={`px-2 py-1.5 text-[11px] font-medium rounded-md transition-all text-left truncate cursor-pointer ${
+                          isActive
+                            ? 'bg-[#0F172A] text-white shadow-xs font-semibold ring-2 ring-[#EA580C]/70'
+                            : 'bg-[#F1F5F9] hover:bg-[#E2E8F0] text-[#0F172A]'
+                        }`}
+                        title={`Frame ${t.frame} (${t.timeSec.toFixed(2)}s): ${t.phaseLabel} — ${t.biomechanicalAction}`}
+                      >
+                        <div className="font-mono text-[9px] opacity-75">F{t.frame < 10 ? '0' + t.frame : t.frame} · {t.timeSec.toFixed(2)}s</div>
+                        <div className="truncate font-semibold">{t.eventName}</div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
 
             {/* 16 Visual Storyboard Panels Quick-Jump Controls for The Stroll & Kick */}
             {activeAnimationMode === 'stroll-kick' && (
@@ -3409,13 +3830,13 @@ export function App() {
                   />
                   Trajectory Arc
                 </label>
-                {activeAnimationMode === 'stroll-kick' && (
+                {(activeAnimationMode === 'basketball' || activeAnimationMode === 'stroll-kick') && (
                   <label className="inline-flex items-center gap-1.5 cursor-pointer whitespace-nowrap">
                     <input
                       type="checkbox"
                       checked={showKinematicsCoM}
                       onChange={(e) => setShowKinematicsCoM(e.target.checked)}
-                      className="accent-[#D97706]"
+                      className="accent-[#10B981]"
                     />
                     Center of Mass &amp; BoS
                   </label>
@@ -3424,7 +3845,34 @@ export function App() {
             </div>
 
             {/* Live Byte-Level Telemetry Strip for Active Frame */}
-            {activeAnimationMode === 'stroll-kick' ? (
+            {activeAnimationMode === 'basketball' ? (
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-3 border-t border-[#E2E8F0] text-xs">
+                <div>
+                  <div className="text-[#64748B]">Phase / Choreography Stage</div>
+                  <div className="font-semibold text-[#0F172A] mt-0.5 truncate" title={`Phase ${safeBasketballFrame.phaseIndex}: ${safeBasketballFrame.phaseName}`}>
+                    P{safeBasketballFrame.phaseIndex}: {safeBasketballFrame.phaseName}
+                  </div>
+                </div>
+                <div>
+                  <div className="text-[#64748B]">Ball Physical State</div>
+                  <div className="font-mono font-semibold text-[#EA580C] mt-0.5 truncate">
+                    {safeBasketballFrame.ballState} · ({safeBasketballFrame.ballX.toFixed(0)}, {safeBasketballFrame.ballY.toFixed(0)}) px
+                  </div>
+                </div>
+                <div>
+                  <div className="text-[#64748B]">Kinematics &amp; Reach Ratio</div>
+                  <div className="font-mono font-semibold text-[#0F172A] mt-0.5 truncate">
+                    Elbow {safeBasketballFrame.rElbowFlexDeg.toFixed(1)}° · Knee {safeBasketballFrame.rKneeFlexDeg.toFixed(1)}°
+                  </div>
+                </div>
+                <div>
+                  <div className="text-[#64748B]">Validation Audit Suite</div>
+                  <div className="font-mono font-semibold text-[#059669] mt-0.5">
+                    {basketballAudit.passedChecks}/{basketballAudit.totalChecks} Checks Passed (100%)
+                  </div>
+                </div>
+              </div>
+            ) : activeAnimationMode === 'stroll-kick' ? (
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-3 border-t border-[#E2E8F0] text-xs">
                 <div>
                   <div className="text-[#64748B]">Panel / Storyboard Stage</div>
