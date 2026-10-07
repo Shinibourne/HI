@@ -2400,3 +2400,14 @@ export {
   synthesizeSpeedStrengthStknds,
 } from './speedVsStrengthFrames';
 
+export {
+  type PhantomShadowboxGeneratorConfig,
+  type PhantomShadowboxKeyframeSpec,
+  type StoryboardPanelMeta,
+  STORYBOARD_PANELS,
+  CANONICAL_75_PHANTOM_FRAMES,
+  CANONICAL_40_PHANTOM_FRAMES,
+  buildAdjustedPhantomFrames,
+  synthesizePhantomShadowboxStknds,
+} from './phantomShadowboxFrames';
+

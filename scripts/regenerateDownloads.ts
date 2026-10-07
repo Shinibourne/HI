@@ -5,6 +5,7 @@ import {
   synthesizeSneezeStknds,
   synthesizeSuperheroStknds,
   synthesizeSpeedStrengthStknds,
+  synthesizePhantomShadowboxStknds,
 } from '../src/lib/stkndsCodec';
 
 async function main() {
@@ -164,7 +165,47 @@ async function main() {
   });
   fs.writeFileSync('public/downloads/speed_vs_strength_24fps_71f.stknds', speed24Baked);
 
-  console.log('Successfully regenerated all 12 .stknds binaries in public/downloads/!');
+  // 5. The Phantom Shadowbox (12 FPS 75f, 24 FPS 75f, 24 FPS 147f baked)
+  const phantom12 = await synthesizePhantomShadowboxStknds(raw27, {
+    projectName: 'phantom_shadowbox',
+    targetFps: 12,
+    interpolate24FpsFrames: false,
+    primaryColorHex: '#0F172A',
+    headColorHex: '#0284C7',
+    stillnessHoldFrames: 30,
+    crouchHoldFrames: 6,
+    jabExtensionSnap: 1.0,
+  });
+  fs.writeFileSync('public/downloads/phantom_shadowbox_12fps.stknds', phantom12);
+  fs.writeFileSync('public/downloads/phantom_shadowbox_12fps_75f.stknds', phantom12);
+
+  const phantom24 = await synthesizePhantomShadowboxStknds(raw27, {
+    projectName: 'phantom_shadowbox',
+    targetFps: 24,
+    interpolate24FpsFrames: false,
+    primaryColorHex: '#0F172A',
+    headColorHex: '#0284C7',
+    stillnessHoldFrames: 30,
+    crouchHoldFrames: 6,
+    jabExtensionSnap: 1.0,
+  });
+  fs.writeFileSync('public/downloads/phantom_shadowbox_24fps.stknds', phantom24);
+  fs.writeFileSync('public/downloads/phantom_shadowbox_24fps_75f.stknds', phantom24);
+
+  const phantom24Baked = await synthesizePhantomShadowboxStknds(raw27, {
+    projectName: 'phantom_shadowbox',
+    targetFps: 24,
+    interpolate24FpsFrames: true,
+    primaryColorHex: '#0F172A',
+    headColorHex: '#0284C7',
+    stillnessHoldFrames: 30,
+    crouchHoldFrames: 6,
+    jabExtensionSnap: 1.0,
+  });
+  fs.writeFileSync('public/downloads/phantom_shadowbox_24fps_147f.stknds', phantom24Baked);
+  fs.writeFileSync('public/downloads/phantom_shadowbox_24fps_79f.stknds', phantom24Baked); // backwards compat
+
+  console.log('Successfully regenerated all .stknds binaries including 75-frame Storyboard Master in public/downloads/!');
 }
 
 main().catch((err) => {

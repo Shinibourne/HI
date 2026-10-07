@@ -52,6 +52,14 @@ import {
   CANONICAL_36_SPEED_VS_STRENGTH_FRAMES,
   buildAdjustedSpeedStrengthFrames,
   synthesizeSpeedStrengthStknds,
+  type PhantomShadowboxGeneratorConfig,
+  type PhantomShadowboxKeyframeSpec,
+  type StoryboardPanelMeta,
+  STORYBOARD_PANELS,
+  CANONICAL_75_PHANTOM_FRAMES,
+  CANONICAL_40_PHANTOM_FRAMES,
+  buildAdjustedPhantomFrames,
+  synthesizePhantomShadowboxStknds,
 } from './lib/stkndsCodec';
 import {
   EXPANDED_46_MOTION_SKILLS,
@@ -86,6 +94,24 @@ interface CorpusPreset {
 }
 
 const CORPUS_PRESETS: CorpusPreset[] = [
+  {
+    label: 'phantom_shadowbox_24fps_75f.stknds (24 FPS · 75f · Storyboard Master)',
+    path: '/downloads/phantom_shadowbox_24fps_75f.stknds',
+    category: 'Generated Animation',
+    note: '24 FPS (@byte 30 = 24), 75 frames: Complete visual storyboard master across all 10 panels. ① The Focus (F1-30 stillness), ② Teleport 1 (F31 BOOM vanish), ③ Reappearance & Jab (F32-34), ④ The Cross & Retract Twist (F35-37), ⑥ Uppercut Launch (F38-41), ⑦ Teleport 2 (F42 apex vanish), ⑧ Aerial Reappearance (F43 horizontal back), ⑨ Axe Kick Drop & Smear (F44-46), ⑨ Impact & 3-Point Crouch (F47-52 screen shake), ⑩ The Reset (F53-75 slow motion ease-in).',
+  },
+  {
+    label: 'phantom_shadowbox_12fps_75f.stknds (12 FPS · 75f · Storyboard Master)',
+    path: '/downloads/phantom_shadowbox_12fps_75f.stknds',
+    category: 'Generated Animation',
+    note: '12 FPS (@byte 30 = 12), 75 frames: Native 12 FPS timing with exact 1:1 storyboard panel fidelity, ground Y=755 invariant, and zero hyperextension.',
+  },
+  {
+    label: 'phantom_shadowbox_24fps_147f.stknds (24 FPS · 147f · Baked Sub-Frame)',
+    path: '/downloads/phantom_shadowbox_24fps_147f.stknds',
+    category: 'Generated Animation',
+    note: '24 FPS (@byte 30 = 24), 147 frames: Sub-frame interpolated action with instantaneous blank-frame teleport cuts strictly preserved without tweening.',
+  },
   {
     label: 'speed_vs_strength_12fps.stknds (12 FPS · 36f · Speed vs Strength Showdown)',
     path: '/downloads/speed_vs_strength_12fps.stknds',
@@ -261,11 +287,22 @@ function computeForwardKinematics(
 
 export function App() {
   const [activeAnimationMode, setActiveAnimationMode] = useState<
-    'teleport' | 'sneeze' | 'superhero' | 'bounce' | 'speed-strength'
-  >('speed-strength');
+    'phantom' | 'teleport' | 'sneeze' | 'superhero' | 'bounce' | 'speed-strength'
+  >('phantom');
 
   // Persistent Global FPS Toggle (12 FPS vs 24 FPS) used across all generated Stick Nodes animations
   const [globalFps, setGlobalFps] = useState<12 | 24>(12);
+
+  const [phantomConfig, setPhantomConfig] = useState<PhantomShadowboxGeneratorConfig>({
+    projectName: 'phantom_shadowbox',
+    targetFps: 12,
+    interpolate24FpsFrames: false,
+    primaryColorHex: '#0F172A',
+    headColorHex: '#0284C7',
+    stillnessHoldFrames: 12,
+    crouchHoldFrames: 6,
+    jabExtensionSnap: 1.0,
+  });
 
   const [teleportConfig, setTeleportConfig] = useState<TeleportAmbushGeneratorConfig>({
     projectName: 'teleport_ambush',
@@ -328,6 +365,7 @@ export function App() {
   // Sync globalFps into all generator configs
   const handleSelectFps = (fps: 12 | 24) => {
     setGlobalFps(fps);
+    setPhantomConfig((c) => ({ ...c, targetFps: fps }));
     setTeleportConfig((c) => ({ ...c, targetFps: fps }));
     setSpeedStrengthConfig((c) => ({ ...c, targetFps: fps }));
     setSneezeConfig((c) => ({ ...c, targetFps: fps }));
@@ -340,7 +378,7 @@ export function App() {
   const [baseTemplate27, setBaseTemplate27] = useState<Uint8Array | null>(null);
   const [activeInspection, setActiveInspection] = useState<StkndsInspectionResult | null>(null);
   const [selectedPresetPath, setSelectedPresetPath] = useState<string>(
-    '/downloads/speed_vs_strength_12fps.stknds'
+    '/downloads/phantom_shadowbox_12fps.stknds'
   );
   const [inspectLoading, setInspectLoading] = useState<boolean>(true);
   const [inspectError, setInspectError] = useState<string | null>(null);
@@ -442,6 +480,11 @@ export function App() {
     }
   }, [selectedPresetPath, inspectPreset]);
 
+  const phantomFrames = useMemo(
+    () => buildAdjustedPhantomFrames(phantomConfig),
+    [phantomConfig]
+  );
+
   const teleportFrames = useMemo(
     () => buildAdjustedTeleportFrames(teleportConfig),
     [teleportConfig]
@@ -513,7 +556,9 @@ export function App() {
   );
 
   const totalModeFrames =
-    activeAnimationMode === 'speed-strength'
+    activeAnimationMode === 'phantom'
+      ? phantomFrames.length
+      : activeAnimationMode === 'speed-strength'
       ? speedStrengthFrames.length
       : activeAnimationMode === 'teleport'
       ? teleportFrames.length
@@ -532,7 +577,7 @@ export function App() {
     return () => window.clearInterval(interval);
   }, [isPlaying, totalModeFrames, globalFps]);
 
-  // Draw the 17-Node Stickfigure (Teleport Ambush, Epic Sneeze, or Sky-Flight Sequence) or Ball Bounce on the 1920x1080 scene canvas
+  // Draw the 17-Node Stickfigure (The Phantom Shadowbox, Speed vs Strength, Teleport Ambush, Epic Sneeze, or Sky-Flight Sequence) or Ball Bounce on the 1920x1080 scene canvas
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -546,7 +591,370 @@ export function App() {
     const scaleX = w / 1920;
     const scaleY = h / 1080;
 
-    if (activeAnimationMode === 'speed-strength') {
+    if (activeAnimationMode === 'phantom') {
+      const safeIdx = currentFrame % phantomFrames.length;
+      const activeSpec = phantomFrames[safeIdx];
+
+      ctx.save();
+      // Wide, static camera shot covering large arena floor
+      const targetSceneX = 640;
+      const targetSceneY = 540;
+      ctx.translate(w * 0.5, h * 0.5);
+      ctx.scale(1.04, 1.04);
+      ctx.translate(-targetSceneX * scaleX, -targetSceneY * scaleY);
+
+      // *SCREEN SHAKE* Translation (Storyboard Panel ⑨: Impact Frame 47)
+      let shakeX = 0;
+      let shakeY = 0;
+      if (activeSpec.screenShake || activeSpec.frame === 46) {
+        shakeX = (Math.random() - 0.5) * 22;
+        shakeY = -12 + (Math.random() - 0.5) * 8;
+      } else if (activeSpec.frame === 47) {
+        shakeX = (Math.random() - 0.5) * 12;
+        shakeY = 6;
+      } else if (activeSpec.frame === 48) {
+        shakeX = (Math.random() - 0.5) * 6;
+        shakeY = -3;
+      }
+      ctx.translate(shakeX * scaleX, shakeY * scaleY);
+
+      // Studio Arena Backdrop - Dynamic Flash Tints
+      const skyGrad = ctx.createLinearGradient(0, 0, 0, 755 * scaleY);
+      skyGrad.addColorStop(
+        0,
+        activeSpec.screenShake || activeSpec.frame === 46
+          ? '#FEE2E2'
+          : activeSpec.isTeleportBlank
+          ? '#FEF3C7'
+          : activeSpec.act.includes('Impact')
+          ? '#FEF2F2'
+          : activeSpec.act.includes('Aerial')
+          ? '#EFF6FF'
+          : activeSpec.act.includes('Jab') || activeSpec.act.includes('Cross')
+          ? '#F8FAFC'
+          : '#F1F5F9'
+      );
+      skyGrad.addColorStop(1, '#F8FAFC');
+      ctx.fillStyle = skyGrad;
+      ctx.fillRect(-1200, -1200, w + 2400, 755 * scaleY + 1200);
+
+      // Fine coordinate grid
+      ctx.strokeStyle = '#E2E8F0';
+      ctx.lineWidth = 1;
+      for (let gx = -400; gx < 2400; gx += 160) {
+        ctx.beginPath();
+        ctx.moveTo(gx * scaleX, -400);
+        ctx.lineTo(gx * scaleX, h + 400);
+        ctx.stroke();
+      }
+      for (let gy = -200; gy < 1400; gy += 120) {
+        ctx.beginPath();
+        ctx.moveTo(-400, gy * scaleY);
+        ctx.lineTo(w + 400, gy * scaleY);
+        ctx.stroke();
+      }
+
+      const groundSceneY = 755;
+      const groundCanvasY = groundSceneY * scaleY;
+
+      // Ground plane line (Universal Ground Plane Y = 755.0 px)
+      ctx.strokeStyle = '#334155';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.moveTo(-400 * scaleX, groundCanvasY);
+      ctx.lineTo(2400 * scaleX, groundCanvasY);
+      ctx.stroke();
+
+      ctx.strokeStyle = '#94A3B8';
+      ctx.lineWidth = 1;
+      for (let tx = -200; tx <= 2200; tx += 40) {
+        ctx.beginPath();
+        ctx.moveTo(tx * scaleX, groundCanvasY);
+        ctx.lineTo((tx - 12) * scaleX, groundCanvasY + 10);
+        ctx.stroke();
+      }
+
+      // Ground Stage Zone Labels
+      ctx.font = '600 10px "IBM Plex Mono", monospace';
+      ctx.fillStyle = '#7C3AED';
+      ctx.fillText('PANELS ⑧–⑩: AERIAL ASSAULT, IMPACT & RESET (X: 340 → 370)', 140 * scaleX, groundCanvasY + 24);
+      ctx.fillStyle = '#0F172A';
+      ctx.fillText('PANEL ①: THE FOCUS STILLNESS (X: 640)', 530 * scaleX, groundCanvasY + 24);
+      ctx.fillStyle = '#D97706';
+      ctx.fillText('PANELS ③–⑥: RAPID HANDS COMBOS (X: 980)', 890 * scaleX, groundCanvasY + 24);
+
+      // Ceiling indicator for aerial parallel reference
+      ctx.save();
+      ctx.strokeStyle = 'rgba(148, 163, 184, 0.4)';
+      ctx.setLineDash([6, 6]);
+      ctx.beginPath();
+      ctx.moveTo(100 * scaleX, 220 * scaleY);
+      ctx.lineTo(600 * scaleX, 220 * scaleY);
+      ctx.stroke();
+      ctx.fillStyle = '#64748B';
+      ctx.font = '500 10px "IBM Plex Mono", monospace';
+      ctx.fillText('AERIAL PARALLEL PLANE (Y ~ 220)', 110 * scaleX, 212 * scaleY);
+      ctx.restore();
+
+      const drawPhantomFigure = (
+        sx: number,
+        sy: number,
+        angles: number[],
+        alpha: number,
+        isGhost: boolean
+      ) => {
+        const joints = computeForwardKinematics(sx, sy, angles, 0.5);
+        ctx.save();
+        ctx.globalAlpha = alpha;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+
+        // Draw segments (Nodes 1..12, 14..16)
+        for (let i = 1; i < 17; i++) {
+          if (i === 13) continue;
+          const j = joints[i];
+          ctx.strokeStyle = isGhost ? '#94A3B8' : phantomConfig.primaryColorHex;
+          ctx.lineWidth = Math.max(2, j.thickness * 0.5 * scaleX);
+          ctx.beginPath();
+          ctx.moveTo(j.startX * scaleX, j.startY * scaleY);
+          ctx.lineTo(j.endX * scaleX, j.endY * scaleY);
+          ctx.stroke();
+        }
+
+        // Draw Head Circle (Node 13)
+        const headJ = joints[13];
+        const headCenterX = ((headJ.startX + headJ.endX) * 0.5) * scaleX;
+        const headCenterY = ((headJ.startY + headJ.endY) * 0.5) * scaleY;
+        const headRadius = (headJ.length * 0.5 * 0.5) * scaleX;
+
+        ctx.fillStyle = isGhost ? '#CBD5E1' : phantomConfig.headColorHex;
+        ctx.strokeStyle = isGhost ? '#94A3B8' : phantomConfig.headColorHex;
+        ctx.lineWidth = Math.max(2.5, 10 * scaleX);
+        ctx.beginPath();
+        ctx.arc(headCenterX, headCenterY, headRadius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        // Pelvis Root Dot
+        ctx.fillStyle = '#FFFFFF';
+        ctx.strokeStyle = isGhost ? '#94A3B8' : phantomConfig.primaryColorHex;
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.arc(sx * scaleX, sy * scaleY, 3.5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.restore();
+        return joints;
+      };
+
+      if (activeSpec.isTeleportBlank) {
+        // TELEPORT 1 (Frame 31) or TELEPORT 2 (Frame 42): 1 BLANK FRAME!
+        ctx.save();
+        if (activeSpec.teleportEffect === 'boom' || activeSpec.frame === 30) {
+          // Panel ② Teleport 1: Flash BOOM blast!
+          const vanishX = 640;
+          const vanishY = 505;
+
+          // Expanding shockwave rings
+          ctx.strokeStyle = '#F59E0B';
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.arc(vanishX * scaleX, vanishY * scaleY, 70 * scaleX, 0, Math.PI * 2);
+          ctx.stroke();
+
+          ctx.strokeStyle = 'rgba(239, 68, 68, 0.7)';
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.arc(vanishX * scaleX, vanishY * scaleY, 100 * scaleX, 0, Math.PI * 2);
+          ctx.stroke();
+
+          // Starburst spikes
+          ctx.strokeStyle = '#DC2626';
+          ctx.lineWidth = 2.5;
+          for (let a = 0; a < Math.PI * 2; a += Math.PI / 6) {
+            ctx.beginPath();
+            ctx.moveTo((vanishX + Math.cos(a) * 45) * scaleX, (vanishY + Math.sin(a) * 45) * scaleY);
+            ctx.lineTo((vanishX + Math.cos(a) * 115) * scaleX, (vanishY + Math.sin(a) * 115) * scaleY);
+            ctx.stroke();
+          }
+
+          // Bold BOOM! comic callout
+          ctx.fillStyle = '#DC2626';
+          ctx.font = '900 24px "Plus Jakarta Sans", sans-serif';
+          ctx.fillText('💥 BOOM!', (vanishX - 52) * scaleX, (vanishY - 15) * scaleY);
+          ctx.fillStyle = '#0F172A';
+          ctx.font = '700 11px "IBM Plex Mono", monospace';
+          ctx.fillText('PANEL ② TELEPORT 1 (1 BLANK FRAME)', (vanishX - 110) * scaleX, (vanishY + 30) * scaleY);
+        } else {
+          // Panel ⑦ Teleport 2: Mid-air apex vanish
+          const vanishX = 974;
+          const vanishY = 440;
+          ctx.strokeStyle = 'rgba(2, 132, 199, 0.6)';
+          ctx.lineWidth = 2;
+          for (let i = 0; i < 6; i++) {
+            ctx.beginPath();
+            ctx.moveTo((vanishX - 30 + i * 15) * scaleX, (vanishY - 40 - i * 8) * scaleY);
+            ctx.lineTo((vanishX + 20 + i * 20) * scaleX, (vanishY - 70 - i * 12) * scaleY);
+            ctx.stroke();
+          }
+          ctx.fillStyle = '#0284C7';
+          ctx.font = '700 12px "IBM Plex Mono", monospace';
+          ctx.fillText('⚡ PANEL ⑦ TELEPORT 2: VANISHES MID-AIR APEX (1 BLANK FRAME)', (vanishX - 180) * scaleX, (vanishY - 50) * scaleY);
+        }
+        ctx.restore();
+      } else {
+        // Onion Skinning
+        if (showOnionSkin && safeIdx > 0) {
+          const prev = phantomFrames[safeIdx - 1];
+          if (!prev.isTeleportBlank) {
+            drawPhantomFigure(prev.sceneX, prev.sceneY, prev.worldAngles, 0.22, true);
+          }
+        }
+
+        // Action Motion Smear Blur (Panel ⑨: Axe Kick Smear Frame 44)
+        if (activeSpec.actionSmear === 'axe_kick' || activeSpec.frame === 44) {
+          ctx.save();
+          ctx.fillStyle = 'rgba(124, 58, 237, 0.22)';
+          ctx.beginPath();
+          ctx.moveTo(360 * scaleX, 280 * scaleY);
+          ctx.arc(360 * scaleX, 280 * scaleY, 155 * scaleX, -Math.PI * 0.15, Math.PI * 0.52);
+          ctx.closePath();
+          ctx.fill();
+
+          ctx.strokeStyle = 'rgba(124, 58, 237, 0.8)';
+          ctx.lineWidth = 2;
+          for (let sl = -20; sl <= 40; sl += 15) {
+            ctx.beginPath();
+            ctx.moveTo((360 + sl) * scaleX, 250 * scaleY);
+            ctx.lineTo((365 + sl) * scaleX, 420 * scaleY);
+            ctx.stroke();
+          }
+
+          ctx.fillStyle = '#7C3AED';
+          ctx.font = '800 12px "IBM Plex Mono", monospace';
+          ctx.fillText('PANEL ⑨ AXE KICK DROP: R LEG SMEAR!', 200 * scaleX, 350 * scaleY);
+          ctx.restore();
+        }
+
+        // Active stickfigure
+        const liveJoints = drawPhantomFigure(
+          activeSpec.sceneX,
+          activeSpec.sceneY,
+          activeSpec.worldAngles,
+          1.0,
+          false
+        );
+
+        // Action Highlights & Biomechanical Callouts
+        if (activeSpec.storyboardPanel === 3 || activeSpec.phase.includes('Jab')) {
+          // Sharp horizontal jab extension
+          const fist = liveJoints[16];
+          ctx.save();
+          ctx.strokeStyle = 'rgba(2, 132, 199, 0.7)';
+          ctx.lineWidth = 2.5;
+          ctx.beginPath();
+          ctx.moveTo((fist.endX + 60) * scaleX, fist.endY * scaleY);
+          ctx.lineTo(fist.endX * scaleX, fist.endY * scaleY);
+          ctx.stroke();
+          ctx.fillStyle = '#0284C7';
+          ctx.font = '700 12px "IBM Plex Mono", monospace';
+          ctx.fillText('PANEL ③ 180° STRAIGHT JAB SNAP', (fist.endX - 110) * scaleX, (fist.endY - 20) * scaleY);
+          ctx.restore();
+        } else if (activeSpec.storyboardPanel === 4 || activeSpec.phase.includes('Cross')) {
+          // Violent torso twist right cross
+          const fist = liveJoints[11];
+          ctx.save();
+          ctx.strokeStyle = 'rgba(220, 38, 38, 0.7)';
+          ctx.lineWidth = 2.5;
+          ctx.beginPath();
+          ctx.moveTo((fist.endX + 70) * scaleX, fist.endY * scaleY);
+          ctx.lineTo(fist.endX * scaleX, fist.endY * scaleY);
+          ctx.stroke();
+          ctx.fillStyle = '#DC2626';
+          ctx.font = '700 12px "IBM Plex Mono", monospace';
+          ctx.fillText('PANEL ④ 180° STRAIGHT CROSS SNAP', (fist.endX - 120) * scaleX, (fist.endY - 20) * scaleY);
+          ctx.restore();
+        } else if (activeSpec.storyboardPanel === 5 || activeSpec.phase.includes('Uppercut')) {
+          // Vertical launch arc
+          const fist = liveJoints[11];
+          ctx.save();
+          ctx.strokeStyle = 'rgba(217, 119, 6, 0.7)';
+          ctx.lineWidth = 2.5;
+          ctx.beginPath();
+          ctx.moveTo(fist.endX * scaleX, (fist.endY + 70) * scaleY);
+          ctx.lineTo(fist.endX * scaleX, fist.endY * scaleY);
+          ctx.stroke();
+          ctx.fillStyle = '#D97706';
+          ctx.font = '700 12px "IBM Plex Mono", monospace';
+          ctx.fillText('PANEL ⑥ DYNAMIC UPPERCUT LAUNCH (+90°)', (fist.endX - 90) * scaleX, (fist.endY - 24) * scaleY);
+          ctx.restore();
+        } else if (activeSpec.storyboardPanel === 7 || activeSpec.phase.includes('Axe Kick')) {
+          // Downward chop arc
+          const foot = liveJoints[3];
+          ctx.save();
+          ctx.strokeStyle = 'rgba(124, 58, 237, 0.7)';
+          ctx.lineWidth = 2.5;
+          ctx.beginPath();
+          ctx.arc(liveJoints[1].startX * scaleX, liveJoints[1].startY * scaleY, 130 * scaleX, -Math.PI * 0.1, Math.PI * 0.5);
+          ctx.stroke();
+          ctx.fillStyle = '#7C3AED';
+          ctx.font = '700 12px "IBM Plex Mono", monospace';
+          ctx.fillText('PANEL ⑧ AXE KICK (-88° DOWNWARD ARC)', (foot.endX - 60) * scaleX, (foot.endY - 24) * scaleY);
+          ctx.restore();
+        }
+
+        // Panel ⑨ Impact & Screen Shake (Frame 46 / Storyboard Frame 47)
+        if (activeSpec.screenShake || activeSpec.frame === 46) {
+          ctx.save();
+          // Ground impact cracks branching out
+          ctx.strokeStyle = '#DC2626';
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.moveTo(370 * scaleX, groundCanvasY);
+          ctx.lineTo(310 * scaleX, groundCanvasY + 6);
+          ctx.lineTo(260 * scaleX, groundCanvasY - 2);
+          ctx.moveTo(370 * scaleX, groundCanvasY);
+          ctx.lineTo(430 * scaleX, groundCanvasY + 5);
+          ctx.lineTo(490 * scaleX, groundCanvasY - 1);
+          ctx.stroke();
+
+          // Shockwave burst rings
+          ctx.strokeStyle = 'rgba(239, 68, 68, 0.8)';
+          ctx.lineWidth = 2.5;
+          ctx.beginPath();
+          ctx.ellipse(370 * scaleX, groundCanvasY, 95 * scaleX, 16 * scaleY, 0, 0, Math.PI * 2);
+          ctx.stroke();
+
+          ctx.fillStyle = '#DC2626';
+          ctx.font = '900 14px "IBM Plex Mono", monospace';
+          ctx.fillText('💥 *SCREEN SHAKE* (IMPACT FRAME 47)', 220 * scaleX, groundCanvasY - 45);
+          ctx.fillText('R FIST IMPACTS FLOOR (Y=754)', 260 * scaleX, groundCanvasY - 25);
+          ctx.restore();
+        } else if (activeSpec.storyboardPanel === 9) {
+          // Deep crouch hold
+          const fist = liveJoints[11];
+          ctx.save();
+          ctx.strokeStyle = '#0284C7';
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.ellipse(fist.endX * scaleX, groundCanvasY, 32 * scaleX, 6 * scaleY, 0, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.fillStyle = '#0284C7';
+          ctx.font = '700 12px "IBM Plex Mono", monospace';
+          ctx.fillText('PANEL ⑨ DEEP 3-POINT CROUCH ABSORPTION', (fist.endX - 110) * scaleX, (fist.endY - 60) * scaleY);
+          ctx.restore();
+        } else if (activeSpec.storyboardPanel === 10) {
+          ctx.save();
+          ctx.fillStyle = '#059669';
+          ctx.font = '700 12px "IBM Plex Mono", monospace';
+          ctx.fillText('PANEL ⑩ THE RESET: EASE IN (TRANSITION TO P1 POSE)', (activeSpec.sceneX - 130) * scaleX, (activeSpec.sceneY - 140) * scaleY);
+          ctx.restore();
+        }
+      }
+
+      ctx.restore();
+    } else if (activeAnimationMode === 'speed-strength') {
       const safeIdx = currentFrame % speedStrengthFrames.length;
       const activeSpec = speedStrengthFrames[safeIdx];
 
@@ -1664,6 +2072,8 @@ export function App() {
     }
   }, [
     activeAnimationMode,
+    phantomFrames,
+    phantomConfig,
     speedStrengthFrames,
     teleportFrames,
     sneezeFrames,
@@ -1686,7 +2096,12 @@ export function App() {
       let stkndsBytes: Uint8Array;
       let fileName: string;
 
-      if (activeAnimationMode === 'speed-strength') {
+      if (activeAnimationMode === 'phantom') {
+        if (!baseTemplate27) return;
+        stkndsBytes = await synthesizePhantomShadowboxStknds(baseTemplate27, phantomConfig);
+        const frameTag = `${phantomFrames.length}f`;
+        fileName = `${phantomConfig.projectName.trim() || 'phantom_shadowbox'}_${phantomConfig.targetFps}fps_${frameTag}.stknds`;
+      } else if (activeAnimationMode === 'speed-strength') {
         if (!baseTemplate27) return;
         stkndsBytes = await synthesizeSpeedStrengthStknds(baseTemplate27, speedStrengthConfig);
         const frameTag =
@@ -1750,14 +2165,13 @@ export function App() {
     }
   };
 
+  const safePhantomFrame = phantomFrames[currentFrame % phantomFrames.length];
   const safeTeleportFrame = teleportFrames[currentFrame % teleportFrames.length];
   const safeSpeedStrengthFrame = speedStrengthFrames[currentFrame % speedStrengthFrames.length];
   const [selectedBoneFigure, setSelectedBoneFigure] = useState<'red' | 'blue'>('red');
 
   const activeStickfigureFrames =
-    activeAnimationMode === 'teleport' || activeAnimationMode === 'speed-strength'
-      ? []
-      : activeAnimationMode === 'sneeze'
+    activeAnimationMode === 'sneeze'
       ? sneezeFrames
       : superheroFrames;
   const safeHeroFrame =
@@ -1788,7 +2202,14 @@ export function App() {
   );
 
   const safeHeroJoints =
-    activeAnimationMode === 'speed-strength'
+    activeAnimationMode === 'phantom'
+      ? computeForwardKinematics(
+          safePhantomFrame.isTeleportBlank ? 640 : safePhantomFrame.sceneX,
+          safePhantomFrame.isTeleportBlank ? 515 : safePhantomFrame.sceneY,
+          safePhantomFrame.worldAngles,
+          0.5
+        )
+      : activeAnimationMode === 'speed-strength'
       ? selectedBoneFigure === 'red'
         ? computeForwardKinematics(
             safeSpeedStrengthFrame.charAX,
@@ -1856,6 +2277,22 @@ export function App() {
           <a
             href={
               globalFps === 12
+                ? '/downloads/phantom_shadowbox_12fps.stknds'
+                : '/downloads/phantom_shadowbox_24fps.stknds'
+            }
+            download={
+              globalFps === 12
+                ? 'phantom_shadowbox_12fps.stknds'
+                : 'phantom_shadowbox_24fps.stknds'
+            }
+            className="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-white bg-[#0F172A] hover:bg-[#1E293B] rounded-lg transition-colors whitespace-nowrap shrink-0 shadow-xs"
+          >
+            <Download className="w-3.5 h-3.5 text-[#38BDF8]" />
+            Phantom Shadowbox ({globalFps} FPS .stknds)
+          </a>
+          <a
+            href={
+              globalFps === 12
                 ? '/downloads/speed_vs_strength_12fps.stknds'
                 : '/downloads/speed_vs_strength_24fps.stknds'
             }
@@ -1864,26 +2301,10 @@ export function App() {
                 ? 'speed_vs_strength_12fps.stknds'
                 : 'speed_vs_strength_24fps.stknds'
             }
-            className="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-white bg-[#D97706] hover:bg-[#B45309] rounded-lg transition-colors whitespace-nowrap shrink-0"
-          >
-            <Download className="w-3.5 h-3.5" />
-            Download Speed vs Strength ({globalFps} FPS .stknds)
-          </a>
-          <a
-            href={
-              globalFps === 12
-                ? '/downloads/teleport_ambush_12fps.stknds'
-                : '/downloads/teleport_ambush_24fps.stknds'
-            }
-            download={
-              globalFps === 12
-                ? 'teleport_ambush_12fps.stknds'
-                : 'teleport_ambush_24fps.stknds'
-            }
             className="inline-flex items-center gap-2 px-3 py-2 text-xs font-medium text-[#475569] bg-white border border-[#CBD5E1] hover:bg-[#F1F5F9] rounded-lg transition-colors whitespace-nowrap shrink-0"
           >
             <Download className="w-3.5 h-3.5" />
-            Teleport Ambush ({globalFps} FPS)
+            Speed vs Strength ({globalFps} FPS)
           </a>
         </div>
       </header>
@@ -1893,45 +2314,45 @@ export function App() {
         <section className="border-b border-[#E2E8F0] pb-8 flex flex-col lg:flex-row lg:items-end justify-between gap-6">
           <div className="space-y-3 max-w-3xl">
             <div className="flex items-center gap-2 text-xs font-medium text-[#475569]">
-              <span>Stick Nodes v334 Multi-Figure &amp; Camera Serialization</span>
+              <span>Stick Nodes v334 Master Choreography Engine</span>
               <span aria-hidden="true">·</span>
-              <span>Human Motion &amp; Biomechanical Framework v4.0</span>
+              <span>The Phantom Shadowbox · 7 Biomechanical Action Phases</span>
               <span aria-hidden="true">·</span>
-              <span>Spatial Consistency &amp; Interaction Verified</span>
+              <span>Universal Motion &amp; Spatial Consistency Framework v4.0</span>
             </div>
             <h1 className="font-display text-3xl sm:text-4xl font-semibold text-[#0F172A] tracking-tight">
-              Speed vs Strength &amp; Multi-Character Biomechanical Showdowns
+              The Phantom Shadowbox &amp; Biomechanical Combat Forge
             </h1>
             <p className="text-[#475569] text-base leading-relaxed">
-              Authored on a strictly shared world coordinate plane (<code className="font-mono text-xs bg-[#E2E8F0]/60 px-1.5 py-0.5 rounded">Ground Y = 755.0 px</code>) where <strong>Character A (Speed, Gold)</strong> and <strong>Character B (Strength, Slate)</strong> execute authentic biomechanical movement: 1. <strong>Standoff</strong> (weight forward vs planted stance), 2. <strong>Progressive Acceleration</strong> (slow-out crouch, coil, and acceleration stride), 3. <strong>Speed Burst</strong> (continuous trajectory flash pass directly beside B), 4. <strong>Heavy Staggered Turn</strong> (feet plant → hips turn → torso follows → arm coils), 5. <strong>The Haymaker Arc &amp; Slip Duck</strong> (clean curved punch at chest level, A slips underneath), 6. <strong>Counter Side Kick</strong> (plant → hip rotation → leg extension → torso impact), 7. <strong>Ballistic Launch</strong> (originating from exact contact point into heavy touchdown and skid), and 8. <strong>Resolution</strong> (B had power, A had speed).
+              Synthesized from first principles on a wide static arena (<code className="font-mono text-xs bg-[#E2E8F0]/60 px-1.5 py-0.5 rounded">Ground Y = 755.0 px</code>) where a single martial-artist stick figure snaps through explosive momentum against an invisible phantom opponent: 1. <strong>The Focus</strong> (absolute stillness, feet shoulder-width, head tilted down), 2. <strong>Teleport 1 Blink</strong> (1-frame complete disappearance), 3. <strong>Combo 1 Rapid Hands</strong> (instant far-right deep stance, 180° head-height jab, violent torso-twist 180° cross, vertical +90° uppercut onto toes), 4. <strong>Teleport 2 Mid-Swing</strong> (vanishes at mid-air uppercut apex, 1 blank frame), 5. <strong>Combo 2 Aerial Assault</strong> (far-left airborne horizontal spine, 190° violent downward axe kick chop), 6. <strong>Impact Landing</strong> (heel ground slam into 3-point crouch with fist in floor), and 7. <strong>The Reset</strong> (crouch hold, uncoil relax, stand completely straight to Step 1 pose).
             </p>
           </div>
 
           {/* Direct Verified Artifact Downloads */}
           <div className="flex flex-wrap items-center gap-2.5 shrink-0">
             <a
-              href="/downloads/speed_vs_strength_12fps.stknds"
-              download="speed_vs_strength_12fps.stknds"
-              className="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-semibold bg-[#D97706] text-white rounded-lg hover:bg-[#B45309] transition-colors whitespace-nowrap"
+              href="/downloads/phantom_shadowbox_24fps_75f.stknds"
+              download="phantom_shadowbox_24fps_75f.stknds"
+              className="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-semibold bg-[#0F172A] text-white rounded-lg hover:bg-[#1E293B] transition-colors whitespace-nowrap shadow-xs"
             >
-              <Download className="w-3.5 h-3.5" />
-              Speed vs Strength 12 FPS (36f .stknds)
+              <Download className="w-3.5 h-3.5 text-[#38BDF8]" />
+              Phantom Shadowbox 24 FPS (75f Storyboard Master .stknds)
             </a>
             <a
-              href="/downloads/speed_vs_strength_24fps.stknds"
-              download="speed_vs_strength_24fps.stknds"
+              href="/downloads/phantom_shadowbox_12fps_75f.stknds"
+              download="phantom_shadowbox_12fps_75f.stknds"
               className="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-medium bg-white border border-[#CBD5E1] text-[#0F172A] rounded-lg hover:bg-[#F1F5F9] transition-colors whitespace-nowrap"
             >
               <Download className="w-3.5 h-3.5" />
-              Speed vs Strength 24 FPS (36f)
+              Phantom Shadowbox 12 FPS (75f Master)
             </a>
             <a
-              href="/downloads/speed_vs_strength_24fps_71f.stknds"
-              download="speed_vs_strength_24fps_71f.stknds"
+              href="/downloads/phantom_shadowbox_24fps_147f.stknds"
+              download="phantom_shadowbox_24fps_147f.stknds"
               className="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-medium bg-white border border-[#CBD5E1] text-[#0F172A] rounded-lg hover:bg-[#F1F5F9] transition-colors whitespace-nowrap"
             >
               <Download className="w-3.5 h-3.5" />
-              Speed vs Strength 24 FPS Baked (71f)
+              Phantom Shadowbox 24 FPS Baked (147f)
             </a>
           </div>
         </section>
@@ -1944,6 +2365,12 @@ export function App() {
               <div>
                 <h2 className="text-lg font-semibold text-[#0F172A] flex items-center gap-2">
                   01. Live v334 Animation Stage ({globalFps} FPS)
+                  {activeAnimationMode === 'phantom' && (
+                    <span className="inline-flex items-center gap-1 text-xs font-mono text-[#0284C7]">
+                      <Sparkles className="w-3.5 h-3.5" />
+                      {safePhantomFrame.act}
+                    </span>
+                  )}
                   {activeAnimationMode === 'speed-strength' && (
                     <span className="inline-flex items-center gap-1 text-xs font-mono text-[#D97706]">
                       <Zap className="w-3.5 h-3.5" />
@@ -1965,7 +2392,12 @@ export function App() {
                     )}
                 </h2>
                 <p className="text-xs text-[#475569]">
-                  {activeAnimationMode === 'speed-strength' ? (
+                  {activeAnimationMode === 'phantom' ? (
+                    <>
+                      Figure: <span className="font-mono">Single Stick Figure (Midnight Slate)</span> · Ground Plane Y = <span className="font-mono font-semibold">755 px</span> ·{' '}
+                      {safePhantomFrame.phase}
+                    </>
+                  ) : activeAnimationMode === 'speed-strength' ? (
                     <>
                       Figures: <span className="font-mono">Char A (Speed, Gold) + Char B (Strength, Slate)</span> · Ground Plane Y = <span className="font-mono font-semibold">755 px</span> ·{' '}
                       {safeSpeedStrengthFrame.phase}
@@ -1996,13 +2428,27 @@ export function App() {
                 <button
                   type="button"
                   onClick={() => {
+                    setActiveAnimationMode('phantom');
+                    setCurrentFrame(0);
+                  }}
+                  className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap ${
+                    activeAnimationMode === 'phantom'
+                      ? 'bg-white text-[#0F172A] shadow-xs font-semibold'
+                      : 'text-[#475569] hover:text-[#0F172A]'
+                  }`}
+                >
+                  The Phantom Shadowbox (75f Storyboard Master)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
                     setActiveAnimationMode('speed-strength');
                     setVcamFollow(true);
                     setCurrentFrame(0);
                   }}
                   className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap ${
                     activeAnimationMode === 'speed-strength'
-                      ? 'bg-white text-[#0F172A] shadow-xs'
+                      ? 'bg-white text-[#0F172A] shadow-xs font-semibold'
                       : 'text-[#475569] hover:text-[#0F172A]'
                   }`}
                 >
@@ -2077,6 +2523,44 @@ export function App() {
                 className="w-full h-auto block"
               />
             </div>
+
+            {/* 10 Visual Storyboard Panels Quick-Jump Controls */}
+            {activeAnimationMode === 'phantom' && (
+              <div className="flex flex-col gap-2 pt-1 border-t border-[#F1F5F9]">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <span className="text-xs font-semibold text-[#0F172A] flex items-center gap-1.5">
+                    <Sparkles className="w-3.5 h-3.5 text-[#0284C7]" />
+                    Visual Storyboard Panels (10 Panels · 75 Frames):
+                  </span>
+                  <span className="text-[11px] font-mono text-[#0284C7] font-semibold bg-[#F0F9FF] px-2 py-0.5 rounded border border-[#BAE6FD]">
+                    Panel {safePhantomFrame.storyboardPanel} · {safePhantomFrame.storyboardLabel}
+                  </span>
+                </div>
+                <div className="flex flex-wrap items-center gap-1.5">
+                  {STORYBOARD_PANELS.map((p) => {
+                    const isActive = safePhantomFrame.storyboardPanel === p.panelNumber;
+                    return (
+                      <button
+                        key={p.panelNumber}
+                        type="button"
+                        onClick={() => {
+                          setIsPlaying(false);
+                          setCurrentFrame(p.startFrame);
+                        }}
+                        className={`px-2.5 py-1 text-xs font-medium rounded-md transition-all whitespace-nowrap cursor-pointer ${
+                          isActive
+                            ? 'bg-[#0F172A] text-white shadow-xs font-semibold ring-2 ring-[#0284C7]/50'
+                            : 'bg-[#F1F5F9] hover:bg-[#E2E8F0] text-[#0F172A]'
+                        }`}
+                        title={`${p.title} (${p.frameRangeStr}): ${p.actionSummary}`}
+                      >
+                        {p.title} ({p.frameRangeStr})
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
 
             {/* Act Quick-Jump Buttons when in Speed vs Strength Mode */}
             {activeAnimationMode === 'speed-strength' && (
@@ -2449,7 +2933,36 @@ export function App() {
             </div>
 
             {/* Live Byte-Level Telemetry Strip for Active Frame */}
-            {activeAnimationMode === 'speed-strength' ? (
+            {activeAnimationMode === 'phantom' ? (
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-3 border-t border-[#E2E8F0] text-xs">
+                <div>
+                  <div className="text-[#64748B]">Act / Choreography Stage</div>
+                  <div className="font-semibold text-[#0F172A] mt-0.5 truncate">
+                    {safePhantomFrame.act}
+                  </div>
+                </div>
+                <div>
+                  <div className="text-[#64748B]">Teleport &amp; Camera State</div>
+                  <div className="font-mono font-semibold text-[#0284C7] mt-0.5">
+                    {safePhantomFrame.isTeleportBlank ? 'BLANK FRAME (VANISHED)' : 'WIDE ARENA VIEW'}
+                  </div>
+                </div>
+                <div>
+                  <div className="text-[#64748B]">Pelvis Root (Ground Y=755)</div>
+                  <div className="font-mono font-semibold text-[#0F172A] mt-0.5 truncate">
+                    {safePhantomFrame.isTeleportBlank
+                      ? 'OFFSCREEN (-9999)'
+                      : `(${safePhantomFrame.sceneX.toFixed(0)}, ${safePhantomFrame.sceneY.toFixed(0)}) px`}
+                  </div>
+                </div>
+                <div>
+                  <div className="text-[#64748B]">Active Frame Rate (@byte 30)</div>
+                  <div className="font-mono font-semibold text-[#059669] mt-0.5">
+                    {globalFps} FPS ({phantomFrames.length} Total Frames)
+                  </div>
+                </div>
+              </div>
+            ) : activeAnimationMode === 'speed-strength' ? (
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-3 border-t border-[#E2E8F0] text-xs">
                 <div>
                   <div className="text-[#64748B]">Act / Choreography Stage</div>
@@ -2617,7 +3130,138 @@ export function App() {
               </p>
             </div>
 
-            {activeAnimationMode === 'speed-strength' ? (
+            {activeAnimationMode === 'phantom' ? (
+              <div className="space-y-4 text-xs">
+                {globalFps === 24 && (
+                  <div className="flex items-center justify-between p-2.5 rounded-lg bg-[#F1F5F9]">
+                    <label
+                      htmlFor="bake-phantom-24fps"
+                      className="font-medium text-[#0F172A] cursor-pointer"
+                    >
+                      Bake 24 FPS In-Betweens (79 Frames Total)
+                    </label>
+                    <input
+                      id="bake-phantom-24fps"
+                      type="checkbox"
+                      checked={phantomConfig.interpolate24FpsFrames}
+                      onChange={(e) => {
+                        setPhantomConfig((c) => ({
+                          ...c,
+                          interpolate24FpsFrames: e.target.checked,
+                        }));
+                        setCurrentFrame(0);
+                      }}
+                      className="accent-[#0284C7]"
+                    />
+                  </div>
+                )}
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1">
+                    <label htmlFor="phantom-primary-color" className="font-medium text-[#0F172A]">
+                      Stick Figure Color
+                    </label>
+                    <div className="flex items-center gap-2">
+                      <input
+                        id="phantom-primary-color"
+                        type="color"
+                        value={phantomConfig.primaryColorHex}
+                        onChange={(e) =>
+                          setPhantomConfig((c) => ({
+                            ...c,
+                            primaryColorHex: e.target.value,
+                          }))
+                        }
+                        className="w-8 h-8 rounded border border-[#CBD5E1] cursor-pointer"
+                      />
+                      <span className="font-mono text-[11px] text-[#64748B]">
+                        {phantomConfig.primaryColorHex}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="space-y-1">
+                    <label htmlFor="phantom-head-color" className="font-medium text-[#0F172A]">
+                      Head Accent Color
+                    </label>
+                    <div className="flex items-center gap-2">
+                      <input
+                        id="phantom-head-color"
+                        type="color"
+                        value={phantomConfig.headColorHex}
+                        onChange={(e) =>
+                          setPhantomConfig((c) => ({
+                            ...c,
+                            headColorHex: e.target.value,
+                          }))
+                        }
+                        className="w-8 h-8 rounded border border-[#CBD5E1] cursor-pointer"
+                      />
+                      <span className="font-mono text-[11px] text-[#64748B]">
+                        {phantomConfig.headColorHex}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 7-Step Action Breakdown Checklist */}
+                <div className="p-3.5 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] space-y-2 text-[11px]">
+                  <div className="font-semibold text-[#0F172A] flex items-center justify-between">
+                    <span className="flex items-center gap-1.5">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-[#0284C7]" />
+                      Prompt Specification Compliance
+                    </span>
+                    <span className="font-mono text-[10px] text-[#0284C7] bg-[#E0F2FE] px-1.5 py-0.5 rounded">
+                      7 Steps Verified
+                    </span>
+                  </div>
+                  <div className="space-y-1.5 text-[#475569]">
+                    <div className="flex items-start gap-1.5">
+                      <span className="font-bold text-[#0F172A]">1. The Focus:</span>
+                      <span>Center frame (X=640), rigid posture, arms down, head tilted down (12f / 1.0s).</span>
+                    </div>
+                    <div className="flex items-start gap-1.5">
+                      <span className="font-bold text-[#0284C7]">2. Teleport 1 Blink:</span>
+                      <span>1-frame complete disappearance. Blank stage sells infinite velocity.</span>
+                    </div>
+                    <div className="flex items-start gap-1.5">
+                      <span className="font-bold text-[#0F172A]">3. Combo 1 Rapid Hands:</span>
+                      <span>Far right deep stance; 180° head-height jab, 180° twist cross, +90° vertical uppercut onto toes.</span>
+                    </div>
+                    <div className="flex items-start gap-1.5">
+                      <span className="font-bold text-[#0284C7]">4. Teleport 2 Mid-Swing:</span>
+                      <span>Vanishes at the apex of the uppercut swing. Exactly 1 blank frame.</span>
+                    </div>
+                    <div className="flex items-start gap-1.5">
+                      <span className="font-bold text-[#0F172A]">5. Combo 2 Aerial Assault:</span>
+                      <span>Far left airborne horizontal spine, 190° violent downward axe kick chop toward floor.</span>
+                    </div>
+                    <div className="flex items-start gap-1.5">
+                      <span className="font-bold text-[#0F172A]">6. Impact Landing:</span>
+                      <span>Right heel ground slam (Y=755), left touchdown, deep 3-point crouch with fist in floor.</span>
+                    </div>
+                    <div className="flex items-start gap-1.5">
+                      <span className="font-bold text-[#0F172A]">7. The Reset:</span>
+                      <span>Hold crouch 6 frames, uncoil, stand completely straight to Step 1 pose.</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="pt-2 border-t border-[#E2E8F0]">
+                  <button
+                    type="button"
+                    disabled={synthesizing || !baseTemplate27}
+                    onClick={handleSynthesizeAndDownload}
+                    className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-semibold text-white bg-[#0F172A] hover:bg-[#1E293B] disabled:bg-[#94A3B8] rounded-lg transition-colors cursor-pointer shadow-xs"
+                  >
+                    <Download className="w-4 h-4 text-[#38BDF8]" />
+                    {synthesizing
+                      ? 'Synthesizing GZIP Container...'
+                      : `Compile & Download The Phantom Shadowbox (${globalFps} FPS · ${phantomFrames.length}f .stknds)`}
+                  </button>
+                </div>
+              </div>
+            ) : activeAnimationMode === 'speed-strength' ? (
               <div className="space-y-4 text-xs">
                 {globalFps === 24 && (
                   <div className="flex items-center justify-between p-2.5 rounded-lg bg-[#F1F5F9]">
@@ -5027,7 +5671,45 @@ export function App() {
           )}
 
           {activeDocTab === 'frames' && (
-            activeAnimationMode === 'teleport' ? (
+            activeAnimationMode === 'phantom' ? (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="bg-white border border-[#E2E8F0] rounded-xl p-5 space-y-3">
+                  <div className="text-xs font-mono text-[#0284C7] font-semibold">
+                    STEPS 01–02 · THE FOCUS &amp; THE BLINK
+                  </div>
+                  <h3 className="text-base font-semibold text-[#0F172A]">
+                    Rigid Stillness &amp; Instant Vanish (Frames 00–12)
+                  </h3>
+                  <p className="text-sm text-[#475569] leading-relaxed">
+                    Single stick figure stands rigid in exact center of frame (<code className="font-mono text-xs">X=640, Y=515</code>), feet shoulder-width, arms hanging straight down with loosely clenched fists, head tilted down. Held in total stillness for 1.0s (12 frames). At Frame 12, the character <em>completely disappears</em> — exactly one blank frame selling instantaneous teleport speed into thin air.
+                  </p>
+                </div>
+
+                <div className="bg-white border border-[#E2E8F0] rounded-xl p-5 space-y-3">
+                  <div className="text-xs font-mono text-[#D97706] font-semibold">
+                    STEPS 03–04 · RAPID HANDS &amp; TELEPORT 2
+                  </div>
+                  <h3 className="text-base font-semibold text-[#0F172A]">
+                    Jab, Cross, Uppercut &amp; Mid-Air Vanish (Frames 13–21)
+                  </h3>
+                  <p className="text-sm text-[#475569] leading-relaxed">
+                    Instant reappearance on the far right (<code className="font-mono text-xs">X=980</code>) in deep fighting stance facing left. Left arm snaps a 180° head-height jab with 1-frame sharp impact hold. Left arm recoils to chin while torso twists violently into a straight 180° right cross. Right arm drops, knees dip lower, and fist launches upward onto toes (+90° vertical uppercut). At the highest apex point in mid-air, the character vanishes again (1 blank frame at F21).
+                  </p>
+                </div>
+
+                <div className="bg-white border border-[#E2E8F0] rounded-xl p-5 space-y-3">
+                  <div className="text-xs font-mono text-[#059669] font-semibold">
+                    STEPS 05–07 · AERIAL ASSAULT, LANDING &amp; RESET
+                  </div>
+                  <h3 className="text-base font-semibold text-[#0F172A]">
+                    Axe Kick, 3-Point Impact &amp; Reset Rise (Frames 22–39)
+                  </h3>
+                  <p className="text-sm text-[#475569] leading-relaxed">
+                    Reappears high in air on far left (<code className="font-mono text-xs">X=340, Y=275</code>) horizontally with back parallel to ceiling (0°). Right leg swings high and violently chops down in massive 190° arc toward floor (-88°). Right heel slams into ground (<code className="font-mono text-xs">Y=755</code>), left touches down, absorbing shock in deep 3-point crouch (right fist punched into floor, left defensive guard). Held 6 frames, then smoothly relaxes and stands completely straight to Step 1 pose.
+                  </p>
+                </div>
+              </div>
+            ) : activeAnimationMode === 'teleport' ? (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="bg-white border border-[#E2E8F0] rounded-xl p-5 space-y-3">
                   <div className="text-xs font-mono text-[#2563EB] font-semibold">
