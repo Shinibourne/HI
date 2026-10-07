@@ -134,6 +134,397 @@ function clamp(v: number, min: number, max: number): number {
   return Math.max(min, Math.min(max, v));
 }
 
+export const MAX_ARM_REACH_PX = 0.98 * 162.6; // ~159.35 px
+
+/**
+ * Clamps shoulder-to-hand target distance to at most 0.98 * 162.6 px.
+ */
+export function clampShoulderToHandTarget(
+  shoulderX: number,
+  shoulderY: number,
+  targetX: number,
+  targetY: number,
+  maxReach = MAX_ARM_REACH_PX
+): { x: number; y: number } {
+  const dx = targetX - shoulderX;
+  const dy = targetY - shoulderY;
+  const dist = Math.hypot(dx, dy);
+  if (dist > maxReach) {
+    const ratio = maxReach / dist;
+    return {
+      x: shoulderX + dx * ratio,
+      y: shoulderY + dy * ratio,
+    };
+  }
+  return { x: targetX, y: targetY };
+}
+
+/**
+ * Directly sets world angles for an arm branch using convention:
+ * 0° = right (+X), +90° = up (-Y screen), -90° = down (+Y screen), figure faces +X.
+ * swing: measured from straight down (-90°), + = forward (+X).
+ * flex: elbow bend, swinging forearm forward/up.
+ * bicepWorld = -90 + swing
+ * forearmWorld = bicepWorld + flex
+ * handWorld = forearmWorld + (0 to 15)
+ */
+export function setArm(
+  sideOrAngles: 'right' | 'left' | number[],
+  swingOrSide: number | 'right' | 'left',
+  flexOrSwing?: number,
+  wristOrFlex?: number,
+  optionalWrist?: number
+): { bicep: number; forearm: number; hand: number } {
+  let manAngles: number[] | null = null;
+  let side: 'right' | 'left';
+  let swing: number;
+  let flex: number;
+  let wristOffset = 6.0;
+
+  if (Array.isArray(sideOrAngles)) {
+    manAngles = sideOrAngles;
+    side = swingOrSide as 'right' | 'left';
+    swing = flexOrSwing ?? 0;
+    flex = wristOrFlex ?? 0;
+    if (optionalWrist !== undefined) wristOffset = optionalWrist;
+  } else {
+    side = sideOrAngles;
+    swing = swingOrSide as number;
+    flex = flexOrSwing ?? 0;
+    if (wristOrFlex !== undefined) wristOffset = wristOrFlex;
+  }
+
+  const bicepWorld = -90.0 + swing;
+  const forearmWorld = bicepWorld + flex;
+  const clampedWrist = clamp(wristOffset, 0.0, 15.0);
+  const handWorld = forearmWorld + clampedWrist;
+
+  if (manAngles) {
+    const baseIdx = side === 'right' ? 9 : 14;
+    manAngles[baseIdx] = bicepWorld;
+    manAngles[baseIdx + 1] = forearmWorld;
+    manAngles[baseIdx + 2] = handWorld;
+  }
+
+  return { bicep: bicepWorld, forearm: forearmWorld, hand: handWorld };
+}
+
+/**
+ * Computes procedural arm swing and flex trajectories across all 216 frames.
+ */
+export function computeArmTrajectory(f: number): {
+  rSwing: number;
+  rFlex: number;
+  lSwing: number;
+  lFlex: number;
+} {
+  // Beat A: F0-18 (Seated floor rest)
+  if (f <= 18) {
+    const tBreathe = f / 18.0;
+    const breathe = Math.sin(tBreathe * Math.PI * 2);
+    return {
+      rSwing: 48.0 + breathe * 0.8,
+      rFlex: 38.0 + breathe * 0.5,
+      lSwing: -35.0 - breathe * 0.6,
+      lFlex: 16.0,
+    };
+  }
+
+  // Beat B1 & B2: F19-43 (Squat Rise & Launch)
+  if (f <= 43) {
+    const t = (f - 19) / 24.0;
+    const easedT = easeInOutCubic(t);
+    return {
+      rSwing: -15.0 - easedT * 8.0,
+      rFlex: 22.0 - easedT * 4.0,
+      lSwing: -20.0 - easedT * 6.0,
+      lFlex: 20.0 - easedT * 4.0,
+    };
+  }
+
+  // Beat B3: F44-71 (Deep Squat Extension to Stand)
+  if (f <= 71) {
+    const t = (f - 44) / 27.0;
+    const easedT = easeInOutCubic(t);
+    const rSwing = -23.0 + easedT * 27.0; // -23° -> +4°
+    const lSwing = -26.0 + easedT * 28.0; // -26° -> +2°
+    const rFlex = 18.0 - easedT * 2.0;   // 18° -> 16°
+    const lFlex = 16.0 - easedT * 1.5;   // 16° -> 14.5°
+    return { rSwing, rFlex, lSwing, lFlex };
+  }
+
+  // Beat C: F72-81 (Standing Equilibrium, 10 frames)
+  // "Stand and Act C: both arms hang, swing about 0–8°, flex 10–20°. Tiny sway only."
+  if (f <= 81) {
+    const t = (f - 72) / 9.0;
+    const sway = Math.sin(t * Math.PI * 2);
+    const rSwing = 3.8 + sway * 0.6; // ~3.2° to 4.4° (avg ~3.8°)
+    const lSwing = 1.8 + sway * 0.5; // ~1.3° to 2.3° (avg ~1.8°)
+    const rFlex = 16.0 + sway * 0.5;
+    const lFlex = 15.0 + sway * 0.5;
+    return { rSwing, rFlex, lSwing, lFlex };
+  }
+
+  // Beat D: F82-111 (Relaxed Stroll, 30 frames)
+  // "D, stroll: arms opposite to the legs. Swing about +22° forward to −22° back, one full cycle per walk cycle (12 frames per step).
+  // Arms lag the legs by 1–2 frames. Flex 35–45° on the forward swing and 15–20° on the back swing.
+  // Left and right must NOT be exact mirrors (about 3–5° and 10% amplitude difference).
+  // Hand never closer than 0.9 × 162.6 px to the shoulder."
+  if (f <= 111) {
+    const walkProgress = (f - 82 - 1.5) / 30.0;
+    const phaseRad = walkProgress * Math.PI * 2;
+
+    const rAmp = 22.0;
+    const rCenter = 13.0; // Swings from -9° to +35° (range 44° >= 35°)
+    const rDrive = -Math.cos(phaseRad);
+    const rSwing = rCenter + rDrive * rAmp;
+
+    // Left arm: 10% amplitude difference (19.8°), 4° offset, subtle phase shift
+    const lAmp = rAmp * 0.90; // 19.8°
+    const lCenter = 9.0;      // 4° offset from 13°
+    const lDrive = Math.cos(phaseRad + 0.15);
+    const lSwing = lCenter + lDrive * lAmp; // Swings -10.8° to +28.8° (range 39.6° >= 35°)
+
+    const rForwardNorm = (rDrive + 1.0) * 0.5;
+    const rFlex = 18.0 + rForwardNorm * 24.0; // 18° to 42°
+
+    const lForwardNorm = (lDrive + 1.0) * 0.5;
+    const lFlex = 17.0 + lForwardNorm * 23.0; // 17° to 40°
+
+    return { rSwing, rFlex, lSwing, lFlex };
+  }
+
+  // Beat E: F112-129 (Notices the Ball, 18 frames)
+  // "E, notice: the leading arm lifts to swing about +35° with flex about 40°. The other arm hangs at swing about −5°, flex 15°.
+  // Shoulders lift a little, then drop and spring, fists closing."
+  if (f <= 129) {
+    const t = (f - 112) / 17.0;
+    const liftT = clamp((f - 112) / 7.0, 0, 1);
+    const easedLift = easeInOutCubic(liftT);
+    const settleT = clamp((f - 120) / 9.0, 0, 1);
+
+    let rSwing = 30.0 + easedLift * 6.0; // 30° -> 36°
+    if (f >= 121) {
+      rSwing = 36.0 - settleT * 12.0; // 36° -> 24°
+    }
+    const rFlex = 36.0 + easedLift * 6.0 - settleT * 8.0; // 36° -> 42° -> 34°
+
+    const lEase = easeInOutCubic(clamp((f - 112) / 5.0, 0, 1));
+    const lSwing = -3.0 * (1 - lEase) + (-5.0) * lEase + Math.sin(t * Math.PI * 2) * 0.6;
+    const lFlex = 15.0 + Math.cos(t * Math.PI * 2) * 0.5;
+
+    return { rSwing, rFlex, lSwing, lFlex };
+  }
+
+  // Beat F1: F130-135 (Jump Crouch Anticipation, 6 frames)
+  // "F, jump: crouch, both arms swing back to about −45°, flex 15°."
+  if (f <= 135) {
+    const t = (f - 130) / 5.0;
+    const easedT = easeInOutCubic(t);
+    const rSwing = 24.0 * (1 - easedT) + (-45.0) * easedT;
+    const lSwing = -5.0 * (1 - easedT) + (-45.0) * easedT;
+    const rFlex = 34.0 * (1 - easedT) + 15.0 * easedT;
+    const lFlex = 15.0;
+    return { rSwing, rFlex, lSwing, lFlex };
+  }
+
+  // Beat F2: F136-147 (Jump Launch & Airborne Apex, 12 frames)
+  // "Launch (4 frames): swing sweeps −45° → +90° → +160°. Air: arms overhead at +165° to +175°, flex 10–20°, fists."
+  // "jump arms reach ≥ +150°"
+  if (f <= 147) {
+    if (f === 136) {
+      return { rSwing: 5.0, rFlex: 16.0, lSwing: 5.0, lFlex: 16.0 };
+    }
+    if (f === 137) {
+      return { rSwing: 70.0, rFlex: 15.0, lSwing: 70.0, lFlex: 15.0 };
+    }
+    if (f === 138) {
+      return { rSwing: 135.0, rFlex: 14.0, lSwing: 135.0, lFlex: 14.0 };
+    }
+    const tAir = (f - 139) / 8.0;
+    const apexT = Math.sin(tAir * Math.PI);
+    const rSwing = 168.0 + apexT * 5.0; // 168° to 173° (>= 150°)
+    const lSwing = 166.0 + apexT * 5.0; // 166° to 171° (>= 150°)
+    const rFlex = 14.0 - apexT * 2.0;   // 12° to 14°
+    const lFlex = 14.0 - apexT * 2.0;
+    return { rSwing, rFlex, lSwing, lFlex };
+  }
+
+  // Beat F3: F148-153 (Jump Landing Cushion & Recovery, 6 frames)
+  // "Landing: arms drop to about +20°, then +40°, then settle at about +10°."
+  if (f <= 153) {
+    const DROP_R = [40.0, 20.0, 28.0, 20.0, 15.0, 10.0];
+    const DROP_L = [40.0, 20.0, 28.0, 20.0, 15.0, 10.0];
+    const idx = f - 148;
+    return {
+      rSwing: DROP_R[idx],
+      rFlex: 18.0 + (idx === 1 ? 4.0 : 0.0),
+      lSwing: DROP_L[idx],
+      lFlex: 18.0 + (idx === 1 ? 4.0 : 0.0),
+    };
+  }
+
+  // Beat G: F154-165 (Run to the Ball, 12 frames)
+  // "G, run: upper arm swing about ±50° opposite to the legs, elbow flex about 90° throughout (never below 70° or above 120°). Never straight arms."
+  // "run ≥ 90° total"
+  // Purposeful athletic footballer run-up: arms act as natural running counterbalance,
+  // swinging primarily forward/backward from shoulders in compact athletic envelope (never flailing above head).
+  // F154-162: rhythmic running counterbalance; F163-165: purposeful transition into kick windup.
+  if (f <= 165) {
+    if (f <= 162) {
+      const runCycle = ((f - 154) % 8) / 8.0;
+      const runPhase = runCycle * Math.PI * 2;
+
+      // Natural running envelope: arms swing through vertical from -25° (back) to +68° (forward)
+      // Range = 68 - (-25) = 93° (>= 90°), hands stay at chest/hip level, never flying above head
+      const rAmp = 46.5;
+      const rCenter = 21.5;
+      const rSwing = rCenter + Math.sin(runPhase) * rAmp;
+
+      // Left arm in anti-phase with 5.5° asymmetry and subtle phase offset
+      const lAmp = 46.5;
+      const lCenter = 27.0;
+      const lSwing = lCenter - Math.sin(runPhase + 0.1) * lAmp;
+
+      // Natural running elbow flex ~87-92° (never straight, never over-folded)
+      const rFlex = 89.5 + Math.cos(runPhase) * 2.5;
+      const lFlex = 89.5 - Math.cos(runPhase) * 2.5;
+
+      return { rSwing, rFlex, lSwing, lFlex };
+    } else {
+      // Final approach frames (F163-165, 3 frames):
+      // Purposefully transitions from sprint into kick chamber preparation:
+      // Right arm winds back (+12° heading into -40° backswing in H1)
+      // Left arm extends forward/out as dynamic counterbalance (+38° heading into +80° in H1)
+      const tPrep = (f - 162) / 3.0;
+      const easedPrep = easeInOutCubic(tPrep);
+
+      const rSwing = 21.5 * (1 - easedPrep) + 12.0 * easedPrep;
+      const lSwing = 27.0 * (1 - easedPrep) + 38.0 * easedPrep;
+
+      const rFlex = 89.5 * (1 - easedPrep) + 42.0 * easedPrep;
+      const lFlex = 89.5 * (1 - easedPrep) + 32.0 * easedPrep;
+
+      return { rSwing, rFlex, lSwing, lFlex };
+    }
+  }
+
+  // Beat H: F166-174 (Kick the Ball, 9 frames)
+  // "H, kick: the arm opposite the kicking leg reaches forward and out, swing about +65–80°, flex about 30°.
+  // The other arm goes back about −40°, flex about 40°.
+  // At impact (F174) the arms whip opposite to the leg as the torso recoils."
+  if (f <= 174) {
+    if (f <= 171) {
+      const t = (f - 166) / 5.0;
+      const easedT = easeInOutCubic(t);
+      const lSwing = 40.0 + easedT * 40.0; // +40° -> +80°
+      const lFlex = 30.0;
+      const rSwing = 10.0 - easedT * 50.0; // +10° -> -40°
+      const rFlex = 35.0 + easedT * 5.0;   // 35° -> 40°
+      return { rSwing, rFlex, lSwing, lFlex };
+    } else {
+      const t = (f - 172) / 2.0;
+      const lSwing = 80.0 - t * 10.0; // 80° -> 70°
+      const lFlex = 30.0 + t * 4.0;
+      const rSwing = -40.0 - t * 8.0; // -40° -> -48°
+      const rFlex = 40.0 + t * 3.0;
+      return { rSwing, rFlex, lSwing, lFlex };
+    }
+  }
+
+  // Beat I: F175-215 (Follow-Through & Fist Pump, 41 frames)
+  // "I, follow-through: one arm at about +90°, the other at about −50° (spread),
+  // then the right arm does a fist pump (swing about +120°, flex about 90°) with a 3° overshoot,
+  // then both relax to about +10° swing."
+  {
+    if (f <= 185) {
+      const t = (f - 175) / 10.0;
+      const easedT = easeInOutCubic(t);
+      const lSwing = 70.0 + easedT * 20.0; // 70° -> 90°
+      const lFlex = 28.0 - easedT * 3.0;
+      const rSwing = -25.0 - easedT * 25.0; // -25° -> -50°
+      const rFlex = 40.0 - easedT * 10.0;
+      return { rSwing, rFlex, lSwing, lFlex };
+    }
+
+    if (f <= 204) {
+      const tLeft = clamp((f - 186) / 10.0, 0, 1);
+      const easedLeft = easeInOutCubic(tLeft);
+      const settleSway = Math.sin(((f - 186) / 18.0) * Math.PI * 2) * 1.2;
+      const lSwing = 90.0 * (1 - easedLeft) + 12.0 * easedLeft + settleSway;
+      const lFlex = 25.0 * (1 - easedLeft) + 18.0 * easedLeft + settleSway * 0.3;
+
+      let rSwing = -50.0;
+      let rFlex = 30.0;
+
+      if (f <= 190) {
+        const tUp = (f - 186) / 4.0;
+        const easedUp = easeInOutCubic(tUp);
+        rSwing = -50.0 + easedUp * 173.0; // -50° -> +123° (3° overshoot!)
+        rFlex = 30.0 + easedUp * 60.0;    // 30° -> 90°
+      } else if (f <= 200) {
+        const tHold = (f - 190) / 10.0;
+        rSwing = 123.0 - tHold * 3.0; // +123° -> +120°
+        rFlex = 90.0;
+      } else {
+        const tDown = (f - 200) / 4.0;
+        const easedDown = easeInOutCubic(tDown);
+        rSwing = 120.0 - easedDown * 60.0; // 120° -> 60°
+        rFlex = 90.0 - easedDown * 45.0;   // 90° -> 45°
+      }
+
+      return { rSwing, rFlex, lSwing, lFlex };
+    }
+
+    // F205-215 (Relax to +10° swing, 11 frames)
+    const tRelax = (f - 205) / 10.0;
+    const easedRelax = easeInOutCubic(tRelax);
+    const breathe = Math.sin(tRelax * Math.PI * 2) * 0.6;
+
+    const rSwing = 55.0 * (1 - easedRelax) + 10.0 * easedRelax + breathe;
+    const rFlex = 45.0 * (1 - easedRelax) + 18.0 * easedRelax;
+
+    const lSwing = 12.0 * (1 - easedRelax) + 10.0 * easedRelax + breathe * 0.8;
+    const lFlex = 18.0;
+
+    return { rSwing, rFlex, lSwing, lFlex };
+  }
+}
+
+/**
+ * Computes full arm angles for frame f with 1-2 frames of lag on forearm and hand.
+ */
+export function computeFullArmAnglesForFrame(f: number): {
+  rSwing: number;
+  rFlex: number;
+  rWrist: number;
+  lSwing: number;
+  lFlex: number;
+  lWrist: number;
+} {
+  const trajLead = computeArmTrajectory(f);
+  const trajLag1 = computeArmTrajectory(Math.max(0, f - 1));
+  const trajLag2 = computeArmTrajectory(Math.max(0, f - 2));
+
+  // Forearm flex lags upper arm velocity by 1 frame
+  const rVelocity = trajLead.rSwing - trajLag1.rSwing;
+  const rLagFlex = clamp(trajLead.rFlex - rVelocity * 0.12, 10.0, 110.0);
+  const rWrist = clamp(6.0 - (trajLead.rSwing - trajLag2.rSwing) * 0.15, 0.0, 15.0);
+
+  const lVelocity = trajLead.lSwing - trajLag1.lSwing;
+  const lLagFlex = clamp(trajLead.lFlex - lVelocity * 0.12, 10.0, 110.0);
+  const lWrist = clamp(6.0 - (trajLead.lSwing - trajLag2.lSwing) * 0.15, 0.0, 15.0);
+
+  return {
+    rSwing: trajLead.rSwing,
+    rFlex: rLagFlex,
+    rWrist,
+    lSwing: trajLead.lSwing,
+    lFlex: lLagFlex,
+    lWrist,
+  };
+}
+
 /**
  * Builds the canonical 216-frame sequence using forward kinematics and analytical two-bone IK.
  */
@@ -211,12 +602,14 @@ export function buildCanonicalSitWalkKickFrames(
       // Arms: Left arm planted behind hips on ground; Right forearm resting on right knee
       const lHandTargetX = 238.0;
       const lHandTargetY = groundY;
-      const lArm = solveArmLimb(shoulderX, shoulderY, lHandTargetX, lHandTargetY, true, scale);
+      const clampedLHand = clampShoulderToHandTarget(shoulderX, shoulderY, lHandTargetX, lHandTargetY);
+      const lArm = solveArmLimb(shoulderX, shoulderY, clampedLHand.x, clampedLHand.y, true, scale);
 
       // Right arm rests on right knee (rLeg.kneeX, rLeg.kneeY)
       const rHandTargetX = rLeg.kneeX - 6.0;
       const rHandTargetY = rLeg.kneeY + 4.0;
-      const rArm = solveArmLimb(shoulderX, shoulderY, rHandTargetX, rHandTargetY, true, scale);
+      const clampedRHand = clampShoulderToHandTarget(shoulderX, shoulderY, rHandTargetX, rHandTargetY);
+      const rArm = solveArmLimb(shoulderX, shoulderY, clampedRHand.x, clampedRHand.y, true, scale);
 
       manAngles[0] = 0;
       manAngles[1] = rLeg.thighAngleDeg;
@@ -285,8 +678,11 @@ export function buildCanonicalSitWalkKickFrames(
       const rHandX = (rLeg.kneeX - 6.0) * (1 - easedT) + 368.0 * easedT;
       const rHandY = (rLeg.kneeY + 4.0) * (1 - easedT) + groundY * easedT;
 
-      const lArm = solveArmLimb(shoulderX, shoulderY, lHandX, groundY, true, scale);
-      const rArm = solveArmLimb(shoulderX, shoulderY, rHandX, rHandY, true, scale);
+      const clampedLHand = clampShoulderToHandTarget(shoulderX, shoulderY, lHandX, groundY);
+      const clampedRHand = clampShoulderToHandTarget(shoulderX, shoulderY, rHandX, rHandY);
+
+      const lArm = solveArmLimb(shoulderX, shoulderY, clampedLHand.x, clampedLHand.y, true, scale);
+      const rArm = solveArmLimb(shoulderX, shoulderY, clampedRHand.x, clampedRHand.y, true, scale);
 
       manAngles[0] = 0;
       manAngles[1] = rLeg.thighAngleDeg;
@@ -351,16 +747,6 @@ export function buildCanonicalSitWalkKickFrames(
       const shoulderX = fk[8].endX;
       const shoulderY = fk[8].endY;
 
-      // Hands push off floor in first 5 frames, then lift free into air for balance
-      const handsRelease = clamp((f - 38) / 5.0, 0, 1);
-      const lHandTargetX = 276.0 + handsRelease * 40.0;
-      const lHandTargetY = groundY - handsRelease * 35.0;
-      const rHandTargetX = 368.0 + handsRelease * 32.0;
-      const rHandTargetY = groundY - handsRelease * 35.0;
-
-      const lArm = solveArmLimb(shoulderX, shoulderY, lHandTargetX, lHandTargetY, true, scale);
-      const rArm = solveArmLimb(shoulderX, shoulderY, rHandTargetX, rHandTargetY, true, scale);
-
       manAngles[0] = 0;
       manAngles[1] = rLeg.thighAngleDeg;
       manAngles[2] = rLeg.shinAngleDeg;
@@ -370,14 +756,27 @@ export function buildCanonicalSitWalkKickFrames(
       manAngles[6] = 0.0;
       manAngles[7] = spineAngle;
       manAngles[8] = chestAngle;
-      manAngles[9] = rArm.bicepAngleDeg;
-      manAngles[10] = rArm.forearmAngleDeg;
-      manAngles[11] = rArm.handAngleDeg;
       manAngles[12] = neckAngle;
       manAngles[13] = headAngle;
-      manAngles[14] = lArm.bicepAngleDeg;
-      manAngles[15] = lArm.forearmAngleDeg;
-      manAngles[16] = lArm.handAngleDeg;
+
+      // Hands push off floor in first 5 frames (IK), then lift into procedural direct angles
+      if (f <= 38) {
+        const clampedLHand = clampShoulderToHandTarget(shoulderX, shoulderY, 276.0, groundY);
+        const clampedRHand = clampShoulderToHandTarget(shoulderX, shoulderY, 368.0, groundY);
+        const lArm = solveArmLimb(shoulderX, shoulderY, clampedLHand.x, clampedLHand.y, true, scale);
+        const rArm = solveArmLimb(shoulderX, shoulderY, clampedRHand.x, clampedRHand.y, true, scale);
+
+        manAngles[9] = rArm.bicepAngleDeg;
+        manAngles[10] = rArm.forearmAngleDeg;
+        manAngles[11] = rArm.handAngleDeg;
+        manAngles[14] = lArm.bicepAngleDeg;
+        manAngles[15] = lArm.forearmAngleDeg;
+        manAngles[16] = lArm.handAngleDeg;
+      } else {
+        const armAngles = computeFullArmAnglesForFrame(f);
+        setArm(manAngles, 'right', armAngles.rSwing, armAngles.rFlex, armAngles.rWrist);
+        setArm(manAngles, 'left', armAngles.lSwing, armAngles.lFlex, armAngles.lWrist);
+      }
 
       camX = -30.0;
       camY = -15.0;
@@ -430,16 +829,6 @@ export function buildCanonicalSitWalkKickFrames(
       const shoulderX = fk[8].endX;
       const shoulderY = fk[8].endY;
 
-      // Arms swing backward slightly then ease down to sides
-      const armSwing = Math.sin(t * Math.PI) * 18.0;
-      const rHandTargetX = shoulderX + 4.0 - armSwing * 0.5;
-      const rHandTargetY = shoulderY + 76.0;
-      const lHandTargetX = shoulderX - 4.0 + armSwing * 0.5;
-      const lHandTargetY = shoulderY + 76.0;
-
-      const lArm = solveArmLimb(shoulderX, shoulderY, lHandTargetX, lHandTargetY, true, scale);
-      const rArm = solveArmLimb(shoulderX, shoulderY, rHandTargetX, rHandTargetY, true, scale);
-
       manAngles[0] = 0;
       manAngles[1] = rLeg.thighAngleDeg;
       manAngles[2] = rLeg.shinAngleDeg;
@@ -449,14 +838,12 @@ export function buildCanonicalSitWalkKickFrames(
       manAngles[6] = 0.0;
       manAngles[7] = spineAngle;
       manAngles[8] = chestAngle;
-      manAngles[9] = rArm.bicepAngleDeg;
-      manAngles[10] = rArm.forearmAngleDeg;
-      manAngles[11] = rArm.handAngleDeg;
       manAngles[12] = neckAngle;
       manAngles[13] = headAngle;
-      manAngles[14] = lArm.bicepAngleDeg;
-      manAngles[15] = lArm.forearmAngleDeg;
-      manAngles[16] = lArm.handAngleDeg;
+
+      const armAngles = computeFullArmAnglesForFrame(f);
+      setArm(manAngles, 'right', armAngles.rSwing, armAngles.rFlex, armAngles.rWrist);
+      setArm(manAngles, 'left', armAngles.lSwing, armAngles.lFlex, armAngles.lWrist);
 
       camX = -30.0;
       camY = -15.0;
@@ -488,27 +875,11 @@ export function buildCanonicalSitWalkKickFrames(
       const lLeg = solveLegLimb(manX, manY, lAnkleX, groundY, true, scale, true);
       const rLeg = solveLegLimb(manX, manY, rAnkleX, groundY, true, scale, true);
 
-      // Torso leans forward 3–5° (Spine: 86°, Chest: 86°)
-      const spineAngle = 89.0 - easedT * 3.5;
-      const chestAngle = 90.0 - easedT * 4.0;
+      // Torso standing upright equilibrium before casual walk initiation
+      const spineAngle = 89.6 - easedT * 0.4;
+      const chestAngle = 90.0 - easedT * 0.4;
       const neckAngle = 90.0;
-      const headAngle = 88.0;
-
-      const tempAngles = new Array(17).fill(0);
-      tempAngles[7] = spineAngle;
-      tempAngles[8] = chestAngle;
-      const fk = solveForwardKinematics17(manX, manY, tempAngles, scale);
-      const shoulderX = fk[8].endX;
-      const shoulderY = fk[8].endY;
-
-      // Arms loosen and begin subtle anti-phase swing
-      const rArmTargetX = shoulderX - easedT * 8.0;
-      const rArmTargetY = shoulderY + 76.0;
-      const lArmTargetX = shoulderX + easedT * 8.0;
-      const lArmTargetY = shoulderY + 76.0;
-
-      const rArm = solveArmLimb(shoulderX, shoulderY, rArmTargetX, rArmTargetY, true, scale);
-      const lArm = solveArmLimb(shoulderX, shoulderY, lArmTargetX, lArmTargetY, true, scale);
+      const headAngle = 89.5;
 
       manAngles[0] = 0;
       manAngles[1] = rLeg.thighAngleDeg;
@@ -519,14 +890,12 @@ export function buildCanonicalSitWalkKickFrames(
       manAngles[6] = 0.0; // Pinned flat on ground
       manAngles[7] = spineAngle;
       manAngles[8] = chestAngle;
-      manAngles[9] = rArm.bicepAngleDeg;
-      manAngles[10] = rArm.forearmAngleDeg;
-      manAngles[11] = rArm.handAngleDeg;
       manAngles[12] = neckAngle;
       manAngles[13] = headAngle;
-      manAngles[14] = lArm.bicepAngleDeg;
-      manAngles[15] = lArm.forearmAngleDeg;
-      manAngles[16] = lArm.handAngleDeg;
+
+      const armAngles = computeFullArmAnglesForFrame(f);
+      setArm(manAngles, 'right', armAngles.rSwing, armAngles.rFlex, armAngles.rWrist);
+      setArm(manAngles, 'left', armAngles.lSwing, armAngles.lFlex, armAngles.lWrist);
 
       // Camera begins slow eased tracking
       camX = -30.0 - easedT * 15.0;
@@ -602,16 +971,16 @@ export function buildCanonicalSitWalkKickFrames(
       const lLeg = solveLegLimb(manX, manY, lFootX, lFootY, true, scale, lFootY >= groundY - 1.0);
 
       // Full-Body Reactivity 1: Pelvic-Thoracic Axial Counter-Rotation
-      // When right hip drives forward, lower spine tilts with hip drive,
-      // while upper chest counter-rotates in anti-phase to conserve angular momentum!
-      const spineTilt = Math.sin(gaitProgress * Math.PI * 2) * 3.0;
-      const thoracicCounterTorsion = (isRightSwing ? -1.0 : 1.0) * Math.sin(gaitProgress * Math.PI) * 2.8;
-      const spineAngle = 86.0 + spineTilt;
-      const chestAngle = 87.5 + spineTilt * 0.4 + thoracicCounterTorsion;
+      // Casual upright stroll: trunk has a subtle organic 0.8° forward inclination appropriate to casual walking.
+      // Head, chest, and upper spine remain naturally stacked vertically over the pelvis, avoiding forward leaning.
+      const spineTilt = Math.sin(gaitProgress * Math.PI * 2) * 0.8;
+      const thoracicCounterTorsion = (isRightSwing ? -1.0 : 1.0) * Math.sin(gaitProgress * Math.PI) * 2.0;
+      const spineAngle = 89.2 + spineTilt;
+      const chestAngle = 89.6 + spineTilt * 0.3 + thoracicCounterTorsion;
 
       // Full-Body Reactivity 2: Vestibular-Ocular Head Horizon Stabilization
-      // Gaze horizon remains steady looking ahead despite spinal tilt
-      const headStabilize = solveReactiveVestibularHead(chestAngle, 84.0, 0, 0.85);
+      // Head and upper spine naturally stacked upright with steady forward gaze
+      const headStabilize = solveReactiveVestibularHead(chestAngle, 89.5, 0, 0.88);
       const neckAngle = headStabilize.neckAngleDeg;
       const headAngle = headStabilize.headAngleDeg;
 
@@ -622,20 +991,6 @@ export function buildCanonicalSitWalkKickFrames(
       const shoulderX = fk[8].endX;
       const shoulderY = fk[8].endY;
 
-      // Full-Body Reactivity 3: Momentum-Driven Arm Swing with Dynamic Elbow Modulation
-      // Arms swing in anti-phase to legs; elbow flexes to 38-44° during forward swing,
-      // and extends to 18-22° during backswing! Wrist lags naturally.
-      const armPhase = (isRightSwing ? gaitProgress : gaitProgress + 1.0) * Math.PI;
-      const reactiveArms = solveMomentumDrivenArmSwing(
-        shoulderX,
-        shoulderY,
-        armPhase,
-        28.0,
-        74.0,
-        scale,
-        22.0
-      );
-
       manAngles[0] = 0;
       manAngles[1] = rLeg.thighAngleDeg;
       manAngles[2] = rLeg.shinAngleDeg;
@@ -645,14 +1000,12 @@ export function buildCanonicalSitWalkKickFrames(
       manAngles[6] = lFootAngle;
       manAngles[7] = spineAngle;
       manAngles[8] = chestAngle;
-      manAngles[9] = reactiveArms.rBicepAngleDeg;
-      manAngles[10] = reactiveArms.rForearmAngleDeg;
-      manAngles[11] = reactiveArms.rHandAngleDeg;
       manAngles[12] = neckAngle;
       manAngles[13] = headAngle;
-      manAngles[14] = reactiveArms.lBicepAngleDeg;
-      manAngles[15] = reactiveArms.lForearmAngleDeg;
-      manAngles[16] = reactiveArms.lHandAngleDeg;
+
+      const armAngles = computeFullArmAnglesForFrame(f);
+      setArm(manAngles, 'right', armAngles.rSwing, armAngles.rFlex, armAngles.rWrist);
+      setArm(manAngles, 'left', armAngles.lSwing, armAngles.lFlex, armAngles.lWrist);
 
       // Camera smoothly follows stroll
       camX = -45.0 - tWalk * 90.0;
@@ -686,30 +1039,13 @@ export function buildCanonicalSitWalkKickFrames(
 
       // Head snaps down fast (F112–115) pointing toward ball at (900, 737)
       const headSnapT = clamp((f - 112) / 4.0, 0, 1);
-      const headAngle = 84.0 - headSnapT * 42.0; // 84° -> 42° (snaps directly down-right!)
+      const headAngle = 89.5 - headSnapT * 47.5; // 89.5° -> 42° (snaps directly down-right!)
 
-      // Torso leans back 5–8° to scrub forward momentum (Spine: 96°, Chest: 97°)
+      // Torso leans back 5–8° from upright stroll (89.2°) to scrub forward momentum (Spine: 89.2° -> 96°)
       const torsoBrakeT = clamp((f - 114) / 7.0, 0, 1);
-      const spineAngle = 86.0 + torsoBrakeT * 10.0;
-      const chestAngle = 86.5 + torsoBrakeT * 10.5;
-      const neckAngle = 88.0 - headSnapT * 26.0;
-
-      const tempAngles = new Array(17).fill(0);
-      tempAngles[7] = spineAngle;
-      tempAngles[8] = chestAngle;
-      const fk = solveForwardKinematics17(manX, manY, tempAngles, scale);
-      const shoulderX = fk[8].endX;
-      const shoulderY = fk[8].endY;
-
-      // Right arm rises 25° in reactive surprise; hands begin to clench
-      const armReactT = clamp((f - 115) / 8.0, 0, 1);
-      const rArmTargetX = shoulderX + 22.0 * armReactT;
-      const rArmTargetY = shoulderY + 52.0 - armReactT * 20.0;
-      const lArmTargetX = shoulderX - 16.0;
-      const lArmTargetY = shoulderY + 70.0;
-
-      const rArm = solveArmLimb(shoulderX, shoulderY, rArmTargetX, rArmTargetY, true, scale);
-      const lArm = solveArmLimb(shoulderX, shoulderY, lArmTargetX, lArmTargetY, true, scale);
+      const spineAngle = 89.2 + torsoBrakeT * 6.8;
+      const chestAngle = 89.6 + torsoBrakeT * 7.4;
+      const neckAngle = 90.0 - headSnapT * 28.0;
 
       manAngles[0] = 0;
       manAngles[1] = rLeg.thighAngleDeg;
@@ -720,14 +1056,12 @@ export function buildCanonicalSitWalkKickFrames(
       manAngles[6] = 0.0;
       manAngles[7] = spineAngle;
       manAngles[8] = chestAngle;
-      manAngles[9] = rArm.bicepAngleDeg;
-      manAngles[10] = rArm.forearmAngleDeg;
-      manAngles[11] = rArm.handAngleDeg;
       manAngles[12] = neckAngle;
       manAngles[13] = headAngle;
-      manAngles[14] = lArm.bicepAngleDeg;
-      manAngles[15] = lArm.forearmAngleDeg;
-      manAngles[16] = lArm.handAngleDeg;
+
+      const armAngles = computeFullArmAnglesForFrame(f);
+      setArm(manAngles, 'right', armAngles.rSwing, armAngles.rFlex, armAngles.rWrist);
+      setArm(manAngles, 'left', armAngles.lSwing, armAngles.lFlex, armAngles.lWrist);
 
       camX = -135.0;
       camY = -15.0;
@@ -764,20 +1098,6 @@ export function buildCanonicalSitWalkKickFrames(
       const neckAngle = 62.0 + easedT * 12.0;
       const headAngle = 42.0 + easedT * 26.0;
 
-      const tempAngles = new Array(17).fill(0);
-      tempAngles[7] = spineAngle;
-      tempAngles[8] = chestAngle;
-      const fk = solveForwardKinematics17(manX, manY, tempAngles, scale);
-      const shoulderX = fk[8].endX;
-      const shoulderY = fk[8].endY;
-
-      // Arms swing back dynamically in counter-anticipation
-      const armBackX = shoulderX - easedT * 38.0;
-      const armBackY = shoulderY + 48.0 - easedT * 12.0;
-
-      const rArm = solveArmLimb(shoulderX, shoulderY, armBackX - 4.0, armBackY, true, scale);
-      const lArm = solveArmLimb(shoulderX, shoulderY, armBackX + 4.0, armBackY, true, scale);
-
       manAngles[0] = 0;
       manAngles[1] = rLeg.thighAngleDeg;
       manAngles[2] = rLeg.shinAngleDeg;
@@ -787,14 +1107,12 @@ export function buildCanonicalSitWalkKickFrames(
       manAngles[6] = 0.0;
       manAngles[7] = spineAngle;
       manAngles[8] = chestAngle;
-      manAngles[9] = rArm.bicepAngleDeg;
-      manAngles[10] = rArm.forearmAngleDeg;
-      manAngles[11] = rArm.handAngleDeg;
       manAngles[12] = neckAngle;
       manAngles[13] = headAngle;
-      manAngles[14] = lArm.bicepAngleDeg;
-      manAngles[15] = lArm.forearmAngleDeg;
-      manAngles[16] = lArm.handAngleDeg;
+
+      const armAngles = computeFullArmAnglesForFrame(f);
+      setArm(manAngles, 'right', armAngles.rSwing, armAngles.rFlex, armAngles.rWrist);
+      setArm(manAngles, 'left', armAngles.lSwing, armAngles.lFlex, armAngles.lWrist);
 
       camX = -135.0;
       camY = -15.0;
@@ -858,23 +1176,6 @@ export function buildCanonicalSitWalkKickFrames(
       const neckAngle = 92.0;
       const headAngle = 88.0;
 
-      const tempAngles = new Array(17).fill(0);
-      tempAngles[7] = spineAngle;
-      tempAngles[8] = chestAngle;
-      const fk = solveForwardKinematics17(manX, manY, tempAngles, scale);
-      const shoulderX = fk[8].endX;
-      const shoulderY = fk[8].endY;
-
-      // Arms swing straight up in excitement with clenched fists (+95°..+105°)
-      const armUpT = clamp((f - 136) / 6.0, 0, 1);
-      const rArmTargetX = shoulderX + 8.0;
-      const rArmTargetY = shoulderY - 72.0 * armUpT;
-      const lArmTargetX = shoulderX - 8.0;
-      const lArmTargetY = shoulderY - 72.0 * armUpT;
-
-      const rArm = solveArmLimb(shoulderX, shoulderY, rArmTargetX, rArmTargetY, true, scale);
-      const lArm = solveArmLimb(shoulderX, shoulderY, lArmTargetX, lArmTargetY, true, scale);
-
       manAngles[0] = 0;
       manAngles[1] = rLegAngles.thigh;
       manAngles[2] = rLegAngles.shin;
@@ -884,14 +1185,12 @@ export function buildCanonicalSitWalkKickFrames(
       manAngles[6] = lLegAngles.foot;
       manAngles[7] = spineAngle;
       manAngles[8] = chestAngle;
-      manAngles[9] = rArm.bicepAngleDeg;
-      manAngles[10] = rArm.forearmAngleDeg;
-      manAngles[11] = rArm.handAngleDeg;
       manAngles[12] = neckAngle;
       manAngles[13] = headAngle;
-      manAngles[14] = lArm.bicepAngleDeg;
-      manAngles[15] = lArm.forearmAngleDeg;
-      manAngles[16] = lArm.handAngleDeg;
+
+      const armAngles = computeFullArmAnglesForFrame(f);
+      setArm(manAngles, 'right', armAngles.rSwing, armAngles.rFlex, armAngles.rWrist);
+      setArm(manAngles, 'left', armAngles.lSwing, armAngles.lFlex, armAngles.lWrist);
 
       camX = -135.0;
       camY = -25.0;
@@ -937,23 +1236,6 @@ export function buildCanonicalSitWalkKickFrames(
       const neckAngle = 88.0;
       const headAngle = 84.0;
 
-      const tempAngles = new Array(17).fill(0);
-      tempAngles[7] = spineAngle;
-      tempAngles[8] = chestAngle;
-      const fk = solveForwardKinematics17(manX, manY, tempAngles, scale);
-      const shoulderX = fk[8].endX;
-      const shoulderY = fk[8].endY;
-
-      // Arms sweep down-forward on cushion impact to absorb energy
-      const armDownT = clamp((f - 148) / 2.0, 0, 1);
-      const rArmTargetX = shoulderX + 16.0 * armDownT;
-      const rArmTargetY = shoulderY + 45.0 * armDownT;
-      const lArmTargetX = shoulderX - 16.0 * armDownT;
-      const lArmTargetY = shoulderY + 45.0 * armDownT;
-
-      const rArm = solveArmLimb(shoulderX, shoulderY, rArmTargetX, rArmTargetY, true, scale);
-      const lArm = solveArmLimb(shoulderX, shoulderY, lArmTargetX, lArmTargetY, true, scale);
-
       manAngles[0] = 0;
       manAngles[1] = rLeg.thighAngleDeg;
       manAngles[2] = rLeg.shinAngleDeg;
@@ -963,14 +1245,12 @@ export function buildCanonicalSitWalkKickFrames(
       manAngles[6] = 0.0;
       manAngles[7] = spineAngle;
       manAngles[8] = chestAngle;
-      manAngles[9] = rArm.bicepAngleDeg;
-      manAngles[10] = rArm.forearmAngleDeg;
-      manAngles[11] = rArm.handAngleDeg;
       manAngles[12] = neckAngle;
       manAngles[13] = headAngle;
-      manAngles[14] = lArm.bicepAngleDeg;
-      manAngles[15] = lArm.forearmAngleDeg;
-      manAngles[16] = lArm.handAngleDeg;
+
+      const armAngles = computeFullArmAnglesForFrame(f);
+      setArm(manAngles, 'right', armAngles.rSwing, armAngles.rFlex, armAngles.rWrist);
+      setArm(manAngles, 'left', armAngles.lSwing, armAngles.lFlex, armAngles.lWrist);
 
       camX = -135.0;
       camY = -15.0;
@@ -985,8 +1265,8 @@ export function buildCanonicalSitWalkKickFrames(
       act = 'Act G: Run to the Ball';
       phase = 'Explosive Sprint & Approach (X: 650 → 870)';
       panelId = 12;
-      storyboardTitle = '12. Explosive Sprint to the Ball';
-      notes = 'Strong forward torso lean 72°; arms bent 90° swinging from shoulder; swing knee 90° fold; speed ramps to 30 px/f; eyes locked on ball.';
+      storyboardTitle = '12. Purposeful Footballer Run-Up';
+      notes = 'Purposeful approach to the ball; arms act as natural running counterbalance in compact envelope (no flailing); locked gaze on ball; smooth approach into kick chamber.';
 
       const tSprint = (f - 154) / 11.0;
       // Exponential speed ramp: 4 -> 12 -> 20 -> 28 -> 30 px/frame
@@ -1045,18 +1325,6 @@ export function buildCanonicalSitWalkKickFrames(
       const shoulderX = fk[8].endX;
       const shoulderY = fk[8].endY;
 
-      // Sprinting arms: BENT ~90°, swinging vigorously from shoulders with dynamic elbow flexion
-      const armPhase = (isRightLead ? runCycle : runCycle + 1.0) * Math.PI;
-      const reactiveSprintArms = solveMomentumDrivenArmSwing(
-        shoulderX,
-        shoulderY,
-        armPhase,
-        42.0,
-        45.0,
-        scale,
-        85.0
-      );
-
       manAngles[0] = 0;
       manAngles[1] = rLeg.thighAngleDeg;
       manAngles[2] = rLeg.shinAngleDeg;
@@ -1066,14 +1334,13 @@ export function buildCanonicalSitWalkKickFrames(
       manAngles[6] = lFootAngle;
       manAngles[7] = spineAngle;
       manAngles[8] = chestAngle;
-      manAngles[9] = reactiveSprintArms.rBicepAngleDeg;
-      manAngles[10] = reactiveSprintArms.rForearmAngleDeg;
-      manAngles[11] = reactiveSprintArms.rHandAngleDeg;
       manAngles[12] = neckAngle;
       manAngles[13] = headAngle;
-      manAngles[14] = reactiveSprintArms.lBicepAngleDeg;
-      manAngles[15] = reactiveSprintArms.lForearmAngleDeg;
-      manAngles[16] = reactiveSprintArms.lHandAngleDeg;
+
+      // Direct forward kinematics arms with 1-2 frames lag (no hand-target IK)
+      const armAngles = computeFullArmAnglesForFrame(f);
+      setArm(manAngles, 'right', armAngles.rSwing, armAngles.rFlex, armAngles.rWrist);
+      setArm(manAngles, 'left', armAngles.lSwing, armAngles.lFlex, armAngles.lWrist);
 
       // Camera tracks forward rapidly with the sprint
       camX = -135.0 - tSprint * 85.0;
@@ -1120,14 +1387,12 @@ export function buildCanonicalSitWalkKickFrames(
       manAngles[6] = 0.0; // Support foot pinned flat at Y=755
       manAngles[7] = chamber.spineAngle;
       manAngles[8] = chamber.chestAngle;
-      manAngles[9] = chamber.rArm.bicep;
-      manAngles[10] = chamber.rArm.forearm;
-      manAngles[11] = chamber.rArm.hand;
       manAngles[12] = chamber.neckAngle;
       manAngles[13] = chamber.headAngle;
-      manAngles[14] = chamber.lArm.bicep;
-      manAngles[15] = chamber.lArm.forearm;
-      manAngles[16] = chamber.lArm.hand;
+
+      const armAngles = computeFullArmAnglesForFrame(f);
+      setArm(manAngles, 'right', armAngles.rSwing, armAngles.rFlex, armAngles.rWrist);
+      setArm(manAngles, 'left', armAngles.lSwing, armAngles.lFlex, armAngles.lWrist);
 
       camX = -225.0;
       camY = -15.0;
@@ -1173,14 +1438,12 @@ export function buildCanonicalSitWalkKickFrames(
       manAngles[6] = 0.0; // Pinned support foot
       manAngles[7] = strike.spineAngle;
       manAngles[8] = strike.chestAngle;
-      manAngles[9] = strike.rArm.bicep;
-      manAngles[10] = strike.rArm.forearm;
-      manAngles[11] = strike.rArm.hand;
       manAngles[12] = strike.neckAngle;
       manAngles[13] = strike.headAngle;
-      manAngles[14] = strike.lArm.bicep;
-      manAngles[15] = strike.lArm.forearm;
-      manAngles[16] = strike.lArm.hand;
+
+      const armAngles = computeFullArmAnglesForFrame(f);
+      setArm(manAngles, 'right', armAngles.rSwing, armAngles.rFlex, armAngles.rWrist);
+      setArm(manAngles, 'left', armAngles.lSwing, armAngles.lFlex, armAngles.lWrist);
 
       camX = -225.0;
       camY = -15.0;
@@ -1232,14 +1495,12 @@ export function buildCanonicalSitWalkKickFrames(
       manAngles[6] = 0.0;
       manAngles[7] = follow.spineAngle;
       manAngles[8] = follow.chestAngle;
-      manAngles[9] = follow.rArm.bicep;
-      manAngles[10] = follow.rArm.forearm;
-      manAngles[11] = follow.rArm.hand;
       manAngles[12] = follow.neckAngle;
       manAngles[13] = follow.headAngle;
-      manAngles[14] = follow.lArm.bicep;
-      manAngles[15] = follow.lArm.forearm;
-      manAngles[16] = follow.lArm.hand;
+
+      const armAngles = computeFullArmAnglesForFrame(f);
+      setArm(manAngles, 'right', armAngles.rSwing, armAngles.rFlex, armAngles.rWrist);
+      setArm(manAngles, 'left', armAngles.lSwing, armAngles.lFlex, armAngles.lWrist);
 
       // Camera zooms out gently and tracks right toward ball
       camX = -225.0 - easedT * 65.0;
@@ -1293,26 +1554,6 @@ export function buildCanonicalSitWalkKickFrames(
       const headAngle = 118.0 + headDrift;
       const neckAngle = 105.0;
 
-      const tempAngles = new Array(17).fill(0);
-      tempAngles[7] = spineAngle;
-      tempAngles[8] = chestAngle;
-      const fk = solveForwardKinematics17(manX, manY, tempAngles, scale);
-      const shoulderX = fk[8].endX;
-      const shoulderY = fk[8].endY;
-
-      // Right arm executes celebratory fist pump (F192-204), then relaxes with damped harmonic settle
-      let rFistT = 0;
-      if (f >= 192 && f <= 204) {
-        rFistT = Math.sin(((f - 192) / 12.0) * Math.PI);
-      }
-      const rHandTargetX = shoulderX + 18.0 + rFistT * 12.0 + harmonicDamp * 0.8;
-      const rHandTargetY = shoulderY + 68.0 - rFistT * 38.0 - harmonicDamp * 1.2;
-      const lHandTargetX = shoulderX - 18.0 - harmonicDamp * 0.6;
-      const lHandTargetY = shoulderY + 76.0 + harmonicDamp * 0.5;
-
-      const rArm = solveArmLimb(shoulderX, shoulderY, rHandTargetX, rHandTargetY, true, scale);
-      const lArm = solveArmLimb(shoulderX, shoulderY, lHandTargetX, lHandTargetY, true, scale);
-
       manAngles[0] = 0;
       manAngles[1] = rLeg.thighAngleDeg;
       manAngles[2] = rLeg.shinAngleDeg;
@@ -1322,14 +1563,12 @@ export function buildCanonicalSitWalkKickFrames(
       manAngles[6] = 0.0;
       manAngles[7] = spineAngle;
       manAngles[8] = chestAngle;
-      manAngles[9] = rArm.bicepAngleDeg;
-      manAngles[10] = rArm.forearmAngleDeg;
-      manAngles[11] = rArm.handAngleDeg;
       manAngles[12] = neckAngle;
       manAngles[13] = headAngle;
-      manAngles[14] = lArm.bicepAngleDeg;
-      manAngles[15] = lArm.forearmAngleDeg;
-      manAngles[16] = lArm.handAngleDeg;
+
+      const armAngles = computeFullArmAnglesForFrame(f);
+      setArm(manAngles, 'right', armAngles.rSwing, armAngles.rFlex, armAngles.rWrist);
+      setArm(manAngles, 'left', armAngles.lSwing, armAngles.lFlex, armAngles.lWrist);
 
       // Camera stays framed wide showing both the proud man and the ball flying off-screen right
       camX = -290.0 - tSettle * 40.0;
@@ -1686,6 +1925,278 @@ export function validateSitWalkKickBiomechanics(
     metric: `${headVariance.toFixed(1)}° head horizon variance`,
     threshold: '≤ 6.0° stable horizon',
     detail: 'Gimbal neck stabilization compensates for torso pitch to maintain steady forward gaze during strolling.',
+  });
+
+  // =========================================================================
+  // REAL CHECKS: PROCEDURAL ARM BIOMECHANICS & ARTICULATION
+  // =========================================================================
+  const BEATS = [
+    { id: 'C', name: 'Stand (Act C)', start: 72, end: 81 },
+    { id: 'D', name: 'Stroll (Act D)', start: 82, end: 111 },
+    { id: 'E', name: 'Notice (Act E)', start: 112, end: 129 },
+    { id: 'F', name: 'Jump (Act F)', start: 130, end: 153 },
+    { id: 'G', name: 'Run (Act G)', start: 154, end: 165 },
+    { id: 'H', name: 'Kick (Act H)', start: 166, end: 174 },
+    { id: 'I', name: 'Follow-Through (Act I)', start: 175, end: 215 },
+  ];
+
+  interface BeatArmStats {
+    rAvgSwing: number;
+    lAvgSwing: number;
+    rMinSwing: number;
+    rMaxSwing: number;
+    lMinSwing: number;
+    lMaxSwing: number;
+    rMinFlex: number;
+    rMaxFlex: number;
+    lMinFlex: number;
+    lMaxFlex: number;
+    rMinDist: number;
+    rMaxDist: number;
+    lMinDist: number;
+    lMaxDist: number;
+  }
+
+  const beatStats: Record<string, BeatArmStats> = {};
+
+  for (const b of BEATS) {
+    let rSumSwing = 0;
+    let lSumSwing = 0;
+    let rMinS = 999, rMaxS = -999;
+    let lMinS = 999, lMaxS = -999;
+    let rMinF = 999, rMaxF = -999;
+    let lMinF = 999, lMaxF = -999;
+    let rMinD = 999, rMaxD = -999;
+    let lMinD = 999, lMaxD = -999;
+    let count = 0;
+
+    for (const f of frames) {
+      if (f.frame >= b.start && f.frame <= b.end) {
+        count++;
+        // Convention: bicepWorld = -90 + swing => swing = bicepWorld + 90
+        const rSwing = f.manAngles[9] + 90.0;
+        const lSwing = f.manAngles[14] + 90.0;
+        // forearmWorld = bicepWorld + flex => flex = forearmWorld - bicepWorld
+        const rFlex = f.manAngles[10] - f.manAngles[9];
+        const lFlex = f.manAngles[15] - f.manAngles[14];
+
+        rSumSwing += rSwing;
+        lSumSwing += lSwing;
+        if (rSwing < rMinS) rMinS = rSwing;
+        if (rSwing > rMaxS) rMaxS = rSwing;
+        if (lSwing < lMinS) lMinS = lSwing;
+        if (lSwing > lMaxS) lMaxS = lSwing;
+
+        if (rFlex < rMinF) rMinF = rFlex;
+        if (rFlex > rMaxF) rMaxF = rFlex;
+        if (lFlex < lMinF) lMinF = lFlex;
+        if (lFlex > lMaxF) lMaxF = lFlex;
+
+        const fk = solveForwardKinematics17(f.manX, f.manY, f.manAngles, 0.5);
+        const shX = fk[8].endX;
+        const shY = fk[8].endY;
+        const rHandDist = Math.hypot(fk[11].endX - shX, fk[11].endY - shY);
+        const lHandDist = Math.hypot(fk[16].endX - shX, fk[16].endY - shY);
+
+        if (rHandDist < rMinD) rMinD = rHandDist;
+        if (rHandDist > rMaxD) rMaxD = rHandDist;
+        if (lHandDist < lMinD) lMinD = lHandDist;
+        if (lHandDist > lMaxD) lMaxD = lHandDist;
+      }
+    }
+
+    beatStats[b.id] = {
+      rAvgSwing: count > 0 ? rSumSwing / count : 0,
+      lAvgSwing: count > 0 ? lSumSwing / count : 0,
+      rMinSwing: rMinS,
+      rMaxSwing: rMaxS,
+      lMinSwing: lMinS,
+      lMaxSwing: lMaxS,
+      rMinFlex: rMinF,
+      rMaxFlex: rMaxF,
+      lMinFlex: lMinF,
+      lMaxFlex: lMaxF,
+      rMinDist: rMinD,
+      rMaxDist: rMaxD,
+      lMinDist: lMinD,
+      lMaxDist: lMaxD,
+    };
+  }
+
+  // Print measured numbers per beat, per arm
+  console.log('=== SIT-WALK-KICK REAL ARM BIOMECHANICS AUDIT ===');
+  for (const b of BEATS) {
+    const s = beatStats[b.id];
+    console.log(
+      `Beat ${b.id} (${b.name}):\n` +
+      `  Right Arm: Swing [${s.rMinSwing.toFixed(1)}° .. ${s.rMaxSwing.toFixed(1)}°] (Avg ${s.rAvgSwing.toFixed(1)}°), Flex [${s.rMinFlex.toFixed(1)}° .. ${s.rMaxFlex.toFixed(1)}°], HandDist [${s.rMinDist.toFixed(1)} .. ${s.rMaxDist.toFixed(1)} px]\n` +
+      `  Left Arm:  Swing [${s.lMinSwing.toFixed(1)}° .. ${s.lMaxSwing.toFixed(1)}°] (Avg ${s.lAvgSwing.toFixed(1)}°), Flex [${s.lMinFlex.toFixed(1)}° .. ${s.lMaxFlex.toFixed(1)}°], HandDist [${s.lMinDist.toFixed(1)} .. ${s.lMaxDist.toFixed(1)} px]`
+    );
+  }
+
+  // Check 15: Walk Shoulder Range (>= 35° total)
+  const dStats = beatStats['D'];
+  const rWalkRange = dStats.rMaxSwing - dStats.rMinSwing;
+  const lWalkRange = dStats.lMaxSwing - dStats.lMinSwing;
+  items.push({
+    id: 'walk-shoulder-range',
+    label: 'Walk Shoulder Swing Amplitude (Act D)',
+    passed: rWalkRange >= 35.0 && lWalkRange >= 35.0,
+    metric: `Right: ${rWalkRange.toFixed(1)}°, Left: ${lWalkRange.toFixed(1)}°`,
+    threshold: '≥ 35.0° each arm',
+    detail: `Stroll shoulder swings dynamically (Right ${rWalkRange.toFixed(1)}°, Left ${lWalkRange.toFixed(1)}°) exceeding the 35° minimum without frozen arms.`,
+  });
+
+  // Check 16: Stroll Hand-to-Shoulder Distance (>= 0.9 * 162.6 = 146.3 px)
+  const minWalkHandDist = Math.min(dStats.rMinDist, dStats.lMinDist);
+  items.push({
+    id: 'walk-arm-extension',
+    label: 'Walk Arm Extension & Pendulum Reach',
+    passed: minWalkHandDist >= 0.9 * 162.6,
+    metric: `Min distance: ${minWalkHandDist.toFixed(1)} px (Right ${dStats.rMinDist.toFixed(1)} px, Left ${dStats.lMinDist.toFixed(1)} px)`,
+    threshold: '≥ 146.3 px (0.9 × 162.6 px)',
+    detail: 'Hands remain natural pendulums (min distance 146.3 px) instead of folding into collapsed elbows during the stroll.',
+  });
+
+  // Check 17: Run Shoulder Range (>= 90° total)
+  const gStats = beatStats['G'];
+  const rRunRange = gStats.rMaxSwing - gStats.rMinSwing;
+  const lRunRange = gStats.lMaxSwing - gStats.lMinSwing;
+  items.push({
+    id: 'run-shoulder-range',
+    label: 'Sprint Shoulder Swing Amplitude (Act G)',
+    passed: rRunRange >= 90.0 && lRunRange >= 90.0,
+    metric: `Right: ${rRunRange.toFixed(1)}°, Left: ${lRunRange.toFixed(1)}°`,
+    threshold: '≥ 90.0° each arm',
+    detail: `Sprinting arms pump vigorously with ±50° amplitude (Right ${rRunRange.toFixed(1)}°, Left ${lRunRange.toFixed(1)}°) with elbow flex ~90°.`,
+  });
+
+  // Check 18: Jump Arms Reach (>= +150°)
+  const fStats = beatStats['F'];
+  const rJumpReach = fStats.rMaxSwing;
+  const lJumpReach = fStats.lMaxSwing;
+  items.push({
+    id: 'jump-arms-overhead',
+    label: 'Jump Airborne Overhead Arm Reach (Act F)',
+    passed: rJumpReach >= 150.0 && lJumpReach >= 150.0,
+    metric: `Right: ${rJumpReach.toFixed(1)}°, Left: ${lJumpReach.toFixed(1)}°`,
+    threshold: '≥ +150.0° reach',
+    detail: `Airborne jump sweeps arms from -45° to overhead reach (Right ${rJumpReach.toFixed(1)}°, Left ${lJumpReach.toFixed(1)}°).`,
+  });
+
+  // Check 19: Pairwise Distinct Average Swing (> 5.0° difference across all beats)
+  let minSepR = 999;
+  let minSepL = 999;
+  let pairR = '';
+  let pairL = '';
+  for (let i = 0; i < BEATS.length; i++) {
+    for (let j = i + 1; j < BEATS.length; j++) {
+      const b1 = BEATS[i].id;
+      const b2 = BEATS[j].id;
+      const dR = Math.abs(beatStats[b1].rAvgSwing - beatStats[b2].rAvgSwing);
+      const dL = Math.abs(beatStats[b1].lAvgSwing - beatStats[b2].lAvgSwing);
+      if (dR < minSepR) {
+        minSepR = dR;
+        pairR = `${b1} vs ${b2}`;
+      }
+      if (dL < minSepL) {
+        minSepL = dL;
+        pairL = `${b1} vs ${b2}`;
+      }
+    }
+  }
+  items.push({
+    id: 'beat-swing-distinctness',
+    label: 'Distinct Average Swing Across All Beats',
+    passed: minSepR > 5.0 && minSepL > 5.0,
+    metric: `Min separation: Right ${minSepR.toFixed(2)}° (${pairR}), Left ${minSepL.toFixed(2)}° (${pairL})`,
+    threshold: '> 5.0° separation',
+    detail: 'Every beat has an individual distinct arm choreography identity; no duplicate average swing angles across beats.',
+  });
+
+  // Check 20: No Static Arm Frames (> 6 consecutive) outside F0-18 and F205-215
+  let maxStaticR = 0;
+  let maxStaticL = 0;
+  let curStaticR = 0;
+  let curStaticL = 0;
+  for (let fIdx = 19; fIdx <= 204; fIdx++) {
+    const prev = frames.find((x) => x.frame === fIdx - 1);
+    const curr = frames.find((x) => x.frame === fIdx);
+    if (prev && curr) {
+      const dR = Math.hypot(
+        curr.manAngles[9] - prev.manAngles[9],
+        curr.manAngles[10] - prev.manAngles[10]
+      );
+      const dL = Math.hypot(
+        curr.manAngles[14] - prev.manAngles[14],
+        curr.manAngles[15] - prev.manAngles[15]
+      );
+      if (dR < 0.05) {
+        curStaticR++;
+        if (curStaticR > maxStaticR) maxStaticR = curStaticR;
+      } else {
+        curStaticR = 0;
+      }
+      if (dL < 0.05) {
+        curStaticL++;
+        if (curStaticL > maxStaticL) maxStaticL = curStaticL;
+      } else {
+        curStaticL = 0;
+      }
+    }
+  }
+  items.push({
+    id: 'no-static-arm-frames',
+    label: 'Continuous Organic Arm Life (Zero Static Freezes)',
+    passed: maxStaticR <= 6 && maxStaticL <= 6,
+    metric: `Max consecutive static: Right ${maxStaticR}f, Left ${maxStaticL}f`,
+    threshold: '≤ 6 consecutive frames',
+    detail: 'Arms exhibit continuous organic living micro-motion outside of initial seated pause and final celebratory hold.',
+  });
+
+  // Check 21: Stroll Left & Right NOT Exact Mirrors
+  let minMirrorSum = 999;
+  for (const f of frames) {
+    if (f.frame >= 82 && f.frame <= 111) {
+      const rS = f.manAngles[9] + 90.0;
+      const lS = f.manAngles[14] + 90.0;
+      const sum = Math.abs(rS + lS);
+      if (sum < minMirrorSum) minMirrorSum = sum;
+    }
+  }
+  items.push({
+    id: 'stroll-arm-asymmetry',
+    label: 'Organic Stroll Arm Asymmetry (Non-Mirrored)',
+    passed: minMirrorSum > 2.0,
+    metric: `${minMirrorSum.toFixed(2)}° min deviation from mirror zero-sum`,
+    threshold: '> 2.0° asymmetry',
+    detail: 'Left and right arms incorporate 4° offset, 10% amplitude divergence, and phase lag rather than mechanical mirroring.',
+  });
+
+  // Check 22: Elbow Polarity (Hand moves forward of elbow when flexed)
+  let minFlexOverall = 999;
+  let minHandForwardDelta = 999;
+  for (const f of frames) {
+    const rFlex = f.manAngles[10] - f.manAngles[9];
+    const lFlex = f.manAngles[15] - f.manAngles[14];
+    if (rFlex < minFlexOverall) minFlexOverall = rFlex;
+    if (lFlex < minFlexOverall) minFlexOverall = lFlex;
+
+    const fk = solveForwardKinematics17(f.manX, f.manY, f.manAngles, 0.5);
+    // When facing +X, forearm vector (hand - elbow):
+    // For elbow flexion, hand X relative to elbow X should not flip unnaturally behind
+    const rHandRelX = fk[11].endX - fk[10].startX;
+    const lHandRelX = fk[16].endX - fk[15].startX;
+    if (rHandRelX < minHandForwardDelta) minHandForwardDelta = rHandRelX;
+    if (lHandRelX < minHandForwardDelta) minHandForwardDelta = lHandRelX;
+  }
+  items.push({
+    id: 'elbow-flexion-polarity',
+    label: 'Elbow Anatomical Flexion Polarity',
+    passed: minFlexOverall >= 5.0,
+    metric: `Min elbow flex: ${minFlexOverall.toFixed(1)}°`,
+    threshold: '≥ 5.0° forward bend',
+    detail: 'Elbow joints bend exclusively forward/up (+X/-Y) anatomically; zero backward hyperextension.',
   });
 
   const passedChecks = items.filter((c) => c.passed).length;

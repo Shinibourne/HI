@@ -108,3 +108,42 @@ export function validateHumanLeg(
       : undefined,
   };
 }
+
+import {
+  buildCanonicalSitWalkKickFrames,
+  validateSitWalkKickBiomechanics,
+} from '../src/lib/sitWalkKickBallFrames';
+
+export function runSitWalkKickAudit(): boolean {
+  console.log('\n========================================');
+  console.log('RUNNING MAN GET UP WALK AND KICK BIOMECHANICS AUDIT');
+  console.log('========================================\n');
+
+  const frames = buildCanonicalSitWalkKickFrames();
+  const audit = validateSitWalkKickBiomechanics(frames);
+
+  console.log('\n--- AUDIT ITEM METRICS & MEASURED VALUES ---');
+  for (const item of audit.items) {
+    const icon = item.passed ? '✓' : '✗';
+    console.log(`[${icon}] ${item.label}: ${item.metric} (Threshold: ${item.threshold})`);
+    if (!item.passed) {
+      console.error(`FAILED CHECK: ${item.id} - ${item.detail}`);
+    }
+  }
+
+  console.log(`\nOverall Result: ${audit.passedChecks}/${audit.totalChecks} checks passed.`);
+  if (!audit.passed) {
+    console.error('FATAL: Biomechanical validation failed!');
+    return false;
+  }
+  return true;
+}
+
+// Run audit if invoked directly
+if (import.meta.url === `file://${process.argv[1]}`) {
+  const success = runSitWalkKickAudit();
+  if (!success) {
+    process.exit(1);
+  }
+}
+
