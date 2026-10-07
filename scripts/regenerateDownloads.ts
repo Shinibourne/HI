@@ -7,6 +7,7 @@ import {
   synthesizeSpeedStrengthStknds,
   synthesizePhantomShadowboxStknds,
 } from '../src/lib/stkndsCodec';
+import { synthesizeSitWalkKickStknds } from '../src/lib/sitWalkKickBallFrames';
 
 async function main() {
   const compressed27 = fs.readFileSync('public/templates/rpoject5.stknds');
@@ -205,7 +206,30 @@ async function main() {
   fs.writeFileSync('public/downloads/phantom_shadowbox_24fps_147f.stknds', phantom24Baked);
   fs.writeFileSync('public/downloads/phantom_shadowbox_24fps_79f.stknds', phantom24Baked); // backwards compat
 
-  console.log('Successfully regenerated all .stknds binaries including 75-frame Storyboard Master in public/downloads/!');
+  // 6. The Stroll & Kick (24 FPS 216f Master, 12 FPS 108f)
+  const strollKick24 = await synthesizeSitWalkKickStknds(raw27, {
+    projectName: 'sit_stand_kick_24fps',
+    targetFps: 24,
+    manColorHex: '#1E293B',
+    ballColorHex: '#EA580C',
+    ballRadius: 18,
+    enableHitStop: true,
+  });
+  fs.writeFileSync('public/downloads/sit_stand_kick_24fps_216f.stknds', strollKick24);
+  fs.writeFileSync('public/downloads/sit_stand_kick_24fps.stknds', strollKick24);
+
+  const strollKick12 = await synthesizeSitWalkKickStknds(raw27, {
+    projectName: 'sit_stand_kick_12fps',
+    targetFps: 12,
+    manColorHex: '#1E293B',
+    ballColorHex: '#EA580C',
+    ballRadius: 18,
+    enableHitStop: true,
+  });
+  fs.writeFileSync('public/downloads/sit_stand_kick_12fps_108f.stknds', strollKick12);
+  fs.writeFileSync('public/downloads/sit_stand_kick_12fps.stknds', strollKick12);
+
+  console.log('Successfully regenerated all .stknds binaries including The Stroll & Kick (216f Master) in public/downloads/!');
 }
 
 main().catch((err) => {

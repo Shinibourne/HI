@@ -851,7 +851,7 @@ export const CANONICAL_22_FRAME_PHASES: {
   { frame: 21, normY: 0, phase: 'Phase 8: Final Contact Settle', squashFactor: 1.00 },
 ];
 
-const STKNDS_PREFIX = new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+export const STKNDS_PREFIX = new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8, 9]);
 
 async function computeSha256Hex(bytes: Uint8Array): Promise<string> {
   const hashBuffer = await crypto.subtle.digest('SHA-256', bytes);
@@ -870,7 +870,7 @@ async function gunzipBytes(compressed: Uint8Array): Promise<Uint8Array> {
   return new Uint8Array(ab);
 }
 
-async function gzipBytes(raw: Uint8Array): Promise<Uint8Array> {
+export async function gzipBytes(raw: Uint8Array): Promise<Uint8Array> {
   const cs = new CompressionStream('gzip');
   const writer = cs.writable.getWriter();
   writer.write(raw);
@@ -880,14 +880,14 @@ async function gzipBytes(raw: Uint8Array): Promise<Uint8Array> {
   return new Uint8Array(ab);
 }
 
-function uint32ToHexColor(val: number): string {
+export function uint32ToHexColor(val: number): string {
   const r = (val >>> 16) & 0xff;
   const g = (val >>> 8) & 0xff;
   const b = val & 0xff;
   return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
 }
 
-function hexColorToArgbUint32(hex: string): number {
+export function hexColorToArgbUint32(hex: string): number {
   const clean = hex.replace('#', '');
   const rgb = parseInt(clean, 16) & 0xffffff;
   return ((0xff << 24) | rgb) >>> 0;
@@ -1033,7 +1033,7 @@ export async function inspectStkndsBuffer(
     if (afterFigure + 4 <= decompressed.length) {
       const candidateFrameCount = dv.getInt32(afterFigure, false);
       const fTableStart = afterFigure + 4;
-      const instSize = 112 + figureNodes.length * 58;
+      const instSize = figureNodes.length === 17 ? 1091 : 112 + figureNodes.length * 58;
 
       if (candidateFrameCount > 0 && candidateFrameCount < 500) {
         let cursor = fTableStart;
