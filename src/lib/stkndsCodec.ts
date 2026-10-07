@@ -2391,3 +2391,12 @@ export async function synthesizeTeleportStknds(
   finalStknds.set(compressedPayload, STKNDS_PREFIX.length);
   return finalStknds;
 }
+
+export {
+  type SpeedVsStrengthGeneratorConfig,
+  type SpeedVsStrengthKeyframeSpec,
+  CANONICAL_36_SPEED_VS_STRENGTH_FRAMES,
+  buildAdjustedSpeedStrengthFrames,
+  synthesizeSpeedStrengthStknds,
+} from './speedVsStrengthFrames';
+

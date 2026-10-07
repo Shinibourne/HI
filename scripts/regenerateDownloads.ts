@@ -4,6 +4,7 @@ import {
   synthesizeTeleportStknds,
   synthesizeSneezeStknds,
   synthesizeSuperheroStknds,
+  synthesizeSpeedStrengthStknds,
 } from '../src/lib/stkndsCodec';
 
 async function main() {
@@ -132,7 +133,38 @@ async function main() {
   });
   fs.writeFileSync('public/downloads/walk_scratch_fly_superhero_24fps_53f.stknds', hero24Baked);
 
-  console.log('Successfully regenerated all 9 .stknds binaries in public/downloads/!');
+  // 4. Speed vs Strength (12 FPS 36f, 24 FPS 36f, 24 FPS 71f baked)
+  const speed12 = await synthesizeSpeedStrengthStknds(raw27, {
+    projectName: 'speed_vs_strength',
+    targetFps: 12,
+    interpolate24FpsFrames: false,
+    speedColorHex: '#F59E0B',
+    strengthColorHex: '#1E293B',
+    cameraDynamicTrack: true,
+  });
+  fs.writeFileSync('public/downloads/speed_vs_strength_12fps.stknds', speed12);
+
+  const speed24 = await synthesizeSpeedStrengthStknds(raw27, {
+    projectName: 'speed_vs_strength',
+    targetFps: 24,
+    interpolate24FpsFrames: false,
+    speedColorHex: '#F59E0B',
+    strengthColorHex: '#1E293B',
+    cameraDynamicTrack: true,
+  });
+  fs.writeFileSync('public/downloads/speed_vs_strength_24fps.stknds', speed24);
+
+  const speed24Baked = await synthesizeSpeedStrengthStknds(raw27, {
+    projectName: 'speed_vs_strength',
+    targetFps: 24,
+    interpolate24FpsFrames: true,
+    speedColorHex: '#F59E0B',
+    strengthColorHex: '#1E293B',
+    cameraDynamicTrack: true,
+  });
+  fs.writeFileSync('public/downloads/speed_vs_strength_24fps_71f.stknds', speed24Baked);
+
+  console.log('Successfully regenerated all 12 .stknds binaries in public/downloads/!');
 }
 
 main().catch((err) => {
