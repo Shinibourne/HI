@@ -445,10 +445,12 @@ export function App() {
   const [baseTemplate27, setBaseTemplate27] = useState<Uint8Array | null>(null);
   const [activeInspection, setActiveInspection] = useState<StkndsInspectionResult | null>(null);
   const [selectedPresetPath, setSelectedPresetPath] = useState<string>(
-    '/downloads/sit_stand_kick_24fps_216f.stknds'
+    '/downloads/basketball_walk_pickup_dribble_24f.stknds'
   );
   const [inspectLoading, setInspectLoading] = useState<boolean>(true);
   const [inspectError, setInspectError] = useState<string | null>(null);
+  const [binaryStageOverride, setBinaryStageOverride] = useState<boolean>(false);
+  const inspectorCanvasRef = useRef<HTMLCanvasElement | null>(null);
 
   const [currentFrame, setCurrentFrame] = useState<number>(0);
   const [isPlaying, setIsPlaying] = useState<boolean>(true);
@@ -523,6 +525,83 @@ export function App() {
     return () => {
       cancelled = true;
     };
+  }, []);
+
+  const syncAnimationModeFromPath = useCallback((pathOrName: string) => {
+    const lower = pathOrName.toLowerCase();
+    const targetFps: 12 | 24 = lower.includes('12fps') ? 12 : 24;
+
+    if (lower.includes('basketball')) {
+      setBinaryStageOverride(false);
+      setActiveAnimationMode('basketball');
+      setGlobalFps(24);
+      setBasketballConfig((c) => ({ ...c, targetFps: 24 }));
+      setCurrentFrame(0);
+      setIsPlaying(true);
+    } else if (lower.includes('sit_stand_kick') || lower.includes('stroll')) {
+      setBinaryStageOverride(false);
+      setActiveAnimationMode('stroll-kick');
+      setGlobalFps(targetFps);
+      setStrollKickConfig((c) => ({ ...c, targetFps }));
+      setCurrentFrame(0);
+      setIsPlaying(true);
+    } else if (lower.includes('phantom_shadowbox')) {
+      setBinaryStageOverride(false);
+      setActiveAnimationMode('phantom');
+      setGlobalFps(targetFps);
+      const baked = lower.includes('147f') || lower.includes('79f');
+      setPhantomConfig((c) => ({ ...c, targetFps, interpolate24FpsFrames: baked }));
+      setCurrentFrame(0);
+      setIsPlaying(true);
+    } else if (lower.includes('speed_vs_strength')) {
+      setBinaryStageOverride(false);
+      setActiveAnimationMode('speed-strength');
+      setGlobalFps(targetFps);
+      const baked = lower.includes('71f');
+      setSpeedStrengthConfig((c) => ({ ...c, targetFps, interpolate24FpsFrames: baked }));
+      setCurrentFrame(0);
+      setIsPlaying(true);
+    } else if (lower.includes('teleport_ambush')) {
+      setBinaryStageOverride(false);
+      setActiveAnimationMode('teleport');
+      setGlobalFps(targetFps);
+      const baked = lower.includes('71f') || lower.includes('smooth');
+      setTeleportConfig((c) => ({ ...c, targetFps, interpolate24FpsFrames: baked }));
+      setCurrentFrame(0);
+      setIsPlaying(true);
+    } else if (lower.includes('epic_sneeze')) {
+      setBinaryStageOverride(false);
+      setActiveAnimationMode('sneeze');
+      setGlobalFps(targetFps);
+      const baked = lower.includes('71f');
+      setSneezeConfig((c) => ({ ...c, targetFps, interpolate24FpsFrames: baked }));
+      setCurrentFrame(0);
+      setIsPlaying(true);
+    } else if (lower.includes('superhero') || lower.includes('walk_scratch_fly')) {
+      setBinaryStageOverride(false);
+      setActiveAnimationMode('superhero');
+      setGlobalFps(targetFps);
+      const baked = lower.includes('53f');
+      setHeroConfig((c) => ({ ...c, targetFps, interpolate24FpsFrames: baked }));
+      setCurrentFrame(0);
+      setIsPlaying(true);
+    } else if (lower.includes('ball_bounce')) {
+      setBinaryStageOverride(false);
+      setActiveAnimationMode('bounce');
+      setGlobalFps(targetFps);
+      setBounceConfig((c) => ({
+        ...c,
+        targetFps,
+        nodeType: lower.includes('type2') ? 2 : 4,
+        enableSquashStretch: !lower.includes('clean'),
+      }));
+      setCurrentFrame(0);
+      setIsPlaying(true);
+    } else {
+      setBinaryStageOverride(true);
+      setCurrentFrame(0);
+      setIsPlaying(true);
+    }
   }, []);
 
   const inspectPreset = useCallback(async (path: string, displayName: string) => {
@@ -644,7 +723,9 @@ export function App() {
   );
 
   const totalModeFrames =
-    activeAnimationMode === 'basketball'
+    binaryStageOverride && activeInspection && activeInspection.frames.length > 0
+      ? activeInspection.frames.length
+      : activeAnimationMode === 'basketball'
       ? basketballFrames.length
       : activeAnimationMode === 'stroll-kick'
       ? strollKickFrames.length
@@ -660,14 +741,19 @@ export function App() {
       ? superheroFrames.length
       : computedBounceFrames.length;
 
+  const effectivePlaybackFps =
+    binaryStageOverride && activeInspection && activeInspection.fps > 0
+      ? activeInspection.fps
+      : globalFps;
+
   // Authentic 12 FPS vs 24 FPS playback timer
   useEffect(() => {
-    if (!isPlaying) return;
+    if (!isPlaying || totalModeFrames <= 0) return;
     const interval = window.setInterval(() => {
       setCurrentFrame((prev) => (prev + 1) % totalModeFrames);
-    }, 1000 / globalFps);
+    }, 1000 / effectivePlaybackFps);
     return () => window.clearInterval(interval);
-  }, [isPlaying, totalModeFrames, globalFps]);
+  }, [isPlaying, totalModeFrames, effectivePlaybackFps]);
 
   // Draw the 17-Node Stickfigure (The Phantom Shadowbox, Speed vs Strength, Teleport Ambush, Epic Sneeze, or Sky-Flight Sequence) or Ball Bounce on the 1920x1080 scene canvas
   useEffect(() => {
@@ -678,26 +764,112 @@ export function App() {
 
     const w = canvas.width;
     const h = canvas.height;
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.clearRect(0, 0, w, h);
 
     const scaleX = w / 1920;
     const scaleY = h / 1080;
 
-    if (activeAnimationMode === 'basketball') {
+    if (binaryStageOverride && activeInspection && activeInspection.frames.length > 0) {
+      const safeIdx = currentFrame % activeInspection.frames.length;
+      const binFrame = activeInspection.frames[safeIdx];
+      const instances = binFrame.instances ?? [
+        {
+          instanceIndex: 0,
+          instanceScale: binFrame.instanceScale,
+          sceneX: binFrame.sceneX,
+          sceneY: binFrame.sceneY,
+          instanceColorHex: binFrame.instanceColorHex,
+          nodes: binFrame.nodes,
+        },
+      ];
+
+      ctx.save();
+      const targetSceneX = 720;
+      const targetSceneY = 540;
+      ctx.translate(w * 0.5, h * 0.5);
+      const z = binFrame.camZoom && binFrame.camZoom > 0.2 ? binFrame.camZoom : 1.0;
+      ctx.scale(z, z);
+      ctx.translate(-targetSceneX * scaleX, -targetSceneY * scaleY);
+
+      const bgGrad = ctx.createLinearGradient(0, 0, 0, 755 * scaleY);
+      bgGrad.addColorStop(0, '#F8FAFC');
+      bgGrad.addColorStop(1, '#F1F5F9');
+      ctx.fillStyle = bgGrad;
+      ctx.fillRect(-1600, -1600, w + 3600, 755 * scaleY + 1600);
+
+      const groundCanvasY = 755 * scaleY;
+      ctx.strokeStyle = '#334155';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.moveTo(-400 * scaleX, groundCanvasY);
+      ctx.lineTo(3200 * scaleX, groundCanvasY);
+      ctx.stroke();
+
+      for (const inst of instances) {
+        const wAngles = inst.nodes.map((n) => n.worldAngle);
+        const nonZeroLimbs = inst.nodes.filter((n, idx) => idx !== 0 && idx !== 13 && n.length > 1).length;
+        if (nonZeroLimbs === 0 && inst.nodes[13] && inst.nodes[13].length > 0) {
+          // Ball / Circle prop instance
+          const r = inst.nodes[13].length * 0.5 * inst.instanceScale * scaleX;
+          ctx.save();
+          ctx.fillStyle = inst.nodes[13].colorHex || inst.instanceColorHex;
+          ctx.beginPath();
+          ctx.arc(inst.sceneX * scaleX, inst.sceneY * scaleY, Math.max(4, r), 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        } else if (inst.nodes.length === 17) {
+          const joints = computeForwardKinematics(inst.sceneX, inst.sceneY, wAngles, inst.instanceScale);
+          ctx.save();
+          ctx.lineCap = 'round';
+          ctx.lineJoin = 'round';
+          for (let i = 1; i < 17; i++) {
+            if (i === 13) continue;
+            const j = joints[i];
+            ctx.strokeStyle = inst.nodes[i]?.colorHex || inst.instanceColorHex;
+            ctx.lineWidth = Math.max(2, j.thickness * inst.instanceScale * scaleX);
+            ctx.beginPath();
+            ctx.moveTo(j.startX * scaleX, j.startY * scaleY);
+            ctx.lineTo(j.endX * scaleX, j.endY * scaleY);
+            ctx.stroke();
+          }
+          const headJ = joints[13];
+          const headCx = ((headJ.startX + headJ.endX) * 0.5) * scaleX;
+          const headCy = ((headJ.startY + headJ.endY) * 0.5) * scaleY;
+          const headR = (headJ.length * inst.instanceScale * 0.5) * scaleX;
+          ctx.fillStyle = inst.nodes[13]?.colorHex || inst.instanceColorHex;
+          ctx.beginPath();
+          ctx.arc(headCx, headCy, Math.max(4, headR), 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        }
+      }
+      ctx.restore();
+
+      ctx.save();
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.88)';
+      ctx.fillRect(12, 12, 340, 36);
+      ctx.fillStyle = '#38BDF8';
+      ctx.font = '600 11px "IBM Plex Mono", monospace';
+      ctx.fillText(
+        `BINARY PREVIEW · ${activeInspection.fileName} · F${safeIdx + 1}/${activeInspection.frames.length}`,
+        22,
+        34
+      );
+      ctx.restore();
+    } else if (activeAnimationMode === 'basketball') {
       const safeIdx = currentFrame % basketballFrames.length;
       const activeSpec = basketballFrames[safeIdx];
 
       ctx.save();
-      // Decoupled virtual camera framing
-      const targetSceneX = 720;
-      const targetSceneY = 540;
+      // Decoupled virtual camera framing that tracks character & ball across X = 480..865
+      const camCenterX = vcamFollow ? 560 + activeSpec.camX : 720;
+      const camCenterY = vcamFollow ? 540 + activeSpec.camY : 540;
       ctx.translate(w * 0.5, h * 0.5);
       if (vcamFollow) {
         ctx.scale(activeSpec.camZoom, activeSpec.camZoom);
-        ctx.translate((-targetSceneX + activeSpec.camX) * scaleX, (-targetSceneY + activeSpec.camY) * scaleY);
-      } else {
-        ctx.translate(-targetSceneX * scaleX, -targetSceneY * scaleY);
       }
+      ctx.translate(-camCenterX * scaleX, -camCenterY * scaleY);
 
       // Studio Court Backdrop Gradient
       const bgGrad = ctx.createLinearGradient(0, 0, 0, 755 * scaleY);
@@ -972,16 +1144,29 @@ export function App() {
         ctx.stroke();
       }
 
-      // Telemetry Banner in Canvas
+      ctx.restore(); // Restore main figure drawing style (line 1050)
+      ctx.restore(); // Restore camera transform (line 863)
+
+      // Telemetry Banner in Canvas (Screen-space HUD)
       ctx.save();
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.88)';
+      ctx.strokeStyle = '#CBD5E1';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.roundRect(12, 12, 460, 44, 8);
+      ctx.fill();
+      ctx.stroke();
+
       ctx.font = '600 11px "IBM Plex Mono", monospace';
       ctx.fillStyle = '#0F172A';
-      ctx.fillText(`FRAME ${activeSpec.frame}/23 · ${activeSpec.phaseName}`, 20 * scaleX, 30 * scaleY);
+      ctx.fillText(`FRAME ${activeSpec.frame}/23 · ${activeSpec.phaseName} [${activeSpec.ballState}]`, 22, 30);
       ctx.font = '500 10px "IBM Plex Mono", monospace';
       ctx.fillStyle = '#475569';
-      ctx.fillText(`${activeSpec.notes}`, 20 * scaleX, 48 * scaleY);
-      ctx.restore();
-
+      ctx.fillText(
+        `${activeSpec.notes.length > 72 ? activeSpec.notes.slice(0, 72) + '…' : activeSpec.notes}`,
+        22,
+        46
+      );
       ctx.restore();
     } else if (activeAnimationMode === 'stroll-kick') {
       const safeIdx = currentFrame % strollKickFrames.length;
@@ -2801,7 +2986,11 @@ export function App() {
       ctx.restore();
     }
   }, [
+    binaryStageOverride,
+    activeInspection,
     activeAnimationMode,
+    basketballFrames,
+    basketballConfig,
     strollKickFrames,
     strollKickConfig,
     phantomFrames,
@@ -2814,6 +3003,7 @@ export function App() {
     currentFrame,
     showOnionSkin,
     showTrajectoryArc,
+    showKinematicsCoM,
     vcamFollow,
     speedStrengthConfig,
     teleportConfig,
@@ -2822,14 +3012,105 @@ export function App() {
     bounceConfig,
   ]);
 
+  // Draw live decoded binary preview inside Section 05 (.stknds Corpus Inspector)
+  useEffect(() => {
+    const canvas = inspectorCanvasRef.current;
+    if (!canvas || !activeInspection || activeInspection.frames.length === 0) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const w = canvas.width;
+    const h = canvas.height;
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, w, h);
+
+    const scaleX = w / 1920;
+    const scaleY = h / 1080;
+    const safeIdx = currentFrame % activeInspection.frames.length;
+    const binFrame = activeInspection.frames[safeIdx];
+    const instances = binFrame.instances ?? [
+      {
+        instanceIndex: 0,
+        instanceScale: binFrame.instanceScale,
+        sceneX: binFrame.sceneX,
+        sceneY: binFrame.sceneY,
+        instanceColorHex: binFrame.instanceColorHex,
+        nodes: binFrame.nodes,
+      },
+    ];
+
+    ctx.save();
+    // Auto-center around active instances
+    const avgX =
+      instances.reduce((acc, inst) => acc + inst.sceneX, 0) / Math.max(1, instances.length);
+    const targetSceneX = Number.isFinite(avgX) ? Math.min(1200, Math.max(480, avgX)) : 720;
+    const targetSceneY = 540;
+    ctx.translate(w * 0.5, h * 0.5);
+    ctx.translate(-targetSceneX * scaleX, -targetSceneY * scaleY);
+
+    const bgGrad = ctx.createLinearGradient(0, 0, 0, 755 * scaleY);
+    bgGrad.addColorStop(0, '#F8FAFC');
+    bgGrad.addColorStop(1, '#F1F5F9');
+    ctx.fillStyle = bgGrad;
+    ctx.fillRect(-1600, -1600, w + 3600, 755 * scaleY + 1600);
+
+    const groundCanvasY = 755 * scaleY;
+    ctx.strokeStyle = '#334155';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(-400 * scaleX, groundCanvasY);
+    ctx.lineTo(3200 * scaleX, groundCanvasY);
+    ctx.stroke();
+
+    for (const inst of instances) {
+      const wAngles = inst.nodes.map((n) => n.worldAngle);
+      const nonZeroLimbs = inst.nodes.filter((n, idx) => idx !== 0 && idx !== 13 && n.length > 1).length;
+      if (nonZeroLimbs === 0 && inst.nodes[13] && inst.nodes[13].length > 0) {
+        const r = inst.nodes[13].length * 0.5 * inst.instanceScale * scaleX;
+        ctx.save();
+        ctx.fillStyle = inst.nodes[13].colorHex || inst.instanceColorHex;
+        ctx.beginPath();
+        ctx.arc(inst.sceneX * scaleX, inst.sceneY * scaleY, Math.max(4, r), 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      } else if (inst.nodes.length === 17) {
+        const joints = computeForwardKinematics(inst.sceneX, inst.sceneY, wAngles, inst.instanceScale);
+        ctx.save();
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        for (let i = 1; i < 17; i++) {
+          if (i === 13) continue;
+          const j = joints[i];
+          ctx.strokeStyle = inst.nodes[i]?.colorHex || inst.instanceColorHex;
+          ctx.lineWidth = Math.max(2, j.thickness * inst.instanceScale * scaleX);
+          ctx.beginPath();
+          ctx.moveTo(j.startX * scaleX, j.startY * scaleY);
+          ctx.lineTo(j.endX * scaleX, j.endY * scaleY);
+          ctx.stroke();
+        }
+        const headJ = joints[13];
+        const headCx = ((headJ.startX + headJ.endX) * 0.5) * scaleX;
+        const headCy = ((headJ.startY + headJ.endY) * 0.5) * scaleY;
+        const headR = (headJ.length * inst.instanceScale * 0.5) * scaleX;
+        ctx.fillStyle = inst.nodes[13]?.colorHex || inst.instanceColorHex;
+        ctx.beginPath();
+        ctx.arc(headCx, headCy, Math.max(3, headR), 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+    ctx.restore();
+  }, [activeInspection, currentFrame]);
+
   const handleSynthesizeAndDownload = async () => {
     setSynthesizing(true);
     try {
       let stkndsBytes: Uint8Array;
+      let fileName = '';
       if (activeAnimationMode === 'basketball') {
         if (!baseTemplate27) return;
         stkndsBytes = await synthesizeBasketballStknds(baseTemplate27, basketballConfig);
-        fileName = `${basketballConfig.projectName.trim() || 'basketball_walk_pickup_dribble'}_24fps_24f.stknds`;
+        fileName = `${basketballConfig.projectName.trim() || 'basketball_walk_pickup_dribble'}_${basketballConfig.targetFps}fps_24f.stknds`;
       } else if (activeAnimationMode === 'stroll-kick') {
         if (!baseTemplate27) return;
         stkndsBytes = await synthesizeSitWalkKickStknds(baseTemplate27, strollKickConfig);
@@ -2880,8 +3161,15 @@ export function App() {
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
 
-      const parsed = await inspectStkndsBuffer(fileName, stkndsBytes.buffer);
+      const exactBuffer = stkndsBytes.buffer.slice(
+        stkndsBytes.byteOffset,
+        stkndsBytes.byteOffset + stkndsBytes.byteLength
+      );
+      const parsed = await inspectStkndsBuffer(fileName, exactBuffer);
       setActiveInspection(parsed);
+      setBinaryStageOverride(false);
+      setCurrentFrame(0);
+      setIsPlaying(true);
     } finally {
       setSynthesizing(false);
     }
@@ -2896,7 +3184,9 @@ export function App() {
       const ab = await file.arrayBuffer();
       const parsed = await inspectStkndsBuffer(file.name, ab);
       setActiveInspection(parsed);
+      syncAnimationModeFromPath(file.name);
       setCurrentFrame(0);
+      setIsPlaying(true);
     } catch (err) {
       setInspectError(err instanceof Error ? err.message : 'Invalid .stknds file');
     } finally {
@@ -3223,11 +3513,14 @@ export function App() {
                 <button
                   type="button"
                   onClick={() => {
+                    setBinaryStageOverride(false);
                     setActiveAnimationMode('basketball');
+                    setSelectedPresetPath('/downloads/basketball_walk_pickup_dribble_24f.stknds');
                     setCurrentFrame(0);
+                    setIsPlaying(true);
                   }}
                   className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap ${
-                    activeAnimationMode === 'basketball'
+                    !binaryStageOverride && activeAnimationMode === 'basketball'
                       ? 'bg-[#EA580C] text-white shadow-xs font-semibold'
                       : 'text-[#475569] hover:text-[#0F172A]'
                   }`}
@@ -3237,11 +3530,14 @@ export function App() {
                 <button
                   type="button"
                   onClick={() => {
+                    setBinaryStageOverride(false);
                     setActiveAnimationMode('stroll-kick');
+                    setSelectedPresetPath('/downloads/sit_stand_kick_24fps_216f.stknds');
                     setCurrentFrame(0);
+                    setIsPlaying(true);
                   }}
                   className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap ${
-                    activeAnimationMode === 'stroll-kick'
+                    !binaryStageOverride && activeAnimationMode === 'stroll-kick'
                       ? 'bg-[#0284C7] text-white shadow-xs font-semibold'
                       : 'text-[#475569] hover:text-[#0F172A]'
                   }`}
@@ -3251,11 +3547,14 @@ export function App() {
                 <button
                   type="button"
                   onClick={() => {
+                    setBinaryStageOverride(false);
                     setActiveAnimationMode('phantom');
+                    setSelectedPresetPath('/downloads/phantom_shadowbox_24fps_75f.stknds');
                     setCurrentFrame(0);
+                    setIsPlaying(true);
                   }}
                   className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap ${
-                    activeAnimationMode === 'phantom'
+                    !binaryStageOverride && activeAnimationMode === 'phantom'
                       ? 'bg-white text-[#0F172A] shadow-xs font-semibold'
                       : 'text-[#475569] hover:text-[#0F172A]'
                   }`}
@@ -3265,12 +3564,15 @@ export function App() {
                 <button
                   type="button"
                   onClick={() => {
+                    setBinaryStageOverride(false);
                     setActiveAnimationMode('speed-strength');
+                    setSelectedPresetPath('/downloads/speed_vs_strength_24fps.stknds');
                     setVcamFollow(true);
                     setCurrentFrame(0);
+                    setIsPlaying(true);
                   }}
                   className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap ${
-                    activeAnimationMode === 'speed-strength'
+                    !binaryStageOverride && activeAnimationMode === 'speed-strength'
                       ? 'bg-white text-[#0F172A] shadow-xs font-semibold'
                       : 'text-[#475569] hover:text-[#0F172A]'
                   }`}
@@ -3280,12 +3582,15 @@ export function App() {
                 <button
                   type="button"
                   onClick={() => {
+                    setBinaryStageOverride(false);
                     setActiveAnimationMode('teleport');
+                    setSelectedPresetPath('/downloads/teleport_ambush_24fps.stknds');
                     setVcamFollow(true);
                     setCurrentFrame(0);
+                    setIsPlaying(true);
                   }}
                   className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap ${
-                    activeAnimationMode === 'teleport'
+                    !binaryStageOverride && activeAnimationMode === 'teleport'
                       ? 'bg-white text-[#0F172A] shadow-xs'
                       : 'text-[#475569] hover:text-[#0F172A]'
                   }`}
@@ -3295,11 +3600,14 @@ export function App() {
                 <button
                   type="button"
                   onClick={() => {
+                    setBinaryStageOverride(false);
                     setActiveAnimationMode('sneeze');
+                    setSelectedPresetPath('/downloads/epic_sneeze_24fps.stknds');
                     setCurrentFrame(0);
+                    setIsPlaying(true);
                   }}
                   className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap ${
-                    activeAnimationMode === 'sneeze'
+                    !binaryStageOverride && activeAnimationMode === 'sneeze'
                       ? 'bg-white text-[#0F172A] shadow-xs'
                       : 'text-[#475569] hover:text-[#0F172A]'
                   }`}
@@ -3309,11 +3617,14 @@ export function App() {
                 <button
                   type="button"
                   onClick={() => {
+                    setBinaryStageOverride(false);
                     setActiveAnimationMode('superhero');
+                    setSelectedPresetPath('/downloads/walk_scratch_fly_superhero_24fps.stknds');
                     setCurrentFrame(0);
+                    setIsPlaying(true);
                   }}
                   className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap ${
-                    activeAnimationMode === 'superhero'
+                    !binaryStageOverride && activeAnimationMode === 'superhero'
                       ? 'bg-white text-[#0F172A] shadow-xs'
                       : 'text-[#475569] hover:text-[#0F172A]'
                   }`}
@@ -3323,11 +3634,14 @@ export function App() {
                 <button
                   type="button"
                   onClick={() => {
+                    setBinaryStageOverride(false);
                     setActiveAnimationMode('bounce');
+                    setSelectedPresetPath('/downloads/ball_bounce_squash_stretch.stknds');
                     setCurrentFrame(0);
+                    setIsPlaying(true);
                   }}
                   className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap ${
-                    activeAnimationMode === 'bounce'
+                    !binaryStageOverride && activeAnimationMode === 'bounce'
                       ? 'bg-white text-[#0F172A] shadow-xs'
                       : 'text-[#475569] hover:text-[#0F172A]'
                   }`}
@@ -4096,7 +4410,151 @@ export function App() {
               </p>
             </div>
 
-            {activeAnimationMode === 'stroll-kick' ? (
+            {activeAnimationMode === 'basketball' ? (
+              <div className="space-y-4 text-xs">
+                {/* 20-Rule Biomechanical & Physics Audit Card */}
+                <div className="p-3 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] space-y-2.5">
+                  <div className="flex items-center justify-between">
+                    <span className="font-semibold text-[#0F172A] flex items-center gap-1.5">
+                      <ShieldCheck className="w-4 h-4 text-[#059669]" />
+                      20-Rule Biomechanical &amp; Ball Physics Audit
+                    </span>
+                    <span className="text-[11px] font-mono px-2 py-0.5 bg-[#ECFDF5] text-[#059669] rounded font-semibold border border-[#A7F3D0]">
+                      {basketballAudit.passedChecks}/{basketballAudit.totalChecks} PASSED
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 max-h-48 overflow-y-auto pr-1 text-[11px]">
+                    {basketballAudit.items.map((it) => (
+                      <div
+                        key={it.id}
+                        className="p-1.5 rounded bg-white border border-[#E2E8F0] flex items-center justify-between gap-1"
+                        title={it.detail}
+                      >
+                        <span className="text-[#475569] truncate">
+                          #{it.ruleNumber} {it.label}
+                        </span>
+                        <span className="font-mono font-semibold text-[#059669] shrink-0">
+                          {it.metric}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Live Procedural Kinematics & Ball Telemetry Card */}
+                <div className="p-3 rounded-lg bg-[#FFF7ED] border border-[#FED7AA] space-y-2 text-xs">
+                  <div className="flex items-center justify-between">
+                    <span className="font-semibold text-[#9A3412] flex items-center gap-1.5">
+                      <Activity className="w-3.5 h-3.5 text-[#EA580C]" />
+                      Basketball &amp; IK Contact Telemetry
+                    </span>
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded font-bold bg-[#FFEDD5] text-[#C2410C] border border-[#FDBA74]">
+                      {safeBasketballFrame.ballState}
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 text-[11px] font-mono">
+                    <div className="p-1.5 rounded bg-white border border-[#FED7AA]/70">
+                      <span className="text-[#9A3412] block text-[10px]">Center of Mass (CoM)</span>
+                      <span className="font-bold text-[#0F172A]">
+                        ({safeBasketballFrame.comX.toFixed(1)}, {safeBasketballFrame.comY.toFixed(1)}) px
+                      </span>
+                    </div>
+                    <div className="p-1.5 rounded bg-white border border-[#FED7AA]/70">
+                      <span className="text-[#9A3412] block text-[10px]">Ball Center / Vel Y</span>
+                      <span className="font-bold text-[#EA580C]">
+                        ({safeBasketballFrame.ballX.toFixed(1)}, {safeBasketballFrame.ballY.toFixed(1)}) · {safeBasketballFrame.ballVy.toFixed(1)} px/f
+                      </span>
+                    </div>
+                    <div className="p-1.5 rounded bg-white border border-[#FED7AA]/70">
+                      <span className="text-[#9A3412] block text-[10px]">Hand-Ball Contact Dist</span>
+                      <span className="font-bold text-[#0F172A]">
+                        {safeBasketballFrame.contactDist.toFixed(1)} px (r={basketballConfig.ballRadius}px)
+                      </span>
+                    </div>
+                    <div className="p-1.5 rounded bg-white border border-[#FED7AA]/70">
+                      <span className="text-[#9A3412] block text-[10px]">R_Knee / R_Elbow Flex</span>
+                      <span className="font-bold text-[#0284C7]">
+                        {safeBasketballFrame.rKneeFlexDeg.toFixed(0)}° / {safeBasketballFrame.rElbowFlexDeg.toFixed(0)}°
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Character & Ball Colors + Radius Controls */}
+                <div className="grid grid-cols-2 gap-3 pt-1">
+                  <div className="space-y-1">
+                    <label className="text-[#475569] font-medium block">Player Color</label>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="color"
+                        value={basketballConfig.charColorHex}
+                        onChange={(e) =>
+                          setBasketballConfig((c) => ({ ...c, charColorHex: e.target.value }))
+                        }
+                        className="w-7 h-7 rounded cursor-pointer border border-[#CBD5E1]"
+                      />
+                      <span className="font-mono text-[#0F172A]">
+                        {basketballConfig.charColorHex}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[#475569] font-medium block">Basketball Color</label>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="color"
+                        value={basketballConfig.ballColorHex}
+                        onChange={(e) =>
+                          setBasketballConfig((c) => ({ ...c, ballColorHex: e.target.value }))
+                        }
+                        className="w-7 h-7 rounded cursor-pointer border border-[#CBD5E1]"
+                      />
+                      <span className="font-mono text-[#0F172A]">
+                        {basketballConfig.ballColorHex}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-1">
+                  <div className="flex justify-between font-medium">
+                    <label htmlFor="bball-radius">Basketball Radius (Node 13 Scale 0.5)</label>
+                    <span className="font-mono text-[#0F172A]">
+                      {basketballConfig.ballRadius} px (Ø {basketballConfig.ballRadius * 2} px)
+                    </span>
+                  </div>
+                  <input
+                    id="bball-radius"
+                    type="range"
+                    min={14}
+                    max={24}
+                    step={1}
+                    value={basketballConfig.ballRadius}
+                    onChange={(e) =>
+                      setBasketballConfig((c) => ({
+                        ...c,
+                        ballRadius: Number(e.target.value),
+                      }))
+                    }
+                    className="w-full accent-[#EA580C]"
+                  />
+                </div>
+
+                <div className="pt-2">
+                  <button
+                    type="button"
+                    disabled={!baseTemplate27 || synthesizing}
+                    onClick={handleSynthesizeAndDownload}
+                    className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-semibold text-white bg-[#EA580C] hover:bg-[#C2410C] disabled:opacity-50 rounded-lg transition-colors whitespace-nowrap shadow-xs"
+                  >
+                    <Download className="w-4 h-4" />
+                    {synthesizing
+                      ? 'Synthesizing GZIP Container...'
+                      : `Compile & Download Basketball (${globalFps} FPS · ${basketballFrames.length}f .stknds)`}
+                  </button>
+                </div>
+              </div>
+            ) : activeAnimationMode === 'stroll-kick' ? (
               <div className="space-y-4 text-xs">
                 {/* Biomechanical Invariant Real-time Audit Card */}
                 <div className="p-3 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] space-y-2.5">
@@ -7205,7 +7663,45 @@ export function App() {
           )}
 
           {activeDocTab === 'frames' && (
-            activeAnimationMode === 'stroll-kick' ? (
+            activeAnimationMode === 'basketball' ? (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="bg-white border border-[#E2E8F0] rounded-xl p-5 space-y-3">
+                  <div className="text-xs font-mono text-[#EA580C] font-semibold">
+                    PHASES 00–03 · WALK GAIT, BRAKE PLANT &amp; DEEP CROUCH PICKUP (F00–11)
+                  </div>
+                  <h3 className="text-base font-semibold text-[#0F172A]">
+                    Locomotion Approach &amp; 2-Bone IK Pickup
+                  </h3>
+                  <p className="text-sm text-[#475569] leading-relaxed">
+                    Player stands at <code className="font-mono text-xs">X=480, Y=512</code> and walks toward the resting basketball at <code className="font-mono text-xs">(864.6, 737.0)</code> on Ground <code className="font-mono text-xs">Y=755</code>. Stance feet pin with 0.00 px slip during each step. At F07, a staggered base <code className="font-mono text-xs">[705..775]</code> is planted, the pelvis lowers into a deep squat (<code className="font-mono text-xs">Y=630</code>), and the right hand contacts the top of the ball at F10 (<code className="font-mono text-xs">dist=18.0 px</code>, reach 85.1% of max).
+                  </p>
+                </div>
+
+                <div className="bg-white border border-[#E2E8F0] rounded-xl p-5 space-y-3">
+                  <div className="text-xs font-mono text-[#0284C7] font-semibold">
+                    PHASES 04–07 · STAND CARRY, TRIPLE-EXTENSION TOSS &amp; CATCH (F12–18)
+                  </div>
+                  <h3 className="text-base font-semibold text-[#0F172A]">
+                    Parabolic Ballistic Flight &amp; Yield Absorption
+                  </h3>
+                  <p className="text-sm text-[#475569] leading-relaxed">
+                    Rising smoothly to standing height (<code className="font-mono text-xs">Y=512</code>), the player dips at F13 and drives upward with triple extension through ankles, knees, hips, and shoulder, releasing the ball at F15 (<code className="font-mono text-xs">vy=-26 px/f</code>). The ball reaches its parabolic apex at <code className="font-mono text-xs">Y=275</code> (F16) while the neck tracks upward (<code className="font-mono text-xs">110°</code>), then descends under gravity to be caught at F18 with a +15° elbow yield.
+                  </p>
+                </div>
+
+                <div className="bg-white border border-[#E2E8F0] rounded-xl p-5 space-y-3">
+                  <div className="text-xs font-mono text-[#059669] font-semibold">
+                    PHASES 08–09 · ATHLETIC STANCE &amp; RHYTHMIC DRIBBLE CYCLE (F19–23)
+                  </div>
+                  <h3 className="text-base font-semibold text-[#0F172A]">
+                    Waist-to-Turf Elastic Rebound Cycle
+                  </h3>
+                  <p className="text-sm text-[#475569] leading-relaxed">
+                    Settling into an athletic crouch (<code className="font-mono text-xs">Y=532..536</code>) with the left guard arm engaged, the right wrist pushes the basketball down from waist height (<code className="font-mono text-xs">Y=580.1</code> at F20) to strike the floor at <code className="font-mono text-xs">Y=737.0</code> (F21, restitution <code className="font-mono text-xs">ε=0.85</code>), rebounding cleanly back to the cushioned palm at F23.
+                  </p>
+                </div>
+              </div>
+            ) : activeAnimationMode === 'stroll-kick' ? (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="bg-white border border-[#E2E8F0] rounded-xl p-5 space-y-3">
                   <div className="text-xs font-mono text-[#0284C7] font-semibold">
@@ -7542,7 +8038,15 @@ export function App() {
             <div>
               <h2 className="font-display text-xl font-semibold text-[#0F172A]">
                 04. Complete Keyframe Schedule —{' '}
-                {activeAnimationMode === 'teleport'
+                {activeAnimationMode === 'basketball'
+                  ? `Basketball: Walk → Approach → Pick Up → Toss → Catch → Dribble (${basketballFrames.length} Frames)`
+                  : activeAnimationMode === 'stroll-kick'
+                  ? `The Stroll & Kick (${strollKickFrames.length} Frames · Man + Ball + Camera)`
+                  : activeAnimationMode === 'phantom'
+                  ? `The Phantom Shadowbox (${phantomFrames.length} Frames)`
+                  : activeAnimationMode === 'speed-strength'
+                  ? `Speed vs Strength (${speedStrengthFrames.length} Frames · 2 Figures)`
+                  : activeAnimationMode === 'teleport'
                   ? `The Teleport Ambush (${teleportFrames.length} Frames · 2 Figures + Camera)`
                   : activeAnimationMode === 'sneeze'
                   ? `The Epic Sneeze (${sneezeFrames.length} Frames)`
@@ -7553,17 +8057,210 @@ export function App() {
               </p>
             </div>
             <span className="text-xs font-mono text-[#475569]">
-              Target Rate: {globalFps} FPS (@byte 30) · Total Frames:{' '}
-              {activeAnimationMode === 'teleport'
-                ? teleportFrames.length
-                : activeAnimationMode === 'sneeze'
-                ? sneezeFrames.length
-                : superheroFrames.length}
+              Target Rate: {globalFps} FPS (@byte 30) · Total Frames: {totalModeFrames}
             </span>
           </div>
 
           <div className="overflow-x-auto max-h-[440px] overflow-y-auto">
-            {activeAnimationMode === 'teleport' ? (
+            {activeAnimationMode === 'basketball' ? (
+              <table className="w-full text-left border-collapse text-xs font-mono">
+                <thead className="sticky top-0 bg-[#F8FAFC] border-b border-[#E2E8F0] text-[#475569]">
+                  <tr>
+                    <th className="py-2.5 px-3">Frame</th>
+                    <th className="py-2.5 px-3">Time</th>
+                    <th className="py-2.5 px-3 font-sans">Choreographic Phase</th>
+                    <th className="py-2.5 px-3 font-sans">Sub-Event</th>
+                    <th className="py-2.5 px-3 text-[#EA580C]">Ball State</th>
+                    <th className="py-2.5 px-3">Pelvis (X, Y)</th>
+                    <th className="py-2.5 px-3 text-[#EA580C]">Ball (X, Y)</th>
+                    <th className="py-2.5 px-3">R_Knee / R_Elbow</th>
+                    <th className="py-2.5 px-3">CoM (X, Y)</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[#E2E8F0]">
+                  {basketballFrames.map((row, idx) => {
+                    const isCurrent = currentFrame % basketballFrames.length === idx;
+                    return (
+                      <tr
+                        key={idx}
+                        onClick={() => {
+                          setIsPlaying(false);
+                          setCurrentFrame(idx);
+                        }}
+                        className={`cursor-pointer transition-colors ${
+                          isCurrent
+                            ? 'bg-[#EA580C]/15 font-semibold'
+                            : row.ballState === 'PROJECTILE' || row.ballState === 'CAUGHT'
+                            ? 'bg-[#EFF6FF]/60 hover:bg-[#DBEAFE]/70'
+                            : row.ballState.includes('DRIBBLE')
+                            ? 'bg-[#FFF7ED]/70 hover:bg-[#FFEDD5]/70'
+                            : 'hover:bg-[#F8FAFC]'
+                        }`}
+                      >
+                        <td className="py-2 px-3 text-[#EA580C]">
+                          #{idx.toString().padStart(2, '0')}
+                        </td>
+                        <td className="py-2 px-3 text-[#64748B]">{row.timeSeconds.toFixed(2)}s</td>
+                        <td className="py-2 px-3 font-sans text-[#475569]">{row.phaseName}</td>
+                        <td className="py-2 px-3 font-sans text-[#0F172A]">{row.subEventName}</td>
+                        <td className="py-2 px-3 text-[#EA580C] font-semibold">{row.ballState}</td>
+                        <td className="py-2 px-3">
+                          ({row.charX.toFixed(0)}, {row.charY.toFixed(0)})
+                        </td>
+                        <td className="py-2 px-3 text-[#EA580C]">
+                          ({row.ballX.toFixed(1)}, {row.ballY.toFixed(1)})
+                        </td>
+                        <td className="py-2 px-3">
+                          {row.rKneeFlexDeg.toFixed(0)}° / {row.rElbowFlexDeg.toFixed(0)}°
+                        </td>
+                        <td className="py-2 px-3 text-[#059669]">
+                          ({row.comX.toFixed(1)}, {row.comY.toFixed(1)})
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            ) : activeAnimationMode === 'stroll-kick' ? (
+              <table className="w-full text-left border-collapse text-xs font-mono">
+                <thead className="sticky top-0 bg-[#F8FAFC] border-b border-[#E2E8F0] text-[#475569]">
+                  <tr>
+                    <th className="py-2.5 px-3">Frame</th>
+                    <th className="py-2.5 px-3 font-sans">Narrative Act</th>
+                    <th className="py-2.5 px-3 font-sans">Keyframe Stage</th>
+                    <th className="py-2.5 px-3">Man Pelvis (X, Y)</th>
+                    <th className="py-2.5 px-3 text-[#EA580C]">Ball (X, Y)</th>
+                    <th className="py-2.5 px-3">Spine / Chest</th>
+                    <th className="py-2.5 px-3">CoM (X, Y)</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[#E2E8F0]">
+                  {strollKickFrames.map((row, idx) => {
+                    const isCurrent = currentFrame % strollKickFrames.length === idx;
+                    return (
+                      <tr
+                        key={idx}
+                        onClick={() => {
+                          setIsPlaying(false);
+                          setCurrentFrame(idx);
+                        }}
+                        className={`cursor-pointer transition-colors ${
+                          isCurrent ? 'bg-[#0284C7]/15 font-semibold' : 'hover:bg-[#F8FAFC]'
+                        }`}
+                      >
+                        <td className="py-2 px-3 text-[#0284C7]">
+                          #{idx.toString().padStart(3, '0')}
+                        </td>
+                        <td className="py-2 px-3 font-sans text-[#475569]">{row.act}</td>
+                        <td className="py-2 px-3 font-sans text-[#0F172A]">{row.phase}</td>
+                        <td className="py-2 px-3">
+                          ({row.manX.toFixed(0)}, {row.manY.toFixed(0)})
+                        </td>
+                        <td className="py-2 px-3 text-[#EA580C]">
+                          ({row.ballX.toFixed(0)}, {row.ballY.toFixed(0)})
+                        </td>
+                        <td className="py-2 px-3">
+                          {row.manAngles[7].toFixed(0)}° / {row.manAngles[8].toFixed(0)}°
+                        </td>
+                        <td className="py-2 px-3 text-[#059669]">
+                          ({row.comX.toFixed(1)}, {row.comY.toFixed(1)})
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            ) : activeAnimationMode === 'phantom' ? (
+              <table className="w-full text-left border-collapse text-xs font-mono">
+                <thead className="sticky top-0 bg-[#F8FAFC] border-b border-[#E2E8F0] text-[#475569]">
+                  <tr>
+                    <th className="py-2.5 px-3">Frame</th>
+                    <th className="py-2.5 px-3 font-sans">Storyboard Panel</th>
+                    <th className="py-2.5 px-3 font-sans">Keyframe Stage</th>
+                    <th className="py-2.5 px-3">Scene (X, Y)</th>
+                    <th className="py-2.5 px-3">Spine (N07/N08)</th>
+                    <th className="py-2.5 px-3">R_Arm / L_Arm</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[#E2E8F0]">
+                  {phantomFrames.map((row, idx) => {
+                    const isCurrent = currentFrame % phantomFrames.length === idx;
+                    return (
+                      <tr
+                        key={idx}
+                        onClick={() => {
+                          setIsPlaying(false);
+                          setCurrentFrame(idx);
+                        }}
+                        className={`cursor-pointer transition-colors ${
+                          isCurrent ? 'bg-[#0284C7]/15 font-semibold' : 'hover:bg-[#F8FAFC]'
+                        }`}
+                      >
+                        <td className="py-2 px-3 text-[#0284C7]">
+                          #{idx.toString().padStart(2, '0')}
+                        </td>
+                        <td className="py-2 px-3 font-sans text-[#475569]">{row.act}</td>
+                        <td className="py-2 px-3 font-sans text-[#0F172A]">{row.phase}</td>
+                        <td className="py-2 px-3">
+                          {row.isTeleportBlank
+                            ? 'TELEPORT VANISH'
+                            : `(${row.sceneX.toFixed(0)}, ${row.sceneY.toFixed(0)})`}
+                        </td>
+                        <td className="py-2 px-3">
+                          {row.worldAngles[7].toFixed(0)}° / {row.worldAngles[8].toFixed(0)}°
+                        </td>
+                        <td className="py-2 px-3">
+                          {row.worldAngles[10].toFixed(0)}° / {row.worldAngles[15].toFixed(0)}°
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            ) : activeAnimationMode === 'speed-strength' ? (
+              <table className="w-full text-left border-collapse text-xs font-mono">
+                <thead className="sticky top-0 bg-[#F8FAFC] border-b border-[#E2E8F0] text-[#475569]">
+                  <tr>
+                    <th className="py-2.5 px-3">Frame</th>
+                    <th className="py-2.5 px-3 font-sans">Narrative Act</th>
+                    <th className="py-2.5 px-3 font-sans">Keyframe Stage</th>
+                    <th className="py-2.5 px-3 text-[#D97706]">Speed A (X, Y)</th>
+                    <th className="py-2.5 px-3 text-[#334155]">Strength B (X, Y)</th>
+                    <th className="py-2.5 px-3">Camera Zoom</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[#E2E8F0]">
+                  {speedStrengthFrames.map((row, idx) => {
+                    const isCurrent = currentFrame % speedStrengthFrames.length === idx;
+                    return (
+                      <tr
+                        key={idx}
+                        onClick={() => {
+                          setIsPlaying(false);
+                          setCurrentFrame(idx);
+                        }}
+                        className={`cursor-pointer transition-colors ${
+                          isCurrent ? 'bg-[#0284C7]/15 font-semibold' : 'hover:bg-[#F8FAFC]'
+                        }`}
+                      >
+                        <td className="py-2 px-3 text-[#0284C7]">
+                          #{idx.toString().padStart(2, '0')}
+                        </td>
+                        <td className="py-2 px-3 font-sans text-[#475569]">{row.act}</td>
+                        <td className="py-2 px-3 font-sans text-[#0F172A]">{row.phase}</td>
+                        <td className="py-2 px-3 text-[#D97706]">
+                          ({row.charAX.toFixed(0)}, {row.charAY.toFixed(0)})
+                        </td>
+                        <td className="py-2 px-3 text-[#334155]">
+                          ({row.charBX.toFixed(0)}, {row.charBY.toFixed(0)})
+                        </td>
+                        <td className="py-2 px-3 text-[#0284C7]">{row.camZoom.toFixed(2)}x</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            ) : activeAnimationMode === 'teleport' ? (
               <table className="w-full text-left border-collapse text-xs font-mono">
                 <thead className="sticky top-0 bg-[#F8FAFC] border-b border-[#E2E8F0] text-[#475569]">
                   <tr>
@@ -7706,7 +8403,11 @@ export function App() {
               <select
                 aria-label="Select a .stknds file to inspect"
                 value={selectedPresetPath}
-                onChange={(e) => setSelectedPresetPath(e.target.value)}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setSelectedPresetPath(val);
+                  syncAnimationModeFromPath(val);
+                }}
                 className="text-xs font-medium bg-[#F8FAFC] border border-[#CBD5E1] rounded-lg px-3 py-2 text-[#0F172A]"
               >
                 {CORPUS_PRESETS.map((p) => (
@@ -7715,6 +8416,27 @@ export function App() {
                   </option>
                 ))}
               </select>
+
+              {activeInspection && activeInspection.frames.length > 0 && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setBinaryStageOverride((prev) => !prev);
+                    setCurrentFrame(0);
+                    setIsPlaying(true);
+                  }}
+                  className={`inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-lg transition-colors whitespace-nowrap ${
+                    binaryStageOverride
+                      ? 'bg-[#0284C7] text-white shadow-xs'
+                      : 'bg-[#EFF6FF] text-[#0284C7] border border-[#BAE6FD] hover:bg-[#DBEAFE]'
+                  }`}
+                >
+                  <Play className="w-3.5 h-3.5" />
+                  {binaryStageOverride
+                    ? 'Playing Raw Binary on Main Stage'
+                    : 'Play Decoded Binary on Main Stage'}
+                </button>
+              )}
 
               <label className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-medium bg-[#F1F5F9] hover:bg-[#E2E8F0] text-[#0F172A] rounded-lg cursor-pointer transition-colors whitespace-nowrap">
                 <Upload className="w-3.5 h-3.5" />
@@ -7808,6 +8530,36 @@ export function App() {
                   </div>
                 ))}
               </div>
+
+              {activeInspection.frames.length > 0 && (
+                <div className="p-4 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] space-y-3">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <div>
+                      <h3 className="text-sm font-semibold text-[#0F172A] flex items-center gap-1.5">
+                        <Play className="w-4 h-4 text-[#0284C7]" />
+                        Decoded Binary Frame Playback — {activeInspection.fileName}
+                      </h3>
+                      <p className="text-xs text-[#64748B]">
+                        Rendering {activeInspection.frames.length} decoded binary frames (
+                        {activeInspection.frames[0]?.figureCount ?? 1} figure/prop instance(s) per frame) at{' '}
+                        {activeInspection.fps} FPS.
+                      </p>
+                    </div>
+                    <span className="text-xs font-mono font-semibold text-[#0284C7]">
+                      Frame {(currentFrame % activeInspection.frames.length) + 1} /{' '}
+                      {activeInspection.frames.length}
+                    </span>
+                  </div>
+                  <div className="rounded-lg overflow-hidden border border-[#CBD5E1] bg-white">
+                    <canvas
+                      ref={inspectorCanvasRef}
+                      width={640}
+                      height={260}
+                      className="w-full h-auto block"
+                    />
+                  </div>
+                </div>
+              )}
 
               {activeInspection.figureNodes.length > 0 && (
                 <div className="space-y-2">

@@ -28,13 +28,27 @@ export interface StkndsFrameNodePose {
   colorHex: string;
 }
 
-export interface StkndsFrameRecord {
-  frameIndex: number;
+export interface StkndsFrameInstance {
+  instanceIndex: number;
   instanceScale: number;
   sceneX: number;
   sceneY: number;
   instanceColorHex: string;
   nodes: StkndsFrameNodePose[];
+}
+
+export interface StkndsFrameRecord {
+  frameIndex: number;
+  camZoom?: number;
+  camX?: number;
+  camY?: number;
+  figureCount?: number;
+  instanceScale: number;
+  sceneX: number;
+  sceneY: number;
+  instanceColorHex: string;
+  nodes: StkndsFrameNodePose[];
+  instances?: StkndsFrameInstance[];
 }
 
 export interface StkndsInspectionResult {
@@ -1056,34 +1070,72 @@ export async function inspectStkndsBuffer(
             break;
           }
 
-          const firstInstOff = cursor + 58;
-          const instanceScale = dv.getFloat32(firstInstOff + 71, false);
-          const sceneX = dv.getFloat32(firstInstOff + 75, false);
-          const sceneY = dv.getFloat32(firstInstOff + 79, false);
-          const instanceColorHex = uint32ToHexColor(dv.getUint32(firstInstOff + 83, false));
+          const rawZoom = dv.getFloat32(cursor + 42, false);
+          const rawCamX = dv.getFloat32(cursor + 46, false);
+          const rawCamY = dv.getFloat32(cursor + 50, false);
+          const camZoom = Number.isFinite(rawZoom) && rawZoom > 0.1 && rawZoom < 10 ? rawZoom : 1.0;
+          const camX = Number.isFinite(rawCamX) && Math.abs(rawCamX) < 10000 ? rawCamX : 0.0;
+          const camY = Number.isFinite(rawCamY) && Math.abs(rawCamY) < 10000 ? rawCamY : 0.0;
 
-          const nodes: StkndsFrameNodePose[] = [];
-          for (let n = 0; n < figureNodes.length; n++) {
-            const rOff = firstInstOff + 112 + n * 58;
-            nodes.push({
-              index: n,
-              scale: dv.getFloat32(rOff + 0, false),
-              length: dv.getFloat32(rOff + 4, false),
-              thickness: dv.getInt32(rOff + 8, false),
-              angleDelta: dv.getFloat32(rOff + 12, false),
-              localAngle: dv.getFloat32(rOff + 16, false),
-              worldAngle: dv.getFloat32(rOff + 20, false),
-              colorHex: uint32ToHexColor(dv.getUint32(rOff + 24, false)),
+          const instances: StkndsFrameInstance[] = [];
+          for (let instIdx = 0; instIdx < figCnt; instIdx++) {
+            const instOff = cursor + 58 + instIdx * instSize;
+            const instScale = dv.getFloat32(instOff + 71, false);
+            const sx = dv.getFloat32(instOff + 75, false);
+            const sy = dv.getFloat32(instOff + 79, false);
+            const instColorHex = uint32ToHexColor(dv.getUint32(instOff + 83, false));
+
+            const instNodes: StkndsFrameNodePose[] = [];
+            for (let n = 0; n < figureNodes.length; n++) {
+              const rOff = instOff + 112 + n * 58;
+              const angleDelta = dv.getFloat32(rOff + 12, false);
+              const localAngle = dv.getFloat32(rOff + 16, false);
+              const rawWorldAngle = dv.getFloat32(rOff + 20, false);
+              const p = n < STICKFIGURE_PARENTS.length ? STICKFIGURE_PARENTS[n] : -1;
+              const reconstructedWorldAngle =
+                figureNodes.length === 17
+                  ? p === -1
+                    ? angleDelta
+                    : (instNodes[p]?.worldAngle ?? 0) + angleDelta
+                  : Number.isFinite(rawWorldAngle)
+                  ? rawWorldAngle
+                  : angleDelta;
+
+              instNodes.push({
+                index: n,
+                scale: dv.getFloat32(rOff + 0, false),
+                length: dv.getFloat32(rOff + 4, false),
+                thickness: dv.getInt32(rOff + 8, false),
+                angleDelta,
+                localAngle: Number.isFinite(localAngle) ? localAngle : angleDelta,
+                worldAngle: reconstructedWorldAngle,
+                colorHex: uint32ToHexColor(dv.getUint32(rOff + 24, false)),
+              });
+            }
+
+            instances.push({
+              instanceIndex: instIdx,
+              instanceScale: instScale,
+              sceneX: sx,
+              sceneY: sy,
+              instanceColorHex: instColorHex,
+              nodes: instNodes,
             });
           }
 
+          const primaryInst = instances[0];
           parsedFrames.push({
             frameIndex: f,
-            instanceScale,
-            sceneX,
-            sceneY,
-            instanceColorHex,
-            nodes,
+            camZoom,
+            camX,
+            camY,
+            figureCount: figCnt,
+            instanceScale: primaryInst.instanceScale,
+            sceneX: primaryInst.sceneX,
+            sceneY: primaryInst.sceneY,
+            instanceColorHex: primaryInst.instanceColorHex,
+            nodes: primaryInst.nodes,
+            instances,
           });
 
           cursor += frameBytes;
