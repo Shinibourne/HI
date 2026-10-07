@@ -25,6 +25,7 @@ import {
   Compass,
   Crosshair,
   Maximize2,
+  Zap,
 } from 'lucide-react';
 import {
   BounceGeneratorConfig,
@@ -339,7 +340,7 @@ export function App() {
   const [baseTemplate27, setBaseTemplate27] = useState<Uint8Array | null>(null);
   const [activeInspection, setActiveInspection] = useState<StkndsInspectionResult | null>(null);
   const [selectedPresetPath, setSelectedPresetPath] = useState<string>(
-    '/downloads/teleport_ambush_12fps.stknds'
+    '/downloads/speed_vs_strength_12fps.stknds'
   );
   const [inspectLoading, setInspectLoading] = useState<boolean>(true);
   const [inspectError, setInspectError] = useState<string | null>(null);
@@ -616,11 +617,11 @@ export function App() {
       ctx.fillStyle = '#B45309';
       ctx.fillText('A START (X: 380)', 340 * scaleX, groundCanvasY + 24);
       ctx.fillStyle = '#475569';
-      ctx.fillText('B POWER STANCE (X: 780)', 740 * scaleX, groundCanvasY + 24);
+      ctx.fillText('B POWER STANCE (X: 645)', 605 * scaleX, groundCanvasY + 24);
       ctx.fillStyle = '#DC2626';
-      ctx.fillText('KICK CLASH (X: 860)', 840 * scaleX, groundCanvasY + 24);
+      ctx.fillText('KICK CLASH (X: 645)', 625 * scaleX, groundCanvasY + 38);
       ctx.fillStyle = '#0284C7';
-      ctx.fillText('B TOUCHDOWN & SKID (X: 335 → 250)', 180 * scaleX, groundCanvasY + 24);
+      ctx.fillText('B TOUCHDOWN & SKID (X: 250 → 240)', 160 * scaleX, groundCanvasY + 24);
 
       // Speed Lines during Act 3 (Frames 9..12)
       if (activeSpec.act.includes('Speed Burst')) {
@@ -636,14 +637,15 @@ export function App() {
         ctx.restore();
       }
 
-      // Punch Arc visualization during Act 5 (Frames 17..20)
+      // Compact Direct Linear Punch Trajectory during Act 5 (Frames 17..20)
       if (activeSpec.act.includes('The Punch')) {
         ctx.save();
-        ctx.strokeStyle = 'rgba(239, 68, 68, 0.5)';
-        ctx.lineWidth = 3;
+        ctx.strokeStyle = 'rgba(239, 68, 68, 0.6)';
+        ctx.lineWidth = 2.5;
         ctx.setLineDash([4, 4]);
         ctx.beginPath();
-        ctx.arc(820 * scaleX, 470 * scaleY, 70 * scaleX, -0.6, 0.6);
+        ctx.moveTo(660 * scaleX, 410 * scaleY);
+        ctx.lineTo(814 * scaleX, 338 * scaleY);
         ctx.stroke();
         ctx.restore();
       }
@@ -654,12 +656,12 @@ export function App() {
         ctx.strokeStyle = '#F59E0B';
         ctx.lineWidth = 3;
         ctx.beginPath();
-        ctx.arc(860 * scaleX, 520 * scaleY, 28 * scaleX, 0, Math.PI * 2);
+        ctx.arc(645 * scaleX, 505 * scaleY, 28 * scaleX, 0, Math.PI * 2);
         ctx.stroke();
         ctx.strokeStyle = '#DC2626';
         ctx.lineWidth = 1.5;
         ctx.beginPath();
-        ctx.arc(860 * scaleX, 520 * scaleY, 44 * scaleX, 0, Math.PI * 2);
+        ctx.arc(645 * scaleX, 505 * scaleY, 44 * scaleX, 0, Math.PI * 2);
         ctx.stroke();
         ctx.restore();
       }
