@@ -41,7 +41,8 @@ export type SkillCategory =
   | 'Spatial Consistency & Interaction'
   | 'Quality Assurance'
   | 'General Physics & Load Intelligence'
-  | 'Physics & Scientific Mass Variations';
+  | 'Physics & Scientific Mass Variations'
+  | 'Kinetic & Potential Energy Dynamics';
 
 export interface MotionSkillDefinition {
   id: number;
@@ -357,6 +358,13 @@ export const SKILL_HIERARCHY: SkillHierarchyBranch[] = [
         name: 'Physics & Scientific Mass Variations',
         description: 'Inertial Mass (F=ma), Gravitational Mass (active/passive & Weak Equivalence Principle), Rest Mass (Invariant Mass & E=mc²), Relativistic Mass (Lorentz γ), and Sub-Category Scientific Mass Variations (Reduced μ, Added m_added, Effective m*).',
         skills: [64, 65, 66, 67, 68],
+        autoInvokes: [],
+      },
+      {
+        id: 'physics-kinetic-potential-energy',
+        name: 'Kinetic & Potential Energy Dynamics',
+        description: 'Translational (KE=0.5mv²), Rotational (KE=0.5Iω²), Vibrational KE, Gravitational (PE=mgh), Elastic (PE=0.5kx²), Chemical, Electrostatic/Nuclear PE, and Conservation Laws.',
+        skills: [69, 70, 71, 72, 73, 74, 75, 76],
         autoInvokes: [],
       },
     ],
@@ -1912,8 +1920,193 @@ export const EXPANDED_46_MOTION_SKILLS: MotionSkillDefinition[] = [
       'Fluid acceleration reflects effective virtual mass m_eff = m_0 + C_v ρ V',
     ],
   },
+  {
+    id: 69,
+    slug: 'translational-kinetic-energy',
+    name: '69. Translational Kinetic Energy & Linear Displacement Dynamics',
+    category: 'Kinetic & Potential Energy Dynamics',
+    priority: 'CRITICAL',
+    summary:
+      'Quantifies translational kinetic energy (KE_trans = 0.5 m v²) stored in the linear motion of entities and props across spatial trajectories.',
+    causalQuestion: 'How much work must be performed by net forces to accelerate an entity of mass m to linear velocity v?',
+    biomechanicalRules: [
+      'Translational kinetic energy scales quadratically with linear velocity: KE_trans = 0.5 m v².',
+      'Doubling speed requires quadrupling work input or braking absorption distance during deceleration.',
+      'Linear momentum p = m v dictates impact force transfer during collisions.',
+    ],
+    failureModesPrevented: [
+      'Linear velocity spikes without work application',
+      'Equal stopping distances for slow vs fast moving entities',
+    ],
+    verificationMetrics: [
+      'Kinetic energy verified against KE = 0.5 m v² within float precision',
+      'Quadratic work-energy relation ΔKE = W_net satisfied',
+    ],
+  },
+  {
+    id: 70,
+    slug: 'rotational-kinetic-energy',
+    name: '70. Rotational Kinetic Energy & Axial Spin Mechanics',
+    category: 'Kinetic & Potential Energy Dynamics',
+    priority: 'CRITICAL',
+    summary:
+      'Measures rotational kinetic energy (KE_rot = 0.5 I ω²) of spinning bodies, torso axial twists, and weapon rotations.',
+    causalQuestion: 'How much rotational torque and angular displacement is stored in a spinning body or prop?',
+    biomechanicalRules: [
+      'Rotational kinetic energy depends on rotational moment of inertia and angular velocity squared: KE_rot = 0.5 I ω².',
+      'Tucking limbs reduces moment of inertia I, increasing angular spin rate ω while preserving angular momentum.',
+      'Torque work W_rot = ∫ τ dθ converts directly into rotational kinetic energy.',
+    ],
+    failureModesPrevented: [
+      'Constant spin rate when tucking or extending limbs in mid-air',
+      'Rotational acceleration without applied torque or inertia change',
+    ],
+    verificationMetrics: [
+      'Rotational KE verified against 0.5 I ω² within float precision',
+      'Angular momentum L = I ω preserved during mid-air tucks',
+    ],
+  },
+  {
+    id: 71,
+    slug: 'vibrational-kinetic-energy',
+    name: '71. Vibrational Kinetic Energy & Oscillatory Structural Dynamics',
+    category: 'Kinetic & Potential Energy Dynamics',
+    priority: 'HIGH',
+    summary:
+      'Governs high-frequency vibrational kinetic oscillations (KE_vib = 0.5 k (A² - x²)) across flexible structures, apparel, and impact shockwaves.',
+    causalQuestion: 'How does impact force dissipate into high-frequency structural vibration and harmonic decay?',
+    biomechanicalRules: [
+      'Vibrational kinetic energy converts back and forth with elastic potential energy during structural oscillations.',
+      'Impact shockwaves induce exponentially damped harmonic vibration x(t) = A e^(-γt) cos(ωt).',
+      'Flexible weapon shafts, apparel, and hair display anti-phase vibrational lag.',
+    ],
+    failureModesPrevented: [
+      'Rigid non-vibrating impact landings',
+      'Undamped infinite jitter without physical decay',
+    ],
+    verificationMetrics: [
+      'Vibrational kinetic energy exchanges continuously with elastic potential energy',
+      'Damping decay rate γ matches physical damping coefficient',
+    ],
+  },
+  {
+    id: 72,
+    slug: 'gravitational-potential-energy',
+    name: '72. Gravitational Potential Energy & Elevation Dynamics',
+    category: 'Kinetic & Potential Energy Dynamics',
+    priority: 'CRITICAL',
+    summary:
+      'Measures stored gravitational potential energy (PE_grav = mgh) based on elevation within a gravitational acceleration field.',
+    causalQuestion: 'How much gravitational potential energy is accumulated at peak elevation, and how does it convert into kinetic fall speed?',
+    biomechanicalRules: [
+      'Gravitational potential energy scales linearly with height h and mass m: PE_grav = m g h.',
+      'Freefall in a vacuum converts 100% of PE_grav into kinetic energy, reaching impact velocity v = √(2gh).',
+      'In athletic jumping, apex elevation represents total initial vertical kinetic energy converted to PE.',
+    ],
+    failureModesPrevented: [
+      'Falling faster or slower than gravitational freefall velocity v = √(2gh)',
+      'Instantaneous upward elevation gains without work input',
+    ],
+    verificationMetrics: [
+      'Gravitational PE verified against mgh within float precision',
+      'Full PE-to-KE energy conversion verified during freefall',
+    ],
+  },
+  {
+    id: 73,
+    slug: 'elastic-potential-energy',
+    name: '73. Elastic Potential Energy & Deformable Material Mechanics',
+    category: 'Kinetic & Potential Energy Dynamics',
+    priority: 'HIGH',
+    summary:
+      'Governs energy stored in stretched or compressed materials, tendons, and springs (PE_elastic = 0.5 k x²).',
+    causalQuestion: 'How much energy is stored during joint compression and released during explosive recoil?',
+    biomechanicalRules: [
+      'Elastic potential energy scales with spring constant k and displacement squared x²: PE_elastic = 0.5 k x².',
+      'Pre-jump knee crouch stretches tendons, storing elastic potential energy released during takeoff drive.',
+      'Impact landings deform material, converting kinetic impact energy into elastic potential compression.',
+    ],
+    failureModesPrevented: [
+      'Explosive jumps without prior crouch deformation',
+      'Rigid impact landings with zero material compliance',
+    ],
+    verificationMetrics: [
+      'Elastic PE verified against 0.5 k x² within float precision',
+      'Restorative Hooke force F = -kx opposes direction of deformation',
+    ],
+  },
+  {
+    id: 74,
+    slug: 'chemical-electrostatic-nuclear-pe',
+    name: '74. Chemical, Electrostatic & Nuclear Potential Energy',
+    category: 'Kinetic & Potential Energy Dynamics',
+    priority: 'HIGH',
+    summary:
+      'Models internal chemical bond energy, electrostatic charge potentials (k_e q1 q2 / r), and nuclear binding energy (Δm c²).',
+    causalQuestion: 'How do internal molecular, electrostatic, and nuclear potential energies transform into macroscopic work and motion?',
+    biomechanicalRules: [
+      'Muscular contraction converts internal chemical potential energy (ATP hydrolysis) into mechanical kinetic work.',
+      'Electrostatic potential energy governs electric charge interactions and field force attractions.',
+      'Nuclear mass defect Δm converts to nuclear potential energy via E = Δm c².',
+    ],
+    failureModesPrevented: [
+      'Uncaused muscular work without internal energy expenditure',
+      'Field interactions violating inverse-distance electrostatic potential laws',
+    ],
+    verificationMetrics: [
+      'Electrostatic PE satisfied via k_e q1 q2 / r within float precision',
+      'Internal potential energy conversions satisfy global thermodynamic balance',
+    ],
+  },
+  {
+    id: 75,
+    slug: 'law-of-conservation-of-energy',
+    name: '75. Law of Conservation of Energy & Transformation Dynamics',
+    category: 'Kinetic & Potential Energy Dynamics',
+    priority: 'CRITICAL',
+    summary:
+      'Enforces the fundamental thermodynamic law that total energy in an isolated system remains strictly constant across all transformations.',
+    causalQuestion: 'Does the sum of all kinetic, potential, thermal, and work energy terms remain conserved across every phase transition?',
+    biomechanicalRules: [
+      'Total energy cannot be created or destroyed: E_total = KE + PE + Q + W = constant.',
+      'Frictional losses convert kinetic energy into thermal heat energy Q = F_f d.',
+      'Energy input from muscular work strictly equals change in mechanical energy plus thermal dissipation.',
+    ],
+    failureModesPrevented: [
+      'Spontaneous energy creation without work input',
+      'Energy vanishing without conversion to potential, thermal, or work forms',
+    ],
+    verificationMetrics: [
+      'Global energy conservation error margin |ΔE_total| < 1e-5 across all frames',
+      '100% accounting for thermal and frictional dissipation terms',
+    ],
+  },
+  {
+    id: 76,
+    slug: 'mechanical-energy-conservation',
+    name: '76. Mechanical Energy Conservation & Phase Oscillations',
+    category: 'Kinetic & Potential Energy Dynamics',
+    priority: 'CRITICAL',
+    summary:
+      'Enforces conservation of mechanical energy (E_mech = KE + PE = constant) in conservative systems such as pendulums, bouncing balls, and jumps.',
+    causalQuestion: 'How does mechanical energy continuously shift back and forth between kinetic motion and potential storage across dynamic phases?',
+    biomechanicalRules: [
+      'In ideal conservative systems without non-conservative friction, E_mech = KE_trans + KE_rot + PE_grav + PE_elastic = constant.',
+      'At trajectory apex, vertical kinetic energy drops to zero while gravitational potential energy reaches maximum.',
+      'At ground level, potential energy reaches zero while kinetic energy reaches maximum velocity.',
+    ],
+    failureModesPrevented: [
+      'Asymmetric peak heights in frictionless bounce cycles',
+      'Non-conservative energy gain or loss during ballistic parabolic flight',
+    ],
+    verificationMetrics: [
+      'Mechanical energy invariance E_mech = constant verified to precision < 1e-6 in ideal phases',
+      'Continuous smooth interchange between KE and PE curves',
+    ],
+  },
 ];
 
+export const EXPANDED_76_MOTION_SKILLS = EXPANDED_46_MOTION_SKILLS;
 export const EXPANDED_68_MOTION_SKILLS = EXPANDED_46_MOTION_SKILLS;
 export const EXPANDED_63_MOTION_SKILLS = EXPANDED_46_MOTION_SKILLS;
 export const EXPANDED_53_MOTION_SKILLS = EXPANDED_46_MOTION_SKILLS;

@@ -18,6 +18,7 @@ import {
 } from '../../lib/physics/generalMotionGenerator';
 import { BiomechanicalAuditReport } from '../../lib/physics/types';
 import { calculateUnifiedMassAnalysis } from '../../lib/physics/scientificMassSolver';
+import { calculateUnifiedEnergyAnalysis } from '../../lib/physics/energyDynamicsSolver';
 
 interface PhysicsIntelligenceTabProps {
   generalPhysicsConfig: GeneralGeneratorConfig;
@@ -48,10 +49,23 @@ export const PhysicsIntelligenceTab: React.FC<PhysicsIntelligenceTabProps> = ({
   const [scientificMassKg, setScientificMassKg] = useState<number>(70);
   const [scientificVelocityFractionC, setScientificVelocityFractionC] = useState<number>(0.1);
 
+  const [energyHeightMeters, setEnergyHeightMeters] = useState<number>(2.5);
+  const [energyVelocityMps, setEnergyVelocityMps] = useState<number>(7.0);
+  const [energyAngularVelRadS, setEnergyAngularVelRadS] = useState<number>(3.14);
+  const [energySpringStretchMeters, setEnergySpringStretchMeters] = useState<number>(0.15);
+
   const scientificAnalysis = calculateUnifiedMassAnalysis({
     massKg: scientificMassKg,
     speedVelocityMps: scientificVelocityFractionC * 299792458,
     secondaryMassKg: generalPhysicsConfig.objMass,
+  });
+
+  const energyAnalysis = calculateUnifiedEnergyAnalysis({
+    massKg: scientificMassKg,
+    heightMeters: energyHeightMeters,
+    velocityMps: energyVelocityMps,
+    angularVelocityRadS: energyAngularVelRadS,
+    springStretchMeters: energySpringStretchMeters,
   });
 
   const scenarios: { type: PhysicsScenarioType; label: string; icon: string; desc: string }[] = [
@@ -245,6 +259,109 @@ export const PhysicsIntelligenceTab: React.FC<PhysicsIntelligenceTabProps> = ({
             <span>20 px (Chest Hold)</span>
             <span>50 px (Mid Hold)</span>
             <span>85 px (Outstretched)</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Kinetic & Potential Energy Dynamics Live Telemetry Panel (Skills #69–#76) */}
+      <div className="bg-white p-4 rounded-xl border border-amber-200 shadow-xs space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-amber-100 pb-3">
+          <div className="flex items-center gap-2">
+            <Zap className="w-4 h-4 text-amber-600 shrink-0" />
+            <div>
+              <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
+                Kinetic &amp; Potential Energy Dynamics (Skills #69–#76)
+              </h3>
+              <p className="text-[11px] text-slate-500">
+                Translational, Rotational, Vibrational KE, Gravitational, Elastic, Chemical/Field PE &amp; Energy Conservation Laws
+              </p>
+            </div>
+          </div>
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="flex items-center gap-1.5">
+              <label className="text-[11px] font-mono text-slate-600">Vel (v):</label>
+              <input
+                type="range"
+                min="0"
+                max="25"
+                step="1"
+                value={energyVelocityMps}
+                onChange={(e) => setEnergyVelocityMps(parseFloat(e.target.value))}
+                className="w-20 accent-amber-600 cursor-pointer"
+              />
+              <span className="text-xs font-mono font-bold text-amber-600 w-10">
+                {energyVelocityMps}m/s
+              </span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <label className="text-[11px] font-mono text-slate-600">Height (h):</label>
+              <input
+                type="range"
+                min="0"
+                max="10"
+                step="0.5"
+                value={energyHeightMeters}
+                onChange={(e) => setEnergyHeightMeters(parseFloat(e.target.value))}
+                className="w-20 accent-emerald-600 cursor-pointer"
+              />
+              <span className="text-xs font-mono font-bold text-emerald-600 w-10">
+                {energyHeightMeters}m
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+          {/* Kinetic Energy Subcategories */}
+          <div className="p-3 bg-amber-50/50 rounded-lg border border-amber-200/60 space-y-1">
+            <div className="font-bold text-amber-900 text-[11px] uppercase tracking-wide flex items-center justify-between">
+              <span>Kinetic Energy (KE)</span>
+              <span className="font-mono text-amber-700">{energyAnalysis.kinetic.totalKineticEnergyJoules.toFixed(1)} J</span>
+            </div>
+            <div className="font-mono text-[11px] text-slate-700 space-y-0.5 pt-1">
+              <div>Translational (½mv²): <span className="font-bold text-amber-800">{energyAnalysis.kinetic.translationalKEJoules.toFixed(1)} J</span></div>
+              <div>Rotational (½Iω²): <span className="font-bold">{energyAnalysis.kinetic.rotationalKEJoules.toFixed(1)} J</span></div>
+              <div>Vibrational (½k(A²-x²)): <span className="font-bold">{energyAnalysis.kinetic.vibrationalKEJoules.toFixed(1)} J</span></div>
+            </div>
+          </div>
+
+          {/* Gravitational & Elastic PE */}
+          <div className="p-3 bg-emerald-50/50 rounded-lg border border-emerald-200/60 space-y-1">
+            <div className="font-bold text-emerald-900 text-[11px] uppercase tracking-wide flex items-center justify-between">
+              <span>Potential Energy (PE)</span>
+              <span className="font-mono text-emerald-700">{energyAnalysis.potential.totalPotentialEnergyJoules.toFixed(1)} J</span>
+            </div>
+            <div className="font-mono text-[11px] text-slate-700 space-y-0.5 pt-1">
+              <div>Gravitational (mgh): <span className="font-bold text-emerald-800">{energyAnalysis.potential.gravitationalPEJoules.toFixed(1)} J</span></div>
+              <div>Elastic (½kx²): <span className="font-bold">{energyAnalysis.potential.elasticPEJoules.toFixed(1)} J</span></div>
+              <div>Electrostatic/Field: <span className="font-bold">{energyAnalysis.potential.electrostaticPEJoules.toFixed(3)} J</span></div>
+            </div>
+          </div>
+
+          {/* Total Mechanical Energy */}
+          <div className="p-3 bg-indigo-50/50 rounded-lg border border-indigo-200/60 space-y-1">
+            <div className="font-bold text-indigo-900 text-[11px] uppercase tracking-wide flex items-center justify-between">
+              <span>Mechanical Energy (E_mech)</span>
+              <span className="font-mono text-indigo-700">{energyAnalysis.conservation.totalMechanicalEnergyJoules.toFixed(1)} J</span>
+            </div>
+            <div className="font-mono text-[11px] text-slate-700 space-y-0.5 pt-1">
+              <div>KE Total: <span className="font-bold text-amber-700">{energyAnalysis.conservation.totalKineticEnergyJoules.toFixed(1)} J</span></div>
+              <div>PE Total: <span className="font-bold text-emerald-700">{energyAnalysis.conservation.totalPotentialEnergyJoules.toFixed(1)} J</span></div>
+              <div>Phase Shift: <span className="font-bold text-indigo-600">KE ↔ PE Oscillation</span></div>
+            </div>
+          </div>
+
+          {/* Law of Conservation of Energy */}
+          <div className="p-3 bg-purple-50/50 rounded-lg border border-purple-200/60 space-y-1">
+            <div className="font-bold text-purple-900 text-[11px] uppercase tracking-wide flex items-center justify-between">
+              <span>Energy Conservation</span>
+              <span className="font-mono text-purple-700 font-bold">100% CONSERVED</span>
+            </div>
+            <div className="font-mono text-[11px] text-slate-700 space-y-0.5 pt-1">
+              <div>Total System E: <span className="font-bold text-purple-800">{energyAnalysis.conservation.totalSystemEnergyJoules.toFixed(1)} J</span></div>
+              <div>Thermal Losses (Q): <span className="font-bold">{energyAnalysis.conservation.thermalLossJoules.toFixed(1)} J</span></div>
+              <div>Thermodynamic Law: <span className="font-bold text-purple-700">E_total = Const</span></div>
+            </div>
           </div>
         </div>
       </div>
