@@ -39,7 +39,8 @@ export type SkillCategory =
   | 'Physics, Secondary & Inertia'
   | 'Timing, Composition & Arcs'
   | 'Spatial Consistency & Interaction'
-  | 'Quality Assurance';
+  | 'Quality Assurance'
+  | 'General Physics & Load Intelligence';
 
 export interface MotionSkillDefinition {
   id: number;
@@ -311,6 +312,43 @@ export const SKILL_HIERARCHY: SkillHierarchyBranch[] = [
         name: 'Multi-Character Synchronization & QC',
         description: 'Same-frame hit timing, recoil physics, dynamic camera framing, and 10-point spatial validation.',
         skills: [52, 53],
+        autoInvokes: [],
+      },
+    ],
+  },
+  {
+    id: 'general-physics-intelligence',
+    name: '9. General Physics & Biomechanical Intelligence',
+    description: 'General-purpose mass ratios, lever-arm torque dynamics, Hof dynamic balance, momentum braking, and multi-entity physical causality.',
+    skills: [54, 55, 56, 57, 58, 59, 60, 61, 62, 63],
+    autoInvokes: ['anatomy', 'kinematics', 'balance', 'spatial-interaction'],
+    subBranches: [
+      {
+        id: 'physics-mass-torque',
+        name: 'Mass, Load & Torque Mechanics',
+        description: 'Relative mass ratios (μ), lever-arm moments (τ = r × F), and postural counter-lean compensation.',
+        skills: [54],
+        autoInvokes: [],
+      },
+      {
+        id: 'physics-balance-momentum',
+        name: 'Dynamic Balance & Momentum Dynamics',
+        description: 'Extrapolated CoM stability, ankle/hip/stepping recovery, rotational inertia, and non-linear braking ramps.',
+        skills: [55, 56],
+        autoInvokes: [],
+      },
+      {
+        id: 'physics-causality-reactions',
+        name: 'Causality, Force Reaction & Continuity',
+        description: 'Newtonian force chains, compliant impact absorption, C1 transition splines, and anti-reset continuity.',
+        skills: [57, 58, 59, 60, 61, 62],
+        autoInvokes: [],
+      },
+      {
+        id: 'physics-audit',
+        name: '7-Domain Biomechanical Audit Gate',
+        description: 'Quantitative physical critic measuring bone invariance, knee polarity, contact slip, and torque proportionality.',
+        skills: [63],
         autoInvokes: [],
       },
     ],
@@ -1521,8 +1559,239 @@ export const EXPANDED_46_MOTION_SKILLS: MotionSkillDefinition[] = [
       'Overall Multi-Character Spatial Consistency Score >= 95%',
     ],
   },
+  {
+    id: 54,
+    slug: 'mass-load-force-interaction',
+    name: '54. Mass, Load & External Force Interaction',
+    category: 'General Physics & Load Intelligence',
+    priority: 'CRITICAL',
+    summary:
+      'Models mass ratios (μ = M_obj / M_char), lever-arm moments (τ = r × F), and proportional whole-body counter-lean across lifting, carrying, pushing, and pulling.',
+    causalQuestion: 'How does the external object mass and moment arm alter the character’s muscular torque demands and whole-body posture?',
+    biomechanicalRules: [
+      'Weight is never treated as a scalar alone; rotational torque demand τ = leverArmX × F_load governs postural compensation.',
+      'A heavy load (μ > 0.35) or far hold (> 50px) requires proportional backward or lateral spinal counter-lean and pelvic displacement.',
+      'Force chains propagate through the whole articulated skeleton: feet, legs, core, shoulders, and arms participate in push/pull/lift.',
+    ],
+    failureModesPrevented: [
+      'Weightless lifting where a character picks up a massive boulder with unchanged upright posture',
+      'Lifting or pushing through isolated floating hand coordinates with no ground reaction participation',
+    ],
+    verificationMetrics: [
+      'Spinal counter-lean angle scales proportionally with torque demand (R² >= 0.88)',
+      'Ground reaction force equals (M_char + M_obj) × g across grounded stance limbs',
+    ],
+  },
+  {
+    id: 55,
+    slug: 'dynamic-balance-recovery',
+    name: '55. Dynamic Balance & Recovery Strategy',
+    category: 'General Physics & Load Intelligence',
+    priority: 'CRITICAL',
+    summary:
+      'Evaluates dynamic stability via Hof Extrapolated Center of Mass (XCoM) and selects authentic recovery actions: ankle torque, hip shear, arm counterbalance, or emergency stumble steps.',
+    causalQuestion: 'When perturbed by forces or movement, which biomechanical recovery strategy restores equilibrium?',
+    biomechanicalRules: [
+      'Static equilibrium requires CoM inside Base of Support; dynamic equilibrium requires Extrapolated CoM inside Base of Support.',
+      'Minor perturbations (|ΔX| < 15px) trigger ankle strategy; moderate perturbations (15–35px) trigger hip strategy; severe perturbations (> 35px) trigger stepping recovery.',
+      'Controlled instability must emerge from physical causes, not frame-to-frame random jitter.',
+    ],
+    failureModesPrevented: [
+      'Characters tipping over without reactive compensation',
+      'Artificial jitter or shaking used as a substitute for real biomechanical balance recovery',
+    ],
+    verificationMetrics: [
+      'Extrapolated CoM tracked per frame against support polygon boundaries',
+      'Perturbations > 35px initiate verified recovery footfall target solving',
+    ],
+  },
+  {
+    id: 56,
+    slug: 'momentum-dynamics',
+    name: '56. Momentum Dynamics & Kinetic Transfer',
+    category: 'General Physics & Load Intelligence',
+    priority: 'HIGH',
+    summary:
+      'Enforces linear momentum conservation, rotational inertia modulation, non-linear braking deceleration ramps, and pelvic-thoracic counter-rotation.',
+    causalQuestion: 'How does the character preserve or dissipate momentum without physically impossible velocity snaps?',
+    biomechanicalRules: [
+      'A character moving left cannot switch to moving right on a single frame; directional reversals require at least a 3-frame braking ramp (10:6:3:1).',
+      'Power in athletic strikes and throws transfers sequentially from proximal heavy segments (legs/hips) to distal light segments (hands/feet).',
+      'Pelvic rotation drives anti-phase thoracic counter-rotation to conserve vertical spinal angular momentum.',
+    ],
+    failureModesPrevented: [
+      'Instantaneous velocity snaps and abrupt momentum teleportation',
+      'Robotic plank-wood torso where shoulders and hips rotate identically',
+    ],
+    verificationMetrics: [
+      'C1 continuous root velocity progression with max acceleration <= 40 px/f²',
+      'Measurable phase lag between proximal pelvic peak velocity and distal extremity peak velocity',
+    ],
+  },
+  {
+    id: 57,
+    slug: 'motion-intent-and-causality',
+    name: '57. Motion Intent & Causality Pipeline',
+    category: 'General Physics & Load Intelligence',
+    priority: 'CRITICAL',
+    summary:
+      'Governs movement as a causal progression: Intent → Cause → Forces/Torques → Momentum → CoM → Contact → Whole-Body Reaction → Kinematics → Audit.',
+    causalQuestion: 'What physical cause made this specific joint configuration and world displacement physically necessary on this frame?',
+    biomechanicalRules: [
+      'Every significant joint movement must have an understandable mechanical cause.',
+      'High-level narrative intent decomposes deterministically into Anticipation, Drive, Contact, Recoil, and Settle phases.',
+      'Eliminates arbitrary coordinate placing in favor of physically motivated body reactions.',
+    ],
+    failureModesPrevented: [
+      'Arbitrary keyframe placement with zero physical motivation',
+      'Uncaused joint twitching and disjointed pose collections',
+    ],
+    verificationMetrics: [
+      '100% of frames trace back to active causal action phases and force vectors',
+      'Zero uncaused coordinate jumps > 5px across non-ballistic phases',
+    ],
+  },
+  {
+    id: 58,
+    slug: 'force-reaction-followthrough',
+    name: '58. Force Reaction & Follow-Through',
+    category: 'General Physics & Load Intelligence',
+    priority: 'HIGH',
+    summary:
+      'Applies Newton’s Third Law across the articulated kinetic tree, modeling athletic whiplash recoil, landing compression cushioning, and staggered follow-through.',
+    causalQuestion: 'How does the reaction force from this strike, jump, or catch propagate back through the body?',
+    biomechanicalRules: [
+      'Maximum kicking or throwing velocity induces backward recoil in the upper torso to conserve momentum.',
+      'High falls or jump landings absorb kinetic energy via multi-joint compression (knees flex +30–50°, pelvis drops 18–36px).',
+      'Free extremities lag primary drivers by 1–3 frames and settle via damped harmonic oscillation.',
+    ],
+    failureModesPrevented: [
+      'Weightless kicking where the torso stays completely motionless during a high-speed strike',
+      'Rigid-legged jump landings with zero knee compression',
+    ],
+    verificationMetrics: [
+      'Torso backward recoil angle >= 6.0° during maximum strike acceleration',
+      'Pelvis compression depth >= 12px on high-velocity touchdowns',
+    ],
+  },
+  {
+    id: 59,
+    slug: 'temporal-motion-timing',
+    name: '59. Temporal Motion & Kinetic Timing',
+    category: 'General Physics & Load Intelligence',
+    priority: 'HIGH',
+    summary:
+      'Decouples action choreography from fixed frame counts; applies non-linear quintic easing curves, anticipation spacing, impact hit-stop holds, and organic moving holds.',
+    causalQuestion: 'Does the action duration match physical reality, and does the timing reflect genuine acceleration curves?',
+    biomechanicalRules: [
+      '24 FPS represents sample rate, not a mandate that every animation must last 24 frames.',
+      'Acceleration phases follow non-linear easing (1:3:7:12:18 launch; 18:12:7:3:1 braking).',
+      'Living human characters must preserve organic micromotions; zero dead freezes exceeding 6 consecutive frames.',
+    ],
+    failureModesPrevented: [
+      'Robotic linear interpolation between poses',
+      'Frozen mannequin characters in moving holds',
+    ],
+    verificationMetrics: [
+      'Monotonically increasing spacing during drive phases',
+      'Zero frozen frames > 6 consecutive frames in living characters',
+    ],
+  },
+  {
+    id: 60,
+    slug: 'motion-transition-continuity',
+    name: '60. Motion Transition Continuity',
+    category: 'General Physics & Load Intelligence',
+    priority: 'CRITICAL',
+    summary:
+      'Abolishes robotic "freeze-and-reset" poses between activities; blends action boundaries via cubic Hermite splines preserving residual momentum and contact anchors.',
+    causalQuestion: 'Does Action B emerge seamlessly from the residual momentum and foot placement of Action A?',
+    biomechanicalRules: [
+      'A living character never resets to a neutral T-pose between activities.',
+      'State buffers (root velocity, joint angles, angular momentum) are preserved across phase boundaries.',
+      'Cubic Hermite splines guarantee C1 velocity continuity across transition seams.',
+    ],
+    failureModesPrevented: [
+      'Abrupt pose snapping at action boundaries',
+      'Foot popping or elevation resets between movements',
+    ],
+    verificationMetrics: [
+      'Max angular delta <= 25°/frame across transition seams',
+      'Planted stance foot drift < 0.5px during action handoffs',
+    ],
+  },
+  {
+    id: 61,
+    slug: 'general-interaction',
+    name: '61. General Multi-Entity Interaction',
+    category: 'General Physics & Load Intelligence',
+    priority: 'CRITICAL',
+    summary:
+      'Maintains unified world-space simulation for Character-Character, Character-Object, Character-Terrain, and Object-Object physical engagements.',
+    causalQuestion: 'Do all participating characters, objects, and props interact in one shared world coordinate system?',
+    biomechanicalRules: [
+      'All scene participants share the master scene origin and ground plane (Y = 755.0px).',
+      'Props transition cleanly between FREE, HELD, RESTING, and IMPACTING states with exact contact precision.',
+      'Multi-character cooperative actions synchronize support forces and ground advancement.',
+    ],
+    failureModesPrevented: [
+      'Props floating or disconnecting from character hands',
+      'Characters interacting across incompatible elevations or ground planes',
+    ],
+    verificationMetrics: [
+      'Hand-to-object contact delta <= 1.5px during HELD state',
+      '100% of grounded actors share Y_ground within 1.0px',
+    ],
+  },
+  {
+    id: 62,
+    slug: 'motion-variation-and-natural-asymmetry',
+    name: '62. Natural Asymmetry & Organic Variation',
+    category: 'General Physics & Load Intelligence',
+    priority: 'STANDARD',
+    summary:
+      'Derives authentic bilateral asymmetry and organic movement variation from physical causes (load bias, lead stance, gait phase offset) without random noise.',
+    causalQuestion: 'Is the bilateral asymmetry motivated by real physical forces rather than artificial random jitter?',
+    biomechanicalRules: [
+      'Never twin left and right limbs into identical robotic mirror copies unless strictly intentional.',
+      'Asymmetry emerges from dominant lead stance, carried loads, and arm pendulum phase offsets.',
+      'All procedural variation must be deterministic and physically justifiable.',
+    ],
+    failureModesPrevented: [
+      'Robotic bilateral twinning and synchronized mirror movements',
+      'Vibrating stickfigures caused by unseeded random noise',
+    ],
+    verificationMetrics: [
+      'Bilateral limb angular separation >= 3.0° during locomotion and idle stances',
+      '100% deterministic frame generation across multiple runs',
+    ],
+  },
+  {
+    id: 63,
+    slug: 'biomechanical-audit',
+    name: '63. 7-Domain Biomechanical Audit Gate',
+    category: 'General Physics & Load Intelligence',
+    priority: 'CRITICAL',
+    summary:
+      'Autonomous quantitative critic verifying structural anatomy, motion continuity, dynamic balance, ground contact, load leverage, interaction precision, and temporal spacing.',
+    causalQuestion: 'Does the animation pass all 7 quantitative physical verification domains with verifiable numeric proof?',
+    biomechanicalRules: [
+      'Evaluates bone length invariance, knee 1-DOF polarity (0° hyperextension), stance pinning, torque-lean proportionality, and contact precision.',
+      'Generates actionable PASS / WARNING / FAIL verdicts with numeric diagnostic telemetry.',
+      'Acts as an automated quality gate preventing defective motion from reaching export.',
+    ],
+    failureModesPrevented: [
+      'Silent export of broken, hyperextended, or sliding animations',
+      'Unverified animations that pass superficial container checks but fail biomechanically',
+    ],
+    verificationMetrics: [
+      '7/7 audit domains evaluated with numeric scores',
+      'Overall Biomechanical Score >= 90/100 required for full certification',
+    ],
+  },
 ];
 
+export const EXPANDED_63_MOTION_SKILLS = EXPANDED_46_MOTION_SKILLS;
 export const EXPANDED_53_MOTION_SKILLS = EXPANDED_46_MOTION_SKILLS;
 
 /**

@@ -436,3 +436,88 @@ Never:
 - claim application testing that did not happen.
 
 The user's core requirement is **independent animation creation using reverse-engineered knowledge**.
+
+---
+
+## 16. General-Purpose Procedural Animation Intelligence Architecture
+
+### 16.1 The Universal Causal Pipeline
+```
+USER / NARRATIVE INTENT
+    │
+    ▼
+MOTION INTENT & CAUSALITY (Phase state machine: Anticipation → Drive → Contact → Settle)
+    │
+    ▼
+ACTION & TASK PLANNING (Locomotion, Lift, Push, Pull, Catch, Throw, Strike, Recover)
+    │
+    ▼
+TEMPORAL TIMING (Non-linear easing, variable durations, spacing curves)
+    │
+    ┌─────────────────────────┴─────────────────────────┐
+    ▼                                                   ▼
+MASS, LOAD & TORQUE MODEL                           CONTACT & SUPPORT MECHANICS
+(Relative mass μ, lever arms, rotational demand)   (Support states, zero slip, normal force)
+    │                                                   │
+    └─────────────────────────┬─────────────────────────┘
+                              ▼
+                  MOMENTUM & ANGULAR DYNAMICS
+                  (Linear dP/dt, angular dL/dt, rotational inertia I, kinetic chain)
+                              ▼
+                  DYNAMIC BALANCE & COM EQUILIBRIUM
+                  (XCoM Hof criterion, support polygon BoS, recovery strategies)
+                              ▼
+                  GENERAL MULTI-ENTITY INTERACTION
+                  (Shared world coordinates, collision precision, hit-stop coincidence)
+                              ▼
+                  FULL-BODY FORCE REACTION
+                  (Newton's 3rd law, pelvic-thoracic counter-twist, recoil)
+                              ▼
+                  ANALYTICAL KINEMATICS & IK
+                  (Coupled 2-bone IK, knee 1-DOF polarity, anterior elbow limits)
+                              ▼
+                  SECONDARY MOTION & FOLLOW-THROUGH
+                  (Inertial lag, damped harmonic decay, organic moving holds)
+                              ▼
+                  FRAME STATE GENERATION (Timestamped, fully articulated FrameState)
+                              ▼
+                  BIOMECHANICAL AUDIT GATE (7-Domain quantitative critic)
+                  ┌───────────┴───────────┐
+                  ▼                       ▼
+                PASS                    FAIL
+                  │                       │
+                  ▼                       ▼
+            .STKNDS EXPORT         CAUSAL REPAIR LOOP
+```
+
+### 16.2 Core vs. Domain-Specific Concepts
+- **Core Primitives (Universal)**:
+  - `Mass`: Normalized mass ratio $\mu = M_{obj} / M_{char}$
+  - `Load`: Lever-arm torque demand $\vec{\tau} = \vec{r} \times \vec{F}$
+  - `Contact`: Support states (`SWING`, `APPROACH`, `CONTACT`, `LOAD`, `PLANT`, `UNLOAD`, `RELEASE`)
+  - `Momentum`: Linear momentum $P = Mv$, angular momentum $L = I\omega$, kinetic chain lag
+  - `Balance`: Center of Mass, Extrapolated CoM ($X_{xcom} = X_{com} + V_{com}/\omega_0$), Base of Support
+  - `Continuity`: $C^1$-continuous Hermite blending across phase boundaries
+  - `Interaction`: Single shared Cartesian coordinate space ($Y_{ground} = 755.0$)
+- **Domain Specializations (Built on Core Primitives)**:
+  - `Locomotion`: Walk, run, jump, land, brake, turn
+  - `Object Interaction`: Lift, carry, push, pull, catch, throw, drop
+  - `Combat & Collision`: Strike, kick, evade, recoil, clash hit-stop
+  - `Perturbation`: Controlled instability, trips, slips, athletic recovery
+
+### 16.3 Configurable Physical Assumptions
+The engine does NOT hard-code universal constants. All physics parameters are configurable:
+- `gravity`: Standard $980\text{px/s}^2$
+- `character_mass`: Default $100$
+- `object_mass`: Configurable per prop ($5$ to $150$)
+- `ground_plane`: Configurable $Y$ elevation (default $755.0\text{px}$)
+- `friction`: Ground traction coefficient (default $0.70$)
+- `contact_threshold`: Geometric reach tolerance (default $12.0\text{px}$)
+- `balance_threshold`: Stability margin boundary (default $25.0\text{px}$)
+- `restitution`: Elastic collision coefficient (default $0.60$)
+
+### 16.4 Inter-Skill Communication Contract
+- **Input State**: `FrameState(t-1)`, `MotionIntent`, `ConfigurablePhysicsParams`
+- **Output State**: `FrameState(t)`, `WorldEntityState[]`, `BiomechanicalAuditReport`
+- **Validation Mandate**: Before `.stknds` serialization, frames must pass the 7-Domain Biomechanical Audit with zero hyperextensions, zero foot slip ($< 0.5\text{px}$), and verifiable torque-lean proportionality.
+
