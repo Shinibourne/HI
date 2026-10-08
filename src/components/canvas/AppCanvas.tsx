@@ -8,6 +8,7 @@ import { SpeedVsStrengthGeneratorConfig, SpeedVsStrengthKeyframeSpec } from '../
 import { TeleportAmbushGeneratorConfig, TeleportAmbushKeyframeSpec, EpicSneezeGeneratorConfig, SuperheroGeneratorConfig, BounceGeneratorConfig, StickfigureKeyframeSpec } from '../../lib/stknds/stkndsCore';
 import { STICKFIGURE_PARENTS, STICKFIGURE_BONE_LENGTHS } from '../../lib/stknds/stickfigureStructure';
 import { calculateCenterOfMass17 } from '../../lib/skills/biomechanicalPhysics';
+import { ParkourGeneratorConfig, ParkourKeyframeSpec } from '../../lib/parkourAcrobatFrames';
 
 interface AppCanvasProps {
   binaryStageOverride: boolean;
@@ -21,6 +22,9 @@ interface AppCanvasProps {
   showKinematicsCoM: boolean;
   vcamFollow: boolean;
   globalFps: 12 | 24;
+  parkourConfig?: ParkourGeneratorConfig;
+  parkourFrames?: ParkourKeyframeSpec[];
+  safeParkourFrame?: ParkourKeyframeSpec;
   basketballConfig: BasketballGeneratorConfig;
   strollKickConfig: SitWalkKickGeneratorConfig;
   phantomConfig: PhantomShadowboxGeneratorConfig;
@@ -58,6 +62,9 @@ export const AppCanvas: React.FC<AppCanvasProps> = ({
   showKinematicsCoM,
   vcamFollow,
   globalFps,
+  parkourConfig,
+  parkourFrames = [],
+  safeParkourFrame,
   basketballConfig,
   strollKickConfig,
   phantomConfig,
@@ -213,6 +220,315 @@ export const AppCanvas: React.FC<AppCanvasProps> = ({
         `BINARY PREVIEW · ${activeInspection.fileName} · F${safeIdx + 1}/${activeInspection.frames.length}`,
         22,
         34
+      );
+      ctx.restore();
+    } else if (activeAnimationMode === 'parkour' && parkourFrames.length > 0) {
+      const safeIdx = currentFrame % parkourFrames.length;
+      const activeSpec = parkourFrames[safeIdx];
+
+      ctx.save();
+      // Decoupled virtual camera framing tracking character across X = 300..1120
+      const camCenterX = vcamFollow ? 480 + activeSpec.camX : 720;
+      const camCenterY = vcamFollow ? 540 + activeSpec.camY : 540;
+      ctx.translate(w * 0.5, h * 0.5);
+      if (vcamFollow) {
+        ctx.scale(activeSpec.camZoom, activeSpec.camZoom);
+      }
+      ctx.translate(-camCenterX * scaleX, -camCenterY * scaleY);
+
+      const groundSceneY = 755;
+      const groundCanvasY = groundSceneY * scaleY;
+
+      // Dynamic athletic arena lighting / backdrop gradient according to active phase
+      const bgGrad = ctx.createLinearGradient(0, 0, 0, groundCanvasY);
+      if (activeSpec.act.includes('Backflip')) {
+        bgGrad.addColorStop(0, '#EDE9FE'); // Soft aerial violet
+        bgGrad.addColorStop(1, '#F8FAFC');
+      } else if (activeSpec.act.includes('Jump') || activeSpec.act.includes('Roll')) {
+        bgGrad.addColorStop(0, '#E0F2FE'); // Dynamic sky cyan
+        bgGrad.addColorStop(1, '#F8FAFC');
+      } else if (activeSpec.act.includes('Settle')) {
+        bgGrad.addColorStop(0, '#ECFDF5'); // Balanced emerald calm
+        bgGrad.addColorStop(1, '#F8FAFC');
+      } else {
+        bgGrad.addColorStop(0, '#F8FAFC');
+        bgGrad.addColorStop(1, '#F1F5F9');
+      }
+      ctx.fillStyle = bgGrad;
+      ctx.fillRect(-2400, -1600, w + 4800, groundCanvasY + 1600);
+
+      // Sprung Gymnastic / Parkour Arena Floor (High-Contrast, premium non-slip athletic surface)
+      const parkourFloorGrad = ctx.createLinearGradient(0, groundCanvasY, 0, groundCanvasY + 600 * scaleY);
+      parkourFloorGrad.addColorStop(0, '#E2E8F0');
+      parkourFloorGrad.addColorStop(0.08, '#EDF2F7');
+      parkourFloorGrad.addColorStop(1, '#CBD5E1');
+      ctx.fillStyle = parkourFloorGrad;
+      ctx.fillRect(-2400, groundCanvasY, w + 4800, 1600);
+
+      // Fine coordinate & distance grid
+      ctx.strokeStyle = '#E2E8F0';
+      ctx.lineWidth = 1;
+      for (let gx = -400; gx < 3200; gx += 160) {
+        ctx.beginPath();
+        ctx.moveTo(gx * scaleX, -400);
+        ctx.lineTo(gx * scaleX, h + 800);
+        ctx.stroke();
+      }
+      for (let gy = -200; gy < 1600; gy += 120) {
+        ctx.beginPath();
+        ctx.moveTo(-400, gy * scaleY);
+        ctx.lineTo(w + 1600, gy * scaleY);
+        ctx.stroke();
+      }
+
+      // Master Ground Plane Line (Universal Y = 755.0 px)
+      ctx.strokeStyle = '#334155';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.moveTo(-400 * scaleX, groundCanvasY);
+      ctx.lineTo(3200 * scaleX, groundCanvasY);
+      ctx.stroke();
+
+      // Floor hatch ticks
+      ctx.strokeStyle = '#94A3B8';
+      ctx.lineWidth = 1;
+      for (let tx = -200; tx <= 3000; tx += 40) {
+        ctx.beginPath();
+        ctx.moveTo(tx * scaleX, groundCanvasY);
+        ctx.lineTo((tx - 12) * scaleX, groundCanvasY + 10);
+        ctx.stroke();
+      }
+
+      // Parkour Obstacle Course Zones & Markings
+      ctx.font = '600 10px "IBM Plex Mono", monospace';
+      ctx.fillStyle = '#64748B';
+      ctx.fillText('SPRINT ACCELERATION ZONE (X: 300 ➔ 590)', 300 * scaleX, groundCanvasY + 24);
+      ctx.fillText('HURDLE DIVE TAKEOFF (X: 590)', 580 * scaleX, groundCanvasY + 40);
+      ctx.fillText('SCAPULAR SHOULDER ROLL MAT (X: 820 ➔ 980)', 810 * scaleX, groundCanvasY + 24);
+      ctx.fillText('REBOUND BLOCK (X: 1010)', 995 * scaleX, groundCanvasY + 40);
+      ctx.fillText('360° BACKFLIP CORRIDOR (X: 1025..1045, APEX Y: 390)', 1025 * scaleX, groundCanvasY + 24);
+      ctx.fillText('LANDING IMPACT CUSHION & HEROIC SETTLE', 1130 * scaleX, groundCanvasY + 40);
+
+      // Trajectory Arcs (Dive Jump & Backflip 360) drawn directly from continuous frames
+      if (showTrajectoryArc && parkourFrames.length >= 82) {
+        ctx.save();
+        // 1. Forward dive jump ballistic arc (F24..F37)
+        ctx.strokeStyle = 'rgba(2, 132, 199, 0.75)';
+        ctx.setLineDash([5, 5]);
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        for (let idx = 23; idx <= 37; idx++) {
+          const pt = parkourFrames[idx];
+          if (idx === 23) ctx.moveTo(pt.manX * scaleX, pt.manY * scaleY);
+          else ctx.lineTo(pt.manX * scaleX, pt.manY * scaleY);
+        }
+        ctx.stroke();
+
+        // 2. Aerial Backflip loop arc (F61..F82)
+        ctx.strokeStyle = 'rgba(139, 92, 246, 0.85)';
+        ctx.beginPath();
+        for (let idx = 61; idx <= 82; idx++) {
+          const pt = parkourFrames[idx];
+          if (idx === 61) ctx.moveTo(pt.manX * scaleX, pt.manY * scaleY);
+          else ctx.lineTo(pt.manX * scaleX, pt.manY * scaleY);
+        }
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      // Dynamic Impact Ripples / Shockwaves on key impact frames
+      const isImpactFrame =
+        (safeIdx >= 24 && safeIdx <= 26) ||
+        (safeIdx >= 38 && safeIdx <= 40) ||
+        (safeIdx >= 56 && safeIdx <= 58) ||
+        (safeIdx >= 82 && safeIdx <= 85);
+
+      if (isImpactFrame) {
+        ctx.save();
+        const rippleX = activeSpec.manX * scaleX;
+        ctx.strokeStyle = 'rgba(2, 132, 199, 0.55)';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.ellipse(rippleX, groundCanvasY, 38 * scaleX, 6 * scaleY, 0, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.strokeStyle = 'rgba(14, 165, 233, 0.3)';
+        ctx.beginPath();
+        ctx.ellipse(rippleX, groundCanvasY, 65 * scaleX, 10 * scaleY, 0, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      // Contact shadow under character
+      if (activeSpec.isGrounded || activeSpec.manY >= 580) {
+        ctx.save();
+        const shadowDist = Math.max(0, groundSceneY - activeSpec.manY);
+        const shadowOpacity = Math.max(0.12, 0.65 - shadowDist * 0.003);
+        const shadowWidth = Math.max(20, (65 - shadowDist * 0.15) * scaleX);
+        ctx.fillStyle = `rgba(15, 23, 42, ${shadowOpacity})`;
+        ctx.beginPath();
+        ctx.ellipse(activeSpec.manX * scaleX, groundCanvasY, shadowWidth, 5 * scaleY, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+
+      // Onion Skinning Preview
+      if (showOnionSkin && safeIdx > 0) {
+        const ghostOffsets = [-2, -1];
+        ghostOffsets.forEach((off) => {
+          const gIdx = safeIdx + off;
+          if (gIdx >= 0 && gIdx < parkourFrames.length) {
+            const gSpec = parkourFrames[gIdx];
+            const gJoints = computeForwardKinematics(gSpec.manX, gSpec.manY, gSpec.manAngles, 0.5);
+            ctx.save();
+            ctx.globalAlpha = off === -1 ? 0.24 : 0.12;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            for (let i = 1; i < 17; i++) {
+              if (i === 13) continue;
+              const j = gJoints[i];
+              ctx.strokeStyle = '#94A3B8';
+              ctx.lineWidth = Math.max(2, j.thickness * 0.5 * scaleX);
+              ctx.beginPath();
+              ctx.moveTo(j.startX * scaleX, j.startY * scaleY);
+              ctx.lineTo(j.endX * scaleX, j.endY * scaleY);
+              ctx.stroke();
+            }
+            const gHeadJ = gJoints[13];
+            const ghCx = ((gHeadJ.startX + gHeadJ.endX) * 0.5) * scaleX;
+            const ghCy = ((gHeadJ.startY + gHeadJ.endY) * 0.5) * scaleY;
+            const ghR = (gHeadJ.length * 0.5 * 0.5) * scaleX;
+            ctx.fillStyle = '#94A3B8';
+            ctx.beginPath();
+            ctx.arc(ghCx, ghCy, ghR, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+          }
+        });
+      }
+
+      // Draw Stickman (17-node fully articulated rig)
+      const joints = computeForwardKinematics(activeSpec.manX, activeSpec.manY, activeSpec.manAngles, 0.5);
+      ctx.save();
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+
+      // Segments (1..12, 14..16)
+      for (let i = 1; i < 17; i++) {
+        if (i === 13) continue;
+        const j = joints[i];
+        ctx.strokeStyle = parkourConfig?.manColorHex || '#0F172A';
+        ctx.lineWidth = Math.max(2.5, j.thickness * 0.5 * scaleX);
+        ctx.beginPath();
+        ctx.moveTo(j.startX * scaleX, j.startY * scaleY);
+        ctx.lineTo(j.endX * scaleX, j.endY * scaleY);
+        ctx.stroke();
+      }
+
+      // Head Circle (Node 13)
+      const headJ = joints[13];
+      const headCenterX = ((headJ.startX + headJ.endX) * 0.5) * scaleX;
+      const headCenterY = ((headJ.startY + headJ.endY) * 0.5) * scaleY;
+      const headRadius = (headJ.length * 0.5 * 0.5) * scaleX;
+
+      ctx.fillStyle = parkourConfig?.accentColorHex || '#0284C7';
+      ctx.strokeStyle = parkourConfig?.manColorHex || '#0F172A';
+      ctx.lineWidth = Math.max(2.5, 9 * scaleX);
+      ctx.beginPath();
+      ctx.arc(headCenterX, headCenterY, headRadius, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+
+      // Pelvis Root Dot
+      ctx.fillStyle = '#FFFFFF';
+      ctx.strokeStyle = parkourConfig?.manColorHex || '#0F172A';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.arc(activeSpec.manX * scaleX, activeSpec.manY * scaleY, 3.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+
+      // Live Procedural Center of Mass & Base of Support
+      if (showKinematicsCoM && activeSpec.comX !== undefined) {
+        ctx.save();
+        const comPxX = activeSpec.comX * scaleX;
+        const comPxY = activeSpec.comY * scaleY;
+        const groundPxY = 755.0 * scaleY;
+
+        // Base of Support interval on ground
+        if (activeSpec.isGrounded && activeSpec.supportMinX !== undefined) {
+          ctx.strokeStyle = activeSpec.isBalanced ? '#10B981' : '#F59E0B';
+          ctx.lineWidth = 4 * scaleX;
+          ctx.beginPath();
+          ctx.moveTo(activeSpec.supportMinX * scaleX, groundPxY);
+          ctx.lineTo(activeSpec.supportMaxX * scaleX, groundPxY);
+          ctx.stroke();
+
+          // End caps
+          ctx.fillStyle = activeSpec.isBalanced ? '#10B981' : '#F59E0B';
+          ctx.beginPath();
+          ctx.arc(activeSpec.supportMinX * scaleX, groundPxY, 3, 0, Math.PI * 2);
+          ctx.arc(activeSpec.supportMaxX * scaleX, groundPxY, 3, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        // Plumb line from CoM down to ground
+        ctx.strokeStyle = activeSpec.isBalanced ? 'rgba(16, 185, 129, 0.45)' : 'rgba(245, 158, 11, 0.55)';
+        ctx.setLineDash([3, 3]);
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.moveTo(comPxX, comPxY);
+        ctx.lineTo(comPxX, groundPxY);
+        ctx.stroke();
+
+        // CoM Symbol (Crosshair in circle)
+        ctx.setLineDash([]);
+        ctx.strokeStyle = activeSpec.isBalanced ? '#10B981' : '#F59E0B';
+        ctx.fillStyle = activeSpec.isBalanced ? 'rgba(16, 185, 129, 0.25)' : 'rgba(245, 158, 11, 0.3)';
+        ctx.lineWidth = 1.8;
+        ctx.beginPath();
+        ctx.arc(comPxX, comPxY, 7, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(comPxX - 10, comPxY);
+        ctx.lineTo(comPxX + 10, comPxY);
+        ctx.moveTo(comPxX, comPxY - 10);
+        ctx.lineTo(comPxX, comPxY + 10);
+        ctx.stroke();
+
+        ctx.font = '600 9px "IBM Plex Mono", monospace';
+        ctx.fillStyle = activeSpec.isBalanced ? '#047857' : '#B45309';
+        ctx.fillText(`CoM (${Math.round(activeSpec.comX)}, ${Math.round(activeSpec.comY)})`, comPxX + 11, comPxY - 4);
+        ctx.restore();
+      }
+
+      ctx.restore(); // Restore camera transform
+
+      // Screen-Space HUD Telemetry Card (Pinned Top-Left)
+      ctx.save();
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.94)';
+      ctx.strokeStyle = '#CBD5E1';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.roundRect(14, 14, 540, 56, 8);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.font = '600 12px "IBM Plex Mono", monospace';
+      ctx.fillStyle = '#0F172A';
+      ctx.fillText(
+        `PARKOUR ACROBAT · F${safeIdx + 1}/${parkourFrames.length} · ${activeSpec.act.toUpperCase()}`,
+        24,
+        34
+      );
+
+      ctx.font = '500 10px "IBM Plex Mono", monospace';
+      ctx.fillStyle = '#0284C7';
+      ctx.fillText(
+        `[${activeSpec.phase}] · Vx: ${activeSpec.kineticVelocityX.toFixed(1)} px/f · Vy: ${activeSpec.kineticVelocityY.toFixed(1)} · Rot: ${Math.round(Math.abs(activeSpec.bodyRotationDeg))}° · Knee: ${Math.round(activeSpec.kneeFlexionDeg)}°`,
+        24,
+        50
       );
       ctx.restore();
     } else if (activeAnimationMode === 'basketball') {
@@ -2456,6 +2772,8 @@ export const AppCanvas: React.FC<AppCanvasProps> = ({
     binaryStageOverride,
     activeInspection,
     activeAnimationMode,
+    parkourFrames,
+    parkourConfig,
     basketballFrames,
     basketballConfig,
     strollKickFrames,

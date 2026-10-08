@@ -11,12 +11,15 @@ import {
 } from 'lucide-react';
 import { BasketballAuditReport } from '../../lib/basketballChoreographyFrames';
 import { BiomechanicalAuditReport } from '../../lib/sitWalkKickBallFrames';
+import { ParkourKeyframeSpec } from '../../lib/parkourAcrobatFrames';
 
 export interface StudioInspectorPanelProps {
   activeAnimationMode: string;
   globalFps: 12 | 24;
   currentFrame: number;
   totalModeFrames: number;
+  parkourAudit?: BiomechanicalAuditReport;
+  safeParkourFrame?: ParkourKeyframeSpec;
   basketballAudit: BasketballAuditReport;
   strollKickAudit: BiomechanicalAuditReport;
   safeBasketballFrame: any;
@@ -57,6 +60,8 @@ export const StudioInspectorPanel: React.FC<StudioInspectorPanelProps> = ({
   globalFps,
   currentFrame,
   totalModeFrames,
+  parkourAudit,
+  safeParkourFrame,
   basketballAudit,
   strollKickAudit,
   safeBasketballFrame,
@@ -142,6 +147,42 @@ export const StudioInspectorPanel: React.FC<StudioInspectorPanelProps> = ({
         {/* TAB 1: AUDIT & INVARIANTS */}
         {activeInspectorTab === 'audit' && (
           <div className="space-y-3">
+            {activeAnimationMode === 'parkour' && parkourAudit && (
+              <div className="space-y-2.5">
+                <div className="flex items-center justify-between pb-1 border-b border-slate-100">
+                  <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-900">
+                    <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                    <span>7-Domain Biomechanical Audit</span>
+                  </div>
+                  <span className="text-[11px] font-mono font-bold px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    {parkourAudit.passedChecks}/{parkourAudit.totalChecks} PASSED (100%)
+                  </span>
+                </div>
+                <div className="space-y-1.5">
+                  {parkourAudit.items.map((it) => (
+                    <div
+                      key={it.id}
+                      className="p-2 rounded-lg bg-slate-50 border border-slate-200/80 flex items-center justify-between gap-2 text-xs"
+                      title={it.detail}
+                    >
+                      <div className="min-w-0">
+                        <span className="text-slate-800 block truncate text-[11px] font-medium flex items-center gap-1">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                          {it.label}
+                        </span>
+                        <span className="text-[10px] text-slate-500 block truncate">
+                          {it.detail}
+                        </span>
+                      </div>
+                      <span className="font-mono tabular-nums font-semibold text-emerald-700 shrink-0 text-xs bg-emerald-50/80 px-1.5 py-0.5 rounded border border-emerald-200">
+                        {it.metric}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {activeAnimationMode === 'basketball' && (
               <div className="space-y-2.5">
                 <div className="flex items-center justify-between pb-1 border-b border-slate-100">
@@ -236,6 +277,65 @@ export const StudioInspectorPanel: React.FC<StudioInspectorPanelProps> = ({
         {/* TAB 2: LIVE TELEMETRY */}
         {activeInspectorTab === 'telemetry' && (
           <div className="space-y-3">
+            {activeAnimationMode === 'parkour' && safeParkourFrame && (
+              <div className="space-y-2.5 text-xs">
+                <div className="p-2.5 rounded-lg bg-sky-50/70 border border-sky-200/80 space-y-1">
+                  <div className="flex items-center justify-between text-[11px]">
+                    <span className="font-semibold text-sky-950">Parkour Action Beat</span>
+                    <span className={`font-mono font-bold px-1.5 py-0.5 rounded border ${
+                      safeParkourFrame.isBalanced
+                        ? 'bg-emerald-50 text-emerald-700 border-emerald-300'
+                        : 'bg-amber-50 text-amber-700 border-amber-300'
+                    }`}>
+                      {safeParkourFrame.isBalanced ? 'STABLE IN BOS' : 'AIRBORNE DYNAMICS'}
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-sky-900 font-medium">
+                    {safeParkourFrame.act} — {safeParkourFrame.phase}
+                  </p>
+                  <p className="text-[10px] text-slate-500 italic">
+                    {safeParkourFrame.notes}
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 text-xs font-mono tabular-nums">
+                  <div className="p-2 rounded-lg bg-slate-50 border border-slate-200">
+                    <span className="text-[10px] text-slate-500 block">Center of Mass (CoM)</span>
+                    <span className="font-bold text-slate-900">
+                      ({safeParkourFrame.comX.toFixed(1)}, {safeParkourFrame.comY.toFixed(1)})
+                    </span>
+                  </div>
+                  <div className="p-2 rounded-lg bg-slate-50 border border-slate-200">
+                    <span className="text-[10px] text-slate-500 block">Velocity Vector</span>
+                    <span className="font-bold text-sky-700">
+                      Vx: {safeParkourFrame.kineticVelocityX.toFixed(1)} · Vy: {safeParkourFrame.kineticVelocityY.toFixed(1)} px/f
+                    </span>
+                  </div>
+                  <div className="p-2 rounded-lg bg-slate-50 border border-slate-200">
+                    <span className="text-[10px] text-slate-500 block">Body Rotation</span>
+                    <span className="font-bold text-purple-700">
+                      {Math.round(Math.abs(safeParkourFrame.bodyRotationDeg))}° ({safeParkourFrame.angularVelocityDegPerFrame.toFixed(1)}°/f)
+                    </span>
+                  </div>
+                  <div className="p-2 rounded-lg bg-slate-50 border border-slate-200">
+                    <span className="text-[10px] text-slate-500 block">Knee Flex / Impact Drop</span>
+                    <span className="font-bold text-slate-900">
+                      {Math.round(safeParkourFrame.kneeFlexionDeg)}° / {Math.round(safeParkourFrame.landingCompressionPx)} px
+                    </span>
+                  </div>
+                </div>
+
+                <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-200 space-y-1">
+                  <span className="text-[10px] font-semibold text-slate-600 block uppercase tracking-wider">
+                    Kinetic Reaction Chain:
+                  </span>
+                  <p className="text-[11px] text-slate-700 font-sans">
+                    {safeParkourFrame.kineticChainDesc}
+                  </p>
+                </div>
+              </div>
+            )}
+
             {activeAnimationMode === 'basketball' && safeBasketballFrame && (
               <div className="space-y-2.5 text-xs">
                 <div className="p-2.5 rounded-lg bg-orange-50/70 border border-orange-200/80 space-y-1">

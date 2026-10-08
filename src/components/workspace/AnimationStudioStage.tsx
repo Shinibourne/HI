@@ -18,6 +18,7 @@ import { AppCanvas } from '../canvas/AppCanvas';
 import { BASKETBALL_24_TIMELINE } from '../../lib/basketballChoreographyFrames';
 import { STROLL_KICK_PANELS } from '../../lib/sitWalkKickBallFrames';
 import { STORYBOARD_PANELS } from '../../lib/phantomShadowboxFrames';
+import { PARKOUR_STORYBOARD_PANELS } from '../../lib/parkourAcrobatFrames';
 
 export interface AnimationStudioStageProps {
   canvasRef?: React.RefObject<HTMLCanvasElement | null>;
@@ -39,6 +40,9 @@ export interface AnimationStudioStageProps {
   binaryStageOverride: boolean;
   setBinaryStageOverride: React.Dispatch<React.SetStateAction<boolean>>;
   activeInspection: any;
+  parkourConfig?: any;
+  parkourFrames?: any[];
+  safeParkourFrame?: any;
   basketballConfig: any;
   strollKickConfig: any;
   phantomConfig: any;
@@ -84,6 +88,9 @@ export const AnimationStudioStage: React.FC<AnimationStudioStageProps> = ({
   binaryStageOverride,
   setBinaryStageOverride,
   activeInspection,
+  parkourConfig,
+  parkourFrames = [],
+  safeParkourFrame,
   basketballConfig,
   strollKickConfig,
   phantomConfig,
@@ -170,6 +177,9 @@ export const AnimationStudioStage: React.FC<AnimationStudioStageProps> = ({
 
   // Determine active phase/act badge title for stage HUD
   const activePhaseTitle = (() => {
+    if (activeAnimationMode === 'parkour' && safeParkourFrame) {
+      return `Panel ${safeParkourFrame.panelId}: ${safeParkourFrame.storyboardTitle} · ${safeParkourFrame.phase}`;
+    }
     if (activeAnimationMode === 'basketball' && safeBasketballFrame) {
       return `Phase ${safeBasketballFrame.phaseIndex}: ${safeBasketballFrame.phaseName} · ${safeBasketballFrame.ballState}`;
     }
@@ -299,6 +309,9 @@ export const AnimationStudioStage: React.FC<AnimationStudioStageProps> = ({
           showKinematicsCoM={showKinematicsCoM}
           vcamFollow={vcamFollow}
           globalFps={globalFps}
+          parkourConfig={parkourConfig}
+          parkourFrames={parkourFrames}
+          safeParkourFrame={safeParkourFrame}
           basketballConfig={basketballConfig}
           strollKickConfig={strollKickConfig}
           phantomConfig={phantomConfig}
@@ -430,6 +443,34 @@ export const AnimationStudioStage: React.FC<AnimationStudioStageProps> = ({
             ref={ribbonScrollRef}
             className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs no-scrollbar scroll-smooth"
           >
+            {activeAnimationMode === 'parkour' &&
+              PARKOUR_STORYBOARD_PANELS.map((p) => {
+                const isActive = (safeParkourFrame?.panelId ?? 1) === p.panelNumber;
+                return (
+                  <button
+                    key={p.panelNumber}
+                    type="button"
+                    onClick={() => {
+                      setIsPlaying(false);
+                      setCurrentFrame(p.startFrame);
+                    }}
+                    className={`shrink-0 px-2.5 py-1.5 rounded-lg border text-left transition-all cursor-pointer ${
+                      isActive
+                        ? 'bg-sky-600 border-sky-600 text-white shadow-xs font-semibold'
+                        : 'bg-slate-50 border-slate-200 hover:bg-slate-100 text-slate-700'
+                    }`}
+                    title={`Panel ${p.panelNumber}: ${p.title} (${p.frameRangeStr}) — ${p.actionSummary}`}
+                  >
+                    <div className="text-[10px] font-mono tabular-nums opacity-75">
+                      {p.frameRangeStr}
+                    </div>
+                    <div className="font-semibold text-[11px] whitespace-nowrap truncate max-w-[140px]">
+                      {p.panelNumber}. {p.title}
+                    </div>
+                  </button>
+                );
+              })}
+
             {activeAnimationMode === 'basketball' &&
               BASKETBALL_24_TIMELINE.map((t: any) => {
                 const isActive = (safeBasketballFrame?.frame ?? currentFrame) === t.frame;

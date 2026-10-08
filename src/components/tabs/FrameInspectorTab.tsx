@@ -13,7 +13,45 @@ export const FrameInspectorTab: React.FC<FrameInspectorTabProps> = ({
   superheroFrames,
 }) => {
   return (
-            activeAnimationMode === 'basketball' ? (
+    activeAnimationMode === 'parkour' ? (
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="bg-white border border-[#E2E8F0] rounded-xl p-5 space-y-3">
+          <div className="text-xs font-mono text-[#0284C7] font-semibold">
+            ACTS I–II · SPRINT ACCELERATION &amp; HURDLE DIVE JUMP (F00–37)
+          </div>
+          <h3 className="text-base font-semibold text-[#0F172A]">
+            Locomotion Sprint &amp; Parabolic Dive Arc
+          </h3>
+          <p className="text-sm text-[#475569] leading-relaxed">
+            Athlete accelerates from <code className="font-mono text-xs">X=300 → 610</code> with 16° forward torso lean and anti-phase arm pumping (±48°) canceling transverse spinal torsion. Lead foot punches into Ground <code className="font-mono text-xs">Y=755.0</code> at F24, launching airborne along a zero-drag parabolic arc reaching apex at <code className="font-mono text-xs">Y=430</code>. Cervical spine locks cranium onto landing target as arms reach forward-downward.
+          </p>
+        </div>
+
+        <div className="bg-white border border-[#E2E8F0] rounded-xl p-5 space-y-3">
+          <div className="text-xs font-mono text-[#D97706] font-semibold">
+            ACTS III–IV · SCAPULAR SHOULDER ROLL &amp; REBOUND SQUAT (F38–65)
+          </div>
+          <h3 className="text-base font-semibold text-[#0F172A]">
+            Rotational Energy Dissipation &amp; Blocking Plant
+          </h3>
+          <p className="text-sm text-[#475569] leading-relaxed">
+            Hands contact the floor at F38, elbows yield from 170° to 110° absorbing vertical velocity, and chin tucks to sternum. Body executes a diagonal scapular roll from right shoulder across thoracic spine to left hip with legs tucked tight (<code className="font-mono text-xs">I=Σmr²</code> minimized). Hips roll through at F56, feet plant firmly at <code className="font-mono text-xs">X=1045</code>, and knees compress to 105° in a deep spring block with arms swept back.
+          </p>
+        </div>
+
+        <div className="bg-white border border-[#E2E8F0] rounded-xl p-5 space-y-3">
+          <div className="text-xs font-mono text-[#7C3AED] font-semibold">
+            ACTS V–VI · EXPLOSIVE 360° BACKFLIP &amp; IMPACT CUSHION (F66–95)
+          </div>
+          <h3 className="text-base font-semibold text-[#0F172A]">
+            Aerial Inversion &amp; Shock Absorption Settle
+          </h3>
+          <p className="text-sm text-[#475569] leading-relaxed">
+            Explosive quad drive and overhead arm whip launch athlete to vertical apex <code className="font-mono text-xs">Y=390</code> (365 px above floor!). Knees pull tight to chest, driving 360° backward rotation in mid-air. At 300°, limbs extend to brake spin. Feet contact ground plane at <code className="font-mono text-xs">Y=755.0</code> (F84), knees compress 45° absorbing 32 px of drop shock, and torso pitches 14° forward to lock CoM solidly within Base of Support.
+          </p>
+        </div>
+      </div>
+    ) : activeAnimationMode === 'basketball' ? (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="bg-white border border-[#E2E8F0] rounded-xl p-5 space-y-3">
                   <div className="text-xs font-mono text-[#EA580C] font-semibold">

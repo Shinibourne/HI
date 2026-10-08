@@ -50,6 +50,13 @@ import {
 } from './lib/sitWalkKickBallFrames';
 
 import {
+  type ParkourGeneratorConfig,
+  type ParkourKeyframeSpec,
+  buildCanonicalParkourFrames,
+  validateParkourBiomechanics,
+} from './lib/parkourAcrobatFrames';
+
+import {
   evaluateTeleportAmbushQuality,
   evaluateSpeedVsStrengthQuality,
   validateMultiCharacterSpatialConsistency,
@@ -62,10 +69,21 @@ import { EngineeringSuite } from './components/workspace/EngineeringSuite';
 
 export function App() {
   const [activeAnimationMode, setActiveAnimationMode] = useState<
-    'basketball' | 'stroll-kick' | 'phantom' | 'teleport' | 'sneeze' | 'superhero' | 'bounce' | 'speed-strength'
-  >('basketball');
+    'parkour' | 'basketball' | 'stroll-kick' | 'phantom' | 'teleport' | 'sneeze' | 'superhero' | 'bounce' | 'speed-strength'
+  >('parkour');
 
   const [globalFps, setGlobalFps] = useState<12 | 24>(24);
+
+  const [parkourConfig, setParkourConfig] = useState<ParkourGeneratorConfig>({
+    projectName: 'parkour_acrobat',
+    targetFps: 24,
+    manColorHex: '#0F172A',
+    accentColorHex: '#0284C7',
+    groundY: 755.0,
+    jumpApexY: 590.0,
+    backflipApexY: 390.0,
+    enableMotionTrails: true,
+  });
 
   const [basketballConfig, setBasketballConfig] = useState<BasketballGeneratorConfig>({
     projectName: 'basketball_walk_pickup_dribble',
@@ -156,6 +174,7 @@ export function App() {
 
   const handleSelectFps = (fps: 12 | 24) => {
     setGlobalFps(fps);
+    setParkourConfig((c) => ({ ...c, targetFps: fps }));
     setBasketballConfig((c) => ({ ...c, targetFps: fps }));
     setStrollKickConfig((c) => ({ ...c, targetFps: fps }));
     setPhantomConfig((c) => ({ ...c, targetFps: fps }));
@@ -254,7 +273,9 @@ export function App() {
 
   const syncAnimationModeFromPath = useCallback((pathOrName: string) => {
     const lower = pathOrName.toLowerCase();
-    if (lower.includes('basketball')) {
+    if (lower.includes('parkour') || lower.includes('acrobat') || lower.includes('flip')) {
+      setActiveAnimationMode('parkour');
+    } else if (lower.includes('basketball')) {
       setActiveAnimationMode('basketball');
     } else if (lower.includes('sit_stand') || lower.includes('stroll')) {
       setActiveAnimationMode('stroll-kick');
@@ -292,6 +313,16 @@ export function App() {
   useEffect(() => {
     inspectPreset(selectedPresetPath, selectedPresetPath.split('/').pop() || 'preset.stknds');
   }, [selectedPresetPath, inspectPreset]);
+
+  const parkourFrames = useMemo(
+    () => buildCanonicalParkourFrames(parkourConfig),
+    [parkourConfig]
+  );
+
+  const parkourAudit = useMemo(
+    () => validateParkourBiomechanics(parkourFrames, parkourConfig.groundY),
+    [parkourFrames, parkourConfig.groundY]
+  );
 
   const basketballFrames = useMemo(
     () => buildCanonicalBasketballFrames(basketballConfig),
@@ -358,6 +389,8 @@ export function App() {
   const totalModeFrames =
     binaryStageOverride && activeInspection && activeInspection.frames.length > 0
       ? activeInspection.frames.length
+      : activeAnimationMode === 'parkour'
+      ? parkourFrames.length
       : activeAnimationMode === 'basketball'
       ? basketballFrames.length
       : activeAnimationMode === 'stroll-kick'
@@ -459,6 +492,8 @@ export function App() {
     }
   };
 
+  const safeParkourFrame =
+    parkourFrames[currentFrame % parkourFrames.length] || parkourFrames[0];
   const safeBasketballFrame =
     basketballFrames[currentFrame % basketballFrames.length] || basketballFrames[0];
   const safeStrollKickFrame =
@@ -500,7 +535,14 @@ export function App() {
   );
 
   const safeHeroJoints =
-    activeAnimationMode === 'teleport'
+    activeAnimationMode === 'parkour'
+      ? computeForwardKinematics(
+          safeParkourFrame.manX,
+          safeParkourFrame.manY,
+          safeParkourFrame.manAngles,
+          0.5
+        )
+      : activeAnimationMode === 'teleport'
       ? selectedBoneFigure === 'red'
         ? safeTeleportRedJoints
         : safeTeleportBlueJoints
@@ -634,6 +676,9 @@ export function App() {
               binaryStageOverride={binaryStageOverride}
               setBinaryStageOverride={setBinaryStageOverride}
               activeInspection={activeInspection}
+              parkourConfig={parkourConfig}
+              parkourFrames={parkourFrames}
+              safeParkourFrame={safeParkourFrame}
               basketballConfig={basketballConfig}
               strollKickConfig={strollKickConfig}
               phantomConfig={phantomConfig}
@@ -666,6 +711,8 @@ export function App() {
               globalFps={globalFps}
               currentFrame={currentFrame}
               totalModeFrames={totalModeFrames}
+              parkourAudit={parkourAudit}
+              safeParkourFrame={safeParkourFrame}
               basketballAudit={basketballAudit}
               strollKickAudit={strollKickAudit}
               safeBasketballFrame={safeBasketballFrame}
@@ -820,6 +867,9 @@ export function App() {
               binaryStageOverride={binaryStageOverride}
               setBinaryStageOverride={setBinaryStageOverride}
               activeInspection={activeInspection}
+              parkourConfig={parkourConfig}
+              parkourFrames={parkourFrames}
+              safeParkourFrame={safeParkourFrame}
               basketballConfig={basketballConfig}
               strollKickConfig={strollKickConfig}
               phantomConfig={phantomConfig}
@@ -854,6 +904,8 @@ export function App() {
                 globalFps={globalFps}
                 currentFrame={currentFrame}
                 totalModeFrames={totalModeFrames}
+                parkourAudit={parkourAudit}
+                safeParkourFrame={safeParkourFrame}
                 basketballAudit={basketballAudit}
                 strollKickAudit={strollKickAudit}
                 safeBasketballFrame={safeBasketballFrame}

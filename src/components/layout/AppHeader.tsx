@@ -37,6 +37,15 @@ export const ANIMATION_MODES: {
   tagline: string;
 }[] = [
   {
+    id: 'parkour',
+    label: 'The Parkour Acrobat (Run ➔ Jump ➔ Roll ➔ Backflip)',
+    shortLabel: '🏃‍♂️ Parkour Acrobat',
+    presetPath: '/downloads/parkour_acrobat_24f.stknds',
+    fps: 24,
+    badge: '24 FPS · 10 Panels',
+    tagline: 'Athletic sprint, hurdle dive jump, scapular shoulder roll, rebound block & 360° aerial backflip',
+  },
+  {
     id: 'basketball',
     label: 'Basketball Choreography (24f Master)',
     shortLabel: '🏀 Basketball',

@@ -8,6 +8,7 @@ import { TeleportAmbushGeneratorConfig, EpicSneezeGeneratorConfig, SuperheroGene
 import { BASKETBALL_24_TIMELINE } from '../../lib/basketballChoreographyFrames';
 import { STROLL_KICK_PANELS } from '../../lib/sitWalkKickBallFrames';
 import { STORYBOARD_PANELS } from '../../lib/phantomShadowboxFrames';
+import { ParkourGeneratorConfig, ParkourKeyframeSpec, PARKOUR_STORYBOARD_PANELS } from '../../lib/parkourAcrobatFrames';
 
 export interface ModeControlsPanelProps {
   activeAnimationMode: string;
@@ -16,6 +17,10 @@ export interface ModeControlsPanelProps {
   setBinaryStageOverride: React.Dispatch<React.SetStateAction<boolean>>;
   setCurrentFrame: React.Dispatch<React.SetStateAction<number>>;
   setIsPlaying: React.Dispatch<React.SetStateAction<boolean>>;
+  parkourConfig?: ParkourGeneratorConfig;
+  setParkourConfig?: React.Dispatch<React.SetStateAction<ParkourGeneratorConfig>>;
+  safeParkourFrame?: ParkourKeyframeSpec;
+  parkourFrames?: ParkourKeyframeSpec[];
   basketballConfig: BasketballGeneratorConfig;
   setBasketballConfig: React.Dispatch<React.SetStateAction<BasketballGeneratorConfig>>;
   strollKickConfig: SitWalkKickGeneratorConfig;
@@ -54,6 +59,10 @@ export const ModeControlsPanel: React.FC<ModeControlsPanelProps> = ({
   setBinaryStageOverride,
   setCurrentFrame,
   setIsPlaying,
+  parkourConfig,
+  setParkourConfig,
+  safeParkourFrame,
+  parkourFrames = [],
   basketballConfig,
   setBasketballConfig,
   strollKickConfig,
@@ -88,6 +97,23 @@ export const ModeControlsPanel: React.FC<ModeControlsPanelProps> = ({
     <div className="space-y-3.5">
       {/* Animation Mode Switcher */}
       <div className="flex items-center gap-1.5 p-1.5 bg-slate-100/90 rounded-xl overflow-x-auto scrollbar-none border border-slate-200/70">
+        <button
+          type="button"
+          onClick={() => {
+            setBinaryStageOverride(false);
+            setActiveAnimationMode('parkour');
+            setSelectedPresetPath('/downloads/parkour_acrobat_24f.stknds');
+            setCurrentFrame(0);
+            setIsPlaying(true);
+          }}
+          className={`shrink-0 px-3 py-1.5 text-xs font-medium rounded-lg transition-all cursor-pointer whitespace-nowrap ${
+            !binaryStageOverride && activeAnimationMode === 'parkour'
+              ? 'bg-[#0284C7] text-white shadow-xs font-semibold'
+              : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
+          }`}
+        >
+          🏃‍♂️ Parkour Acrobat (96f)
+        </button>
         <button
           type="button"
           onClick={() => {
@@ -227,6 +253,74 @@ export const ModeControlsPanel: React.FC<ModeControlsPanelProps> = ({
           ⚪ Ball Bounce (22f)
         </button>
       </div>
+
+      {activeAnimationMode === 'parkour' && safeParkourFrame && (
+        <div className="flex flex-col gap-2.5 pt-1 border-t border-slate-100">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <span className="text-xs font-semibold text-slate-900 flex items-center gap-1.5">
+              <Sparkles className="w-3.5 h-3.5 text-[#0284C7]" />
+              Parkour Biomechanical Sequence (Run ➔ Jump ➔ Roll ➔ Backflip):
+            </span>
+            <span className="text-[11px] font-mono text-[#0284C7] font-semibold bg-sky-50 px-2 py-0.5 rounded border border-sky-200">
+              {safeParkourFrame.act} · {safeParkourFrame.phase}
+            </span>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+            <div className="p-2 rounded-lg bg-slate-50 border border-slate-200/60">
+              <div className="text-[10px] text-slate-500 font-medium">Kinetic Velocity</div>
+              <div className="font-semibold text-slate-800 font-mono">
+                Vx: {safeParkourFrame.kineticVelocityX.toFixed(1)} px/f · Vy: {safeParkourFrame.kineticVelocityY.toFixed(1)}
+              </div>
+            </div>
+            <div className="p-2 rounded-lg bg-slate-50 border border-slate-200/60">
+              <div className="text-[10px] text-slate-500 font-medium">Angular Rotation</div>
+              <div className="font-semibold text-slate-800 font-mono">
+                {Math.round(Math.abs(safeParkourFrame.bodyRotationDeg))}° ({safeParkourFrame.angularVelocityDegPerFrame.toFixed(1)}°/f)
+              </div>
+            </div>
+            <div className="p-2 rounded-lg bg-slate-50 border border-slate-200/60">
+              <div className="text-[10px] text-slate-500 font-medium">Knee Flexion</div>
+              <div className="font-semibold text-slate-800 font-mono">
+                {Math.round(safeParkourFrame.kneeFlexionDeg)}° (1-DOF Polarity)
+              </div>
+            </div>
+            <div className="p-2 rounded-lg bg-slate-50 border border-slate-200/60">
+              <div className="text-[10px] text-slate-500 font-medium">Dynamic Equilibrium</div>
+              <div className="font-semibold text-emerald-700 font-mono flex items-center gap-1">
+                <Activity className="w-3 h-3 text-emerald-600" />
+                {safeParkourFrame.isBalanced ? 'Balanced in BoS' : 'Controlled Instability'}
+              </div>
+            </div>
+          </div>
+
+          <div className="overflow-x-auto scrollbar-none pb-1">
+            <div className="flex gap-1.5 min-w-max">
+              {PARKOUR_STORYBOARD_PANELS.map((p) => {
+                const isActive = (safeParkourFrame?.panelId ?? 1) === p.panelNumber;
+                return (
+                  <button
+                    key={p.panelNumber}
+                    type="button"
+                    onClick={() => {
+                      setIsPlaying(false);
+                      setCurrentFrame(p.startFrame);
+                    }}
+                    className={`px-2.5 py-1.5 text-[11px] font-medium rounded-lg transition-all text-left truncate cursor-pointer shrink-0 ${
+                      isActive
+                        ? 'bg-sky-600 text-white shadow-xs font-semibold ring-2 ring-sky-400'
+                        : 'bg-slate-100 hover:bg-slate-200 text-slate-800'
+                    }`}
+                  >
+                    <div className="text-[9px] font-mono opacity-75">{p.frameRangeStr}</div>
+                    <div className="font-semibold truncate max-w-[130px]">{p.panelNumber}. {p.title}</div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
 
       {activeAnimationMode === 'basketball' && (
         <div className="flex flex-col gap-2 pt-1 border-t border-slate-100">
