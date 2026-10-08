@@ -345,11 +345,30 @@ export async function inspectStkndsBuffer(
   let frameTableOffset: number | undefined = undefined;
 
   if (targetFigOffset !== undefined && figureNodes.length > 0) {
-    const afterFigure = targetFigOffset + 12 + figureNodes.length * 84 + 12;
-    if (afterFigure + 4 <= decompressed.length) {
-      const candidateFrameCount = dv.getInt32(afterFigure, false);
-      const fTableStart = afterFigure + 4;
-      const instSize = figureNodes.length === 17 ? 1091 : 112 + figureNodes.length * 58;
+    const defaultAfter = targetFigOffset + 12 + figureNodes.length * 84 + 12;
+    const candidateOffsets: number[] = [defaultAfter];
+
+    // Also scan forward for other candidate frame table offsets if needed
+    for (let off = defaultAfter; off < Math.min(decompressed.length - 100, defaultAfter + 20000); off += 4) {
+      if (off !== defaultAfter) {
+        const val = dv.getInt32(off, false);
+        if (val > 0 && val < 500 && off + 58 + 58 <= decompressed.length) {
+          const figCnt = dv.getInt32(off + 4 + 54, false);
+          if (figCnt >= 1 && figCnt <= 16) {
+            candidateOffsets.push(off);
+          }
+        }
+      }
+    }
+
+    for (const startOff of candidateOffsets) {
+      if (frameCount > 0) break;
+      if (startOff + 4 > decompressed.length) continue;
+
+      const candidateFrameCount = dv.getInt32(startOff, false);
+      const fTableStart = startOff + 4;
+      const nodeCount = figureNodes.length > 0 ? figureNodes.length : 17;
+      const instSize = nodeCount === 17 ? 1091 : 112 + nodeCount * 58;
 
       if (candidateFrameCount > 0 && candidateFrameCount < 500) {
         let cursor = fTableStart;
@@ -388,14 +407,15 @@ export async function inspectStkndsBuffer(
             const instColorHex = uint32ToHexColor(dv.getUint32(instOff + 83, false));
 
             const instNodes: StkndsFrameNodePose[] = [];
-            for (let n = 0; n < figureNodes.length; n++) {
+            for (let n = 0; n < nodeCount; n++) {
               const rOff = instOff + 112 + n * 58;
+              if (rOff + 28 > decompressed.length) break;
               const angleDelta = dv.getFloat32(rOff + 12, false);
               const localAngle = dv.getFloat32(rOff + 16, false);
               const rawWorldAngle = dv.getFloat32(rOff + 20, false);
               const p = n < STICKFIGURE_PARENTS.length ? STICKFIGURE_PARENTS[n] : -1;
               const reconstructedWorldAngle =
-                figureNodes.length === 17
+                nodeCount === 17
                   ? p === -1
                     ? angleDelta
                     : (instNodes[p]?.worldAngle ?? 0) + angleDelta
@@ -426,19 +446,21 @@ export async function inspectStkndsBuffer(
           }
 
           const primaryInst = instances[0];
-          parsedFrames.push({
-            frameIndex: f,
-            camZoom,
-            camX,
-            camY,
-            figureCount: figCnt,
-            instanceScale: primaryInst.instanceScale,
-            sceneX: primaryInst.sceneX,
-            sceneY: primaryInst.sceneY,
-            instanceColorHex: primaryInst.instanceColorHex,
-            nodes: primaryInst.nodes,
-            instances,
-          });
+          if (primaryInst) {
+            parsedFrames.push({
+              frameIndex: f,
+              camZoom,
+              camX,
+              camY,
+              figureCount: figCnt,
+              instanceScale: primaryInst.instanceScale,
+              sceneX: primaryInst.sceneX,
+              sceneY: primaryInst.sceneY,
+              instanceColorHex: primaryInst.instanceColorHex,
+              nodes: primaryInst.nodes,
+              instances,
+            });
+          }
 
           cursor += frameBytes;
         }

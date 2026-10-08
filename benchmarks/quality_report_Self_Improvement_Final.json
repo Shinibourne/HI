@@ -1,0 +1,101 @@
+{
+  "id": "report_mv0128pd",
+  "targetAnimationName": "Self_Improvement_Final",
+  "overallScore": 92,
+  "categoryScores": [
+    {
+      "category": "footContact",
+      "score": 93,
+      "weight": 0.15,
+      "issues": [],
+      "strengths": [
+        "Planted foot stability well-maintained"
+      ]
+    },
+    {
+      "category": "balance",
+      "score": 100,
+      "weight": 0.15,
+      "issues": [],
+      "strengths": [
+        "Center of mass properly counter-balanced"
+      ]
+    },
+    {
+      "category": "timing",
+      "score": 99,
+      "weight": 0.12,
+      "issues": [],
+      "strengths": [
+        "Dynamic non-linear timing and acceleration curves"
+      ]
+    },
+    {
+      "category": "weight",
+      "score": 92,
+      "weight": 0.12,
+      "issues": [],
+      "strengths": [
+        "Impact compression communicates physical mass"
+      ]
+    },
+    {
+      "category": "torsoMechanics",
+      "score": 100,
+      "weight": 0.1,
+      "issues": [],
+      "strengths": [
+        "Spine curvature well-distributed"
+      ]
+    },
+    {
+      "category": "armMechanics",
+      "score": 90,
+      "weight": 0.1,
+      "issues": [],
+      "strengths": [
+        "Elbow hinge joint limits respected"
+      ]
+    },
+    {
+      "category": "headBehavior",
+      "score": 70,
+      "weight": 0.08,
+      "issues": [
+        "Head orientation unstable or bobbing excessively"
+      ],
+      "strengths": []
+    },
+    {
+      "category": "impact",
+      "score": 94,
+      "weight": 0.08,
+      "issues": [],
+      "strengths": [
+        "High-energy impact force detected"
+      ]
+    },
+    {
+      "category": "secondaryMotion",
+      "score": 88,
+      "weight": 0.05,
+      "issues": [],
+      "strengths": [
+        "Secondary follow-through and lag present"
+      ]
+    },
+    {
+      "category": "camera",
+      "score": 82,
+      "weight": 0.05,
+      "issues": [],
+      "strengths": [
+        "Camera response calibrated"
+      ]
+    }
+  ],
+  "primaryIssues": [],
+  "recommendedSkillsToApply": [],
+  "suggestedParameterTweaks": {},
+  "createdAt": "2026-10-08T21:07:26.737Z"
+}

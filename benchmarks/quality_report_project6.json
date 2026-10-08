@@ -1,0 +1,101 @@
+{
+  "id": "report_mv00tb5g",
+  "targetAnimationName": "project6",
+  "overallScore": 93,
+  "categoryScores": [
+    {
+      "category": "footContact",
+      "score": 100,
+      "weight": 0.15,
+      "issues": [],
+      "strengths": [
+        "Planted foot stability well-maintained"
+      ]
+    },
+    {
+      "category": "balance",
+      "score": 100,
+      "weight": 0.15,
+      "issues": [],
+      "strengths": [
+        "Center of mass properly counter-balanced"
+      ]
+    },
+    {
+      "category": "timing",
+      "score": 100,
+      "weight": 0.12,
+      "issues": [],
+      "strengths": [
+        "Dynamic non-linear timing and acceleration curves"
+      ]
+    },
+    {
+      "category": "weight",
+      "score": 92,
+      "weight": 0.12,
+      "issues": [],
+      "strengths": [
+        "Impact compression communicates physical mass"
+      ]
+    },
+    {
+      "category": "torsoMechanics",
+      "score": 88,
+      "weight": 0.1,
+      "issues": [],
+      "strengths": [
+        "Spine curvature organic"
+      ]
+    },
+    {
+      "category": "armMechanics",
+      "score": 85,
+      "weight": 0.1,
+      "issues": [],
+      "strengths": [
+        "Hinge joint polarity intact"
+      ]
+    },
+    {
+      "category": "headBehavior",
+      "score": 90,
+      "weight": 0.08,
+      "issues": [],
+      "strengths": [
+        "Head gaze level"
+      ]
+    },
+    {
+      "category": "impact",
+      "score": 90,
+      "weight": 0.08,
+      "issues": [],
+      "strengths": [
+        "Hit-stop holds present"
+      ]
+    },
+    {
+      "category": "secondaryMotion",
+      "score": 78,
+      "weight": 0.05,
+      "issues": [
+        "Arm follow-through lag could be increased"
+      ],
+      "strengths": []
+    },
+    {
+      "category": "camera",
+      "score": 86,
+      "weight": 0.05,
+      "issues": [],
+      "strengths": [
+        "Camera shake synchronized"
+      ]
+    }
+  ],
+  "primaryIssues": [],
+  "recommendedSkillsToApply": [],
+  "suggestedParameterTweaks": {},
+  "createdAt": "2026-10-08T21:00:30.004Z"
+}
