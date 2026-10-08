@@ -1,0 +1,11 @@
+{
+  "timestamp": "2026-10-08T21:07:26.739Z",
+  "initialScore": 92,
+  "finalScore": 92,
+  "scoreImprovement": 0,
+  "appliedAdjustments": {
+    "crouchHoldFrames": 3,
+    "jabExtensionSnap": 2
+  },
+  "evolvedSkillsCount": 3
+}

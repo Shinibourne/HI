@@ -1,0 +1,7048 @@
+[
+  {
+    "id": "proj_834e05dacade",
+    "fileName": "4-.stknds",
+    "filePath": "templates/4-.stknds",
+    "sha256": "834e05dacade01fd0eb18c5fabe473b79b3bab4c831adc82ab0797a8fb7c21b3",
+    "projectName": "4-",
+    "fps": 20,
+    "tweenedFrames": 5,
+    "frameCount": 1556,
+    "durationSeconds": 77.8,
+    "category": "reference",
+    "characterCount": 1,
+    "characters": [
+      {
+        "figureName": "Embedded Figure",
+        "nodeCount": 2,
+        "nodes": [
+          {
+            "index": 0,
+            "uid": 0,
+            "name": "Node_0",
+            "parentIndex": -1,
+            "childrenIndices": [
+              1
+            ],
+            "length": 0,
+            "thickness": 32,
+            "role": "root"
+          },
+          {
+            "index": 1,
+            "uid": 1,
+            "name": "Node_1",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 100,
+            "thickness": 32
+          }
+        ],
+        "rootIndex": 0,
+        "kineticChains": [
+          {
+            "name": "Main Hierarchy",
+            "jointIndices": [
+              0,
+              1
+            ]
+          }
+        ]
+      }
+    ],
+    "hasCameraData": false,
+    "hasAudioData": false,
+    "fileSizeBytes": 400820,
+    "decompressedSizeBytes": 1864196,
+    "analyzedAt": "2026-10-08T21:07:22.809Z"
+  },
+  {
+    "id": "proj_be59dcc1c2d5",
+    "fileName": "4.stknds",
+    "filePath": "templates/4.stknds",
+    "sha256": "be59dcc1c2d55696ed2be27d3331bcd8e54477663a47137967860b17480c247c",
+    "projectName": "4",
+    "fps": 20,
+    "tweenedFrames": 5,
+    "frameCount": 3049,
+    "durationSeconds": 152.45,
+    "category": "reference",
+    "characterCount": 1,
+    "characters": [
+      {
+        "figureName": "doman_Segment sg2",
+        "nodeCount": 2,
+        "nodes": [
+          {
+            "index": 0,
+            "uid": 0,
+            "name": "Node_0",
+            "parentIndex": -1,
+            "childrenIndices": [
+              1
+            ],
+            "length": 0,
+            "thickness": 32,
+            "role": "root"
+          },
+          {
+            "index": 1,
+            "uid": 1,
+            "name": "Node_1",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 100,
+            "thickness": 32
+          }
+        ],
+        "rootIndex": 0,
+        "kineticChains": [
+          {
+            "name": "Main Hierarchy",
+            "jointIndices": [
+              0,
+              1
+            ]
+          }
+        ]
+      }
+    ],
+    "hasCameraData": false,
+    "hasAudioData": false,
+    "fileSizeBytes": 353678,
+    "decompressedSizeBytes": 3651271,
+    "analyzedAt": "2026-10-08T21:07:22.859Z"
+  },
+  {
+    "id": "proj_814e56ccdc3b",
+    "fileName": "Ani_ending_part.stknds",
+    "filePath": "templates/Ani_ending_part.stknds",
+    "sha256": "814e56ccdc3b71967c7357841a42e44f534fbf5ba95cc5be6dea695bc004016a",
+    "projectName": "Ani_ending_part",
+    "fps": 19,
+    "tweenedFrames": 5,
+    "frameCount": 7400,
+    "durationSeconds": 389.4736842105263,
+    "category": "reference",
+    "characterCount": 1,
+    "characters": [
+      {
+        "figureName": "_Stickfigure inverted",
+        "nodeCount": 12,
+        "nodes": [
+          {
+            "index": 0,
+            "uid": 0,
+            "name": "Node_0",
+            "parentIndex": -1,
+            "childrenIndices": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11
+            ],
+            "length": 0,
+            "thickness": 32,
+            "role": "root"
+          },
+          {
+            "index": 1,
+            "uid": 9,
+            "name": "Node_1",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 140,
+            "thickness": 32
+          },
+          {
+            "index": 2,
+            "uid": 8,
+            "name": "Node_2",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 160,
+            "thickness": 32
+          },
+          {
+            "index": 3,
+            "uid": 4,
+            "name": "Node_3",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 140,
+            "thickness": 32
+          },
+          {
+            "index": 4,
+            "uid": 3,
+            "name": "Node_4",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 160,
+            "thickness": 32
+          },
+          {
+            "index": 5,
+            "uid": 7,
+            "name": "Node_5",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 100,
+            "thickness": 32
+          },
+          {
+            "index": 6,
+            "uid": 6,
+            "name": "Node_6",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 100,
+            "thickness": 32
+          },
+          {
+            "index": 7,
+            "uid": 5,
+            "name": "Node_7",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 100,
+            "thickness": 0
+          },
+          {
+            "index": 8,
+            "uid": 11,
+            "name": "Node_8",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 110,
+            "thickness": 32
+          },
+          {
+            "index": 9,
+            "uid": 10,
+            "name": "Node_9",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 110,
+            "thickness": 32
+          },
+          {
+            "index": 10,
+            "uid": 2,
+            "name": "Node_10",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 110,
+            "thickness": 32
+          },
+          {
+            "index": 11,
+            "uid": 1,
+            "name": "Node_11",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 110,
+            "thickness": 32
+          }
+        ],
+        "rootIndex": 0,
+        "kineticChains": [
+          {
+            "name": "Main Hierarchy",
+            "jointIndices": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11
+            ]
+          }
+        ]
+      }
+    ],
+    "hasCameraData": false,
+    "hasAudioData": false,
+    "fileSizeBytes": 922837,
+    "decompressedSizeBytes": 8865774,
+    "analyzedAt": "2026-10-08T21:07:23.018Z"
+  },
+  {
+    "id": "proj_0a0ed5a7bd65",
+    "fileName": "Bleeding.stknds",
+    "filePath": "templates/Bleeding.stknds",
+    "sha256": "0a0ed5a7bd658ffc404703e43dc18722223748edc80a5d6ba38577d38667024b",
+    "projectName": "Bleeding",
+    "fps": 16,
+    "tweenedFrames": 5,
+    "frameCount": 0,
+    "durationSeconds": 0,
+    "category": "reference",
+    "characterCount": 1,
+    "characters": [
+      {
+        "figureName": "Embedded Figure",
+        "nodeCount": 0,
+        "nodes": [],
+        "rootIndex": 0,
+        "kineticChains": [
+          {
+            "name": "Main Hierarchy",
+            "jointIndices": []
+          }
+        ]
+      }
+    ],
+    "hasCameraData": false,
+    "hasAudioData": false,
+    "fileSizeBytes": 3725839,
+    "decompressedSizeBytes": 14095171,
+    "analyzedAt": "2026-10-08T21:07:23.245Z"
+  },
+  {
+    "id": "proj_d1f8ff79d700",
+    "fileName": "Giveaway1.stknds",
+    "filePath": "templates/Giveaway1.stknds",
+    "sha256": "d1f8ff79d7006258c45edfb1544bb50c887f068b0a579e01d4f3bf5d189808cf",
+    "projectName": "Giveaway1",
+    "fps": 20,
+    "tweenedFrames": 5,
+    "frameCount": 0,
+    "durationSeconds": 0,
+    "category": "reference",
+    "characterCount": 1,
+    "characters": [
+      {
+        "figureName": "Embedded Figure",
+        "nodeCount": 0,
+        "nodes": [],
+        "rootIndex": 0,
+        "kineticChains": [
+          {
+            "name": "Main Hierarchy",
+            "jointIndices": []
+          }
+        ]
+      }
+    ],
+    "hasCameraData": false,
+    "hasAudioData": false,
+    "fileSizeBytes": 10380,
+    "decompressedSizeBytes": 101915,
+    "analyzedAt": "2026-10-08T21:07:23.257Z"
+  },
+  {
+    "id": "proj_05643d64962b",
+    "fileName": "Giveaway2.stknds",
+    "filePath": "templates/Giveaway2.stknds",
+    "sha256": "05643d64962bfbc90ec4eeea0daf95aefed6d1a67c7691173138f2e860f0db1f",
+    "projectName": "Giveaway2",
+    "fps": 24,
+    "tweenedFrames": 5,
+    "frameCount": 0,
+    "durationSeconds": 0,
+    "category": "reference",
+    "characterCount": 1,
+    "characters": [
+      {
+        "figureName": "Embedded Figure",
+        "nodeCount": 0,
+        "nodes": [],
+        "rootIndex": 0,
+        "kineticChains": [
+          {
+            "name": "Main Hierarchy",
+            "jointIndices": []
+          }
+        ]
+      }
+    ],
+    "hasCameraData": false,
+    "hasAudioData": false,
+    "fileSizeBytes": 4736,
+    "decompressedSizeBytes": 63416,
+    "analyzedAt": "2026-10-08T21:07:23.263Z"
+  },
+  {
+    "id": "proj_3c953bb93e0d",
+    "fileName": "Giveaway3.stknds",
+    "filePath": "templates/Giveaway3.stknds",
+    "sha256": "3c953bb93e0dcbb7163dd606e5214ab46ec9c4f0e9fd136a8867671a1368484b",
+    "projectName": "Giveaway3",
+    "fps": 20,
+    "tweenedFrames": 5,
+    "frameCount": 0,
+    "durationSeconds": 0,
+    "category": "reference",
+    "characterCount": 1,
+    "characters": [
+      {
+        "figureName": "Embedded Figure",
+        "nodeCount": 0,
+        "nodes": [],
+        "rootIndex": 0,
+        "kineticChains": [
+          {
+            "name": "Main Hierarchy",
+            "jointIndices": []
+          }
+        ]
+      }
+    ],
+    "hasCameraData": false,
+    "hasAudioData": false,
+    "fileSizeBytes": 13720,
+    "decompressedSizeBytes": 142198,
+    "analyzedAt": "2026-10-08T21:07:23.275Z"
+  },
+  {
+    "id": "proj_bbe6a8843362",
+    "fileName": "Giveaway4.stknds",
+    "filePath": "templates/Giveaway4.stknds",
+    "sha256": "bbe6a884336251075a5ec8dbd080cd667398d7a4bea168db3f9f4ccc14566b7c",
+    "projectName": "Giveaway4",
+    "fps": 24,
+    "tweenedFrames": 5,
+    "frameCount": 0,
+    "durationSeconds": 0,
+    "category": "reference",
+    "characterCount": 1,
+    "characters": [
+      {
+        "figureName": "Embedded Figure",
+        "nodeCount": 0,
+        "nodes": [],
+        "rootIndex": 0,
+        "kineticChains": [
+          {
+            "name": "Main Hierarchy",
+            "jointIndices": []
+          }
+        ]
+      }
+    ],
+    "hasCameraData": false,
+    "hasAudioData": false,
+    "fileSizeBytes": 9341,
+    "decompressedSizeBytes": 131550,
+    "analyzedAt": "2026-10-08T21:07:23.285Z"
+  },
+  {
+    "id": "proj_8e8ae5a2f86d",
+    "fileName": "Giveaway6.stknds",
+    "filePath": "templates/Giveaway6.stknds",
+    "sha256": "8e8ae5a2f86d789f0185c4f999548f39481ddf342a6d93a51f0597753a7f3351",
+    "projectName": "Giveaway6",
+    "fps": 20,
+    "tweenedFrames": 5,
+    "frameCount": 0,
+    "durationSeconds": 0,
+    "category": "reference",
+    "characterCount": 1,
+    "characters": [
+      {
+        "figureName": "Embedded Figure",
+        "nodeCount": 0,
+        "nodes": [],
+        "rootIndex": 0,
+        "kineticChains": [
+          {
+            "name": "Main Hierarchy",
+            "jointIndices": []
+          }
+        ]
+      }
+    ],
+    "hasCameraData": false,
+    "hasAudioData": false,
+    "fileSizeBytes": 251465,
+    "decompressedSizeBytes": 4862760,
+    "analyzedAt": "2026-10-08T21:07:23.340Z"
+  },
+  {
+    "id": "proj_0886c28061f9",
+    "fileName": "Project2.stknds",
+    "filePath": "templates/Project2.stknds",
+    "sha256": "0886c28061f95c4e4b711e4a5e9f278fa1c270b52d27c006c29887961d6bcaf7",
+    "projectName": "Project2",
+    "fps": 25,
+    "tweenedFrames": 5,
+    "frameCount": 1,
+    "durationSeconds": 0.04,
+    "category": "reference",
+    "characterCount": 1,
+    "characters": [
+      {
+        "figureName": "Poly Square",
+        "nodeCount": 5,
+        "nodes": [
+          {
+            "index": 0,
+            "uid": 0,
+            "name": "Node_0",
+            "parentIndex": -1,
+            "childrenIndices": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "length": 0,
+            "thickness": 32,
+            "role": "root"
+          },
+          {
+            "index": 1,
+            "uid": 4,
+            "name": "Node_1",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 228.31082153320312,
+            "thickness": 0
+          },
+          {
+            "index": 2,
+            "uid": 3,
+            "name": "Node_2",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 141.27584838867188,
+            "thickness": 0
+          },
+          {
+            "index": 3,
+            "uid": 2,
+            "name": "Node_3",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 200.2424774169922,
+            "thickness": 0
+          },
+          {
+            "index": 4,
+            "uid": 1,
+            "name": "Node_4",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 87.74331665039062,
+            "thickness": 0
+          }
+        ],
+        "rootIndex": 0,
+        "kineticChains": [
+          {
+            "name": "Main Hierarchy",
+            "jointIndices": [
+              0,
+              1,
+              2,
+              3,
+              4
+            ]
+          }
+        ]
+      }
+    ],
+    "hasCameraData": true,
+    "hasAudioData": false,
+    "fileSizeBytes": 37697,
+    "decompressedSizeBytes": 648852,
+    "analyzedAt": "2026-10-08T21:07:23.379Z"
+  },
+  {
+    "id": "proj_2a84d995f983",
+    "fileName": "Project3.stknds",
+    "filePath": "templates/Project3.stknds",
+    "sha256": "2a84d995f983ab16e3407c38f667061916359c21721a4c50ca2faa9b145bf57f",
+    "projectName": "Project3",
+    "fps": 24,
+    "tweenedFrames": 5,
+    "frameCount": 1037,
+    "durationSeconds": 43.208333333333336,
+    "category": "reference",
+    "characterCount": 1,
+    "characters": [
+      {
+        "figureName": "Star Light Explosion 2",
+        "nodeCount": 6,
+        "nodes": [
+          {
+            "index": 0,
+            "uid": 0,
+            "name": "Node_0",
+            "parentIndex": -1,
+            "childrenIndices": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "length": 0,
+            "thickness": 32,
+            "role": "root"
+          },
+          {
+            "index": 1,
+            "uid": 1,
+            "name": "Node_1",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 389.3645935058594,
+            "thickness": 0
+          },
+          {
+            "index": 2,
+            "uid": 2,
+            "name": "Node_2",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 339.1131591796875,
+            "thickness": 75
+          },
+          {
+            "index": 3,
+            "uid": 3,
+            "name": "Node_3",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 339.1131591796875,
+            "thickness": 75
+          },
+          {
+            "index": 4,
+            "uid": 4,
+            "name": "Node_4",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 339.1131591796875,
+            "thickness": 75
+          },
+          {
+            "index": 5,
+            "uid": 5,
+            "name": "Node_5",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 339.1131591796875,
+            "thickness": 75
+          }
+        ],
+        "rootIndex": 0,
+        "kineticChains": [
+          {
+            "name": "Main Hierarchy",
+            "jointIndices": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5
+            ]
+          }
+        ]
+      }
+    ],
+    "hasCameraData": false,
+    "hasAudioData": false,
+    "fileSizeBytes": 123659,
+    "decompressedSizeBytes": 1243375,
+    "analyzedAt": "2026-10-08T21:07:23.473Z"
+  },
+  {
+    "id": "proj_56cd8c2ee0b8",
+    "fileName": "Project4.stknds",
+    "filePath": "templates/Project4.stknds",
+    "sha256": "56cd8c2ee0b8267d01e5cbe6d92f3cd28bced37c808a3ae192e2f22b804c93b1",
+    "projectName": "Project4",
+    "fps": 24,
+    "tweenedFrames": 5,
+    "frameCount": 574,
+    "durationSeconds": 23.916666666666668,
+    "category": "reference",
+    "characterCount": 1,
+    "characters": [
+      {
+        "figureName": "3dBas_Base_3dbas_poly angle3d",
+        "nodeCount": 12,
+        "nodes": [
+          {
+            "index": 0,
+            "uid": 0,
+            "name": "Node_0",
+            "parentIndex": -1,
+            "childrenIndices": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11
+            ],
+            "length": 0,
+            "thickness": 32,
+            "role": "root"
+          },
+          {
+            "index": 1,
+            "uid": 1,
+            "name": "Node_1",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 457,
+            "thickness": 0
+          },
+          {
+            "index": 2,
+            "uid": 2,
+            "name": "Node_2",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 457,
+            "thickness": 0
+          },
+          {
+            "index": 3,
+            "uid": 6,
+            "name": "Node_3",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 100,
+            "thickness": 0
+          },
+          {
+            "index": 4,
+            "uid": 3,
+            "name": "Node_4",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 100,
+            "thickness": 0
+          },
+          {
+            "index": 5,
+            "uid": 4,
+            "name": "Node_5",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 100,
+            "thickness": 0
+          },
+          {
+            "index": 6,
+            "uid": 5,
+            "name": "Node_6",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 201.04428100585938,
+            "thickness": 0
+          },
+          {
+            "index": 7,
+            "uid": 10,
+            "name": "Node_7",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 100,
+            "thickness": 0
+          },
+          {
+            "index": 8,
+            "uid": 7,
+            "name": "Node_8",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 100,
+            "thickness": 0
+          },
+          {
+            "index": 9,
+            "uid": 8,
+            "name": "Node_9",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 100,
+            "thickness": 0
+          },
+          {
+            "index": 10,
+            "uid": 9,
+            "name": "Node_10",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 201.04428100585938,
+            "thickness": 0
+          },
+          {
+            "index": 11,
+            "uid": 11,
+            "name": "Node_11",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 100,
+            "thickness": 0
+          }
+        ],
+        "rootIndex": 0,
+        "kineticChains": [
+          {
+            "name": "Main Hierarchy",
+            "jointIndices": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11
+            ]
+          }
+        ]
+      }
+    ],
+    "hasCameraData": false,
+    "hasAudioData": false,
+    "fileSizeBytes": 58091,
+    "decompressedSizeBytes": 688478,
+    "analyzedAt": "2026-10-08T21:07:23.484Z"
+  },
+  {
+    "id": "proj_b4a6431aa29b",
+    "fileName": "SASUKE PROJECT.stknds",
+    "filePath": "templates/SASUKE PROJECT.stknds",
+    "sha256": "b4a6431aa29b5802e454a75126769ba31f1cd63776a20b230dbfa6dfb4dc9d2d",
+    "projectName": "\u0000\u0000\u0000\u000eSASUKE PROJECT\u0000\u0000\u0000\u0000\u0000\u0002:)�(\u0000�\u0000\u0000\u0000\u0015\u0000",
+    "fps": 24,
+    "tweenedFrames": 0,
+    "frameCount": 0,
+    "durationSeconds": 0,
+    "category": "reference",
+    "characterCount": 1,
+    "characters": [
+      {
+        "figureName": "Embedded Figure",
+        "nodeCount": 0,
+        "nodes": [],
+        "rootIndex": 0,
+        "kineticChains": [
+          {
+            "name": "Main Hierarchy",
+            "jointIndices": []
+          }
+        ]
+      }
+    ],
+    "hasCameraData": false,
+    "hasAudioData": false,
+    "fileSizeBytes": 3509227,
+    "decompressedSizeBytes": 22282570,
+    "analyzedAt": "2026-10-08T21:07:23.868Z"
+  },
+  {
+    "id": "proj_85185f7a477d",
+    "fileName": "Sht smear.stknds",
+    "filePath": "templates/Sht smear.stknds",
+    "sha256": "85185f7a477dbcdad03bdf272a37441a1838ce48b384dc372b13dcc2e75bcbf2",
+    "projectName": "Sht smear",
+    "fps": 24,
+    "tweenedFrames": 5,
+    "frameCount": 1136,
+    "durationSeconds": 47.333333333333336,
+    "category": "reference",
+    "characterCount": 1,
+    "characters": [
+      {
+        "figureName": "strechy base",
+        "nodeCount": 16,
+        "nodes": [
+          {
+            "index": 0,
+            "uid": 0,
+            "name": "Node_0",
+            "parentIndex": -1,
+            "childrenIndices": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15
+            ],
+            "length": 0,
+            "thickness": 32,
+            "role": "root"
+          },
+          {
+            "index": 1,
+            "uid": 7,
+            "name": "Node_1",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 70,
+            "thickness": 70
+          },
+          {
+            "index": 2,
+            "uid": 8,
+            "name": "Node_2",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 70,
+            "thickness": 70
+          },
+          {
+            "index": 3,
+            "uid": 9,
+            "name": "Node_3",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 70,
+            "thickness": 70
+          },
+          {
+            "index": 4,
+            "uid": 14,
+            "name": "Node_4",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 25,
+            "thickness": 40
+          },
+          {
+            "index": 5,
+            "uid": 15,
+            "name": "Node_5",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 100,
+            "thickness": 40
+          },
+          {
+            "index": 6,
+            "uid": 12,
+            "name": "Node_6",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 105,
+            "thickness": 70
+          },
+          {
+            "index": 7,
+            "uid": 13,
+            "name": "Node_7",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 105,
+            "thickness": 70
+          },
+          {
+            "index": 8,
+            "uid": 10,
+            "name": "Node_8",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 105,
+            "thickness": 70
+          },
+          {
+            "index": 9,
+            "uid": 11,
+            "name": "Node_9",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 105,
+            "thickness": 70
+          },
+          {
+            "index": 10,
+            "uid": 4,
+            "name": "Node_10",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 125,
+            "thickness": 70
+          },
+          {
+            "index": 11,
+            "uid": 5,
+            "name": "Node_11",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 125,
+            "thickness": 70
+          },
+          {
+            "index": 12,
+            "uid": 6,
+            "name": "Node_12",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 15,
+            "thickness": 70
+          },
+          {
+            "index": 13,
+            "uid": 1,
+            "name": "Node_13",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 125,
+            "thickness": 70
+          },
+          {
+            "index": 14,
+            "uid": 2,
+            "name": "Node_14",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 125,
+            "thickness": 70
+          },
+          {
+            "index": 15,
+            "uid": 3,
+            "name": "Node_15",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 15,
+            "thickness": 70
+          }
+        ],
+        "rootIndex": 0,
+        "kineticChains": [
+          {
+            "name": "Main Hierarchy",
+            "jointIndices": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15
+            ]
+          }
+        ]
+      }
+    ],
+    "hasCameraData": false,
+    "hasAudioData": false,
+    "fileSizeBytes": 258332,
+    "decompressedSizeBytes": 1360596,
+    "analyzedAt": "2026-10-08T21:07:23.893Z"
+  },
+  {
+    "id": "proj_bd696774454d",
+    "fileName": "Stickfigure vs stickfigure.stknds",
+    "filePath": "templates/Stickfigure vs stickfigure.stknds",
+    "sha256": "bd696774454d7af287a6bab5461ff5ccd3ee5f92aca1e07745a0c7d44cf33873",
+    "projectName": "Stickfigure vs stickfigure",
+    "fps": 20,
+    "tweenedFrames": 5,
+    "frameCount": 2105,
+    "durationSeconds": 105.25,
+    "category": "reference",
+    "characterCount": 1,
+    "characters": [
+      {
+        "figureName": "_Stickfigure (Girl)",
+        "nodeCount": 33,
+        "nodes": [
+          {
+            "index": 0,
+            "uid": 0,
+            "name": "Node_0",
+            "parentIndex": -1,
+            "childrenIndices": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31,
+              32
+            ],
+            "length": 0,
+            "thickness": 32,
+            "role": "root"
+          },
+          {
+            "index": 1,
+            "uid": 24,
+            "name": "Node_1",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 100,
+            "thickness": 32
+          },
+          {
+            "index": 2,
+            "uid": 21,
+            "name": "Node_2",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 100,
+            "thickness": 32
+          },
+          {
+            "index": 3,
+            "uid": 2,
+            "name": "Node_3",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 110,
+            "thickness": 32
+          },
+          {
+            "index": 4,
+            "uid": 1,
+            "name": "Node_4",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 110,
+            "thickness": 32
+          },
+          {
+            "index": 5,
+            "uid": 28,
+            "name": "Node_5",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 110,
+            "thickness": 32
+          },
+          {
+            "index": 6,
+            "uid": 27,
+            "name": "Node_6",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 110,
+            "thickness": 32
+          },
+          {
+            "index": 7,
+            "uid": 5,
+            "name": "Node_7",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 100,
+            "thickness": 0
+          },
+          {
+            "index": 8,
+            "uid": 6,
+            "name": "Node_8",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 52.782962799072266,
+            "thickness": 30
+          },
+          {
+            "index": 9,
+            "uid": 7,
+            "name": "Node_9",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 48.257999420166016,
+            "thickness": 30
+          },
+          {
+            "index": 10,
+            "uid": 8,
+            "name": "Node_10",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 33.67170333862305,
+            "thickness": 30
+          },
+          {
+            "index": 11,
+            "uid": 9,
+            "name": "Node_11",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 32.23625946044922,
+            "thickness": 30
+          },
+          {
+            "index": 12,
+            "uid": 10,
+            "name": "Node_12",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 19.15384292602539,
+            "thickness": 30
+          },
+          {
+            "index": 13,
+            "uid": 11,
+            "name": "Node_13",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 34.65425491333008,
+            "thickness": 30
+          },
+          {
+            "index": 14,
+            "uid": 12,
+            "name": "Node_14",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 39.23925018310547,
+            "thickness": 30
+          },
+          {
+            "index": 15,
+            "uid": 13,
+            "name": "Node_15",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 26.858192443847656,
+            "thickness": 30
+          },
+          {
+            "index": 16,
+            "uid": 14,
+            "name": "Node_16",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 31.817094802856445,
+            "thickness": 30
+          },
+          {
+            "index": 17,
+            "uid": 15,
+            "name": "Node_17",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 22.330364227294922,
+            "thickness": 30
+          },
+          {
+            "index": 18,
+            "uid": 16,
+            "name": "Node_18",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 6.284516334533691,
+            "thickness": 30
+          },
+          {
+            "index": 19,
+            "uid": 19,
+            "name": "Node_19",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 15.163507461547852,
+            "thickness": 30
+          },
+          {
+            "index": 20,
+            "uid": 20,
+            "name": "Node_20",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 13.209019660949707,
+            "thickness": 30
+          },
+          {
+            "index": 21,
+            "uid": 17,
+            "name": "Node_21",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 24.128915786743164,
+            "thickness": 30
+          },
+          {
+            "index": 22,
+            "uid": 18,
+            "name": "Node_22",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 38.673667907714844,
+            "thickness": 30
+          },
+          {
+            "index": 23,
+            "uid": 29,
+            "name": "Node_23",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 14.789048194885254,
+            "thickness": 20
+          },
+          {
+            "index": 24,
+            "uid": 30,
+            "name": "Node_24",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 4.622766017913818,
+            "thickness": 5
+          },
+          {
+            "index": 25,
+            "uid": 31,
+            "name": "Node_25",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 33.480377197265625,
+            "thickness": 0
+          },
+          {
+            "index": 26,
+            "uid": 32,
+            "name": "Node_26",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 14.264252662658691,
+            "thickness": 10
+          },
+          {
+            "index": 27,
+            "uid": 22,
+            "name": "Node_27",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 17.85711669921875,
+            "thickness": 0
+          },
+          {
+            "index": 28,
+            "uid": 23,
+            "name": "Node_28",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 20.72707176208496,
+            "thickness": 42
+          },
+          {
+            "index": 29,
+            "uid": 4,
+            "name": "Node_29",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 140,
+            "thickness": 32
+          },
+          {
+            "index": 30,
+            "uid": 3,
+            "name": "Node_30",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 160,
+            "thickness": 32
+          },
+          {
+            "index": 31,
+            "uid": 26,
+            "name": "Node_31",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 140,
+            "thickness": 32
+          },
+          {
+            "index": 32,
+            "uid": 25,
+            "name": "Node_32",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 160,
+            "thickness": 32
+          }
+        ],
+        "rootIndex": 0,
+        "kineticChains": [
+          {
+            "name": "Main Hierarchy",
+            "jointIndices": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31,
+              32
+            ]
+          }
+        ]
+      }
+    ],
+    "hasCameraData": false,
+    "hasAudioData": false,
+    "fileSizeBytes": 221242,
+    "decompressedSizeBytes": 2520936,
+    "analyzedAt": "2026-10-08T21:07:23.926Z"
+  },
+  {
+    "id": "proj_9f4d9c0b3dc6",
+    "fileName": "Sword animation(sub to Melvin_animz).stknds",
+    "filePath": "templates/Sword animation(sub to Melvin_animz).stknds",
+    "sha256": "9f4d9c0b3dc66def4f47888301bedaedc63a975bb9e3d5390e84566fcda3213e",
+    "projectName": "Sword animation(sub to Melvin_animz)",
+    "fps": 24,
+    "tweenedFrames": 8,
+    "frameCount": 470,
+    "durationSeconds": 19.583333333333332,
+    "category": "reference",
+    "characterCount": 1,
+    "characters": [
+      {
+        "figureName": "Sword-Smart-Stretch",
+        "nodeCount": 16,
+        "nodes": [
+          {
+            "index": 0,
+            "uid": 0,
+            "name": "Node_0",
+            "parentIndex": -1,
+            "childrenIndices": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15
+            ],
+            "length": 0,
+            "thickness": 32,
+            "role": "root"
+          },
+          {
+            "index": 1,
+            "uid": 1,
+            "name": "Node_1",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 27.244308471679688,
+            "thickness": 12
+          },
+          {
+            "index": 2,
+            "uid": 2,
+            "name": "Node_2",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 39.469154357910156,
+            "thickness": 9
+          },
+          {
+            "index": 3,
+            "uid": 4,
+            "name": "Node_3",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 84.76011657714844,
+            "thickness": 9
+          },
+          {
+            "index": 4,
+            "uid": 6,
+            "name": "Node_4",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 9.081439971923828,
+            "thickness": 9
+          },
+          {
+            "index": 5,
+            "uid": 12,
+            "name": "Node_5",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 6.054293632507324,
+            "thickness": 9
+          },
+          {
+            "index": 6,
+            "uid": 13,
+            "name": "Node_6",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 4.281030654907227,
+            "thickness": 9
+          },
+          {
+            "index": 7,
+            "uid": 14,
+            "name": "Node_7",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 15.135729789733887,
+            "thickness": 9
+          },
+          {
+            "index": 8,
+            "uid": 5,
+            "name": "Node_8",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 24.217174530029297,
+            "thickness": 6
+          },
+          {
+            "index": 9,
+            "uid": 7,
+            "name": "Node_9",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 42.38005828857422,
+            "thickness": 6
+          },
+          {
+            "index": 10,
+            "uid": 11,
+            "name": "Node_10",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 28.837873458862305,
+            "thickness": 0
+          },
+          {
+            "index": 11,
+            "uid": 10,
+            "name": "Node_11",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 15.66366958618164,
+            "thickness": 0
+          },
+          {
+            "index": 12,
+            "uid": 9,
+            "name": "Node_12",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 284.61968994140625,
+            "thickness": 0
+          },
+          {
+            "index": 13,
+            "uid": 8,
+            "name": "Node_13",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 244.04872131347656,
+            "thickness": 0
+          },
+          {
+            "index": 14,
+            "uid": 3,
+            "name": "Node_14",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 33.43593215942383,
+            "thickness": 12
+          },
+          {
+            "index": 15,
+            "uid": 15,
+            "name": "Node_15",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 51.06678771972656,
+            "thickness": 12
+          }
+        ],
+        "rootIndex": 0,
+        "kineticChains": [
+          {
+            "name": "Main Hierarchy",
+            "jointIndices": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15
+            ]
+          }
+        ]
+      }
+    ],
+    "hasCameraData": false,
+    "hasAudioData": false,
+    "fileSizeBytes": 73723,
+    "decompressedSizeBytes": 566351,
+    "analyzedAt": "2026-10-08T21:07:23.936Z"
+  },
+  {
+    "id": "proj_5791037f2732",
+    "fileName": "bebsbs.stknds",
+    "filePath": "templates/bebsbs.stknds",
+    "sha256": "5791037f27327d2dd778e58f34b14bc0eb208f4283ee78832be6db2324b7db58",
+    "projectName": "bebsbs",
+    "fps": 23,
+    "tweenedFrames": 5,
+    "frameCount": 1784,
+    "durationSeconds": 77.56521739130434,
+    "category": "reference",
+    "characterCount": 1,
+    "characters": [
+      {
+        "figureName": "Smart-Stretch-Circle",
+        "nodeCount": 64,
+        "nodes": [
+          {
+            "index": 0,
+            "uid": 0,
+            "name": "Node_0",
+            "parentIndex": -1,
+            "childrenIndices": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40,
+              41,
+              42,
+              43,
+              44,
+              45,
+              46,
+              47,
+              48,
+              49,
+              50,
+              51,
+              52,
+              53,
+              54,
+              55,
+              56,
+              57,
+              58,
+              59,
+              60,
+              61,
+              62,
+              63
+            ],
+            "length": 0,
+            "thickness": 32,
+            "role": "root"
+          },
+          {
+            "index": 1,
+            "uid": 1,
+            "name": "Node_1",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 132.3362274169922,
+            "thickness": 0
+          },
+          {
+            "index": 2,
+            "uid": 2,
+            "name": "Node_2",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 132.3362274169922,
+            "thickness": 0
+          },
+          {
+            "index": 3,
+            "uid": 3,
+            "name": "Node_3",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 132.3362274169922,
+            "thickness": 0
+          },
+          {
+            "index": 4,
+            "uid": 4,
+            "name": "Node_4",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 132.3362274169922,
+            "thickness": 0
+          },
+          {
+            "index": 5,
+            "uid": 5,
+            "name": "Node_5",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 132.3362274169922,
+            "thickness": 0
+          },
+          {
+            "index": 6,
+            "uid": 6,
+            "name": "Node_6",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 132.3362274169922,
+            "thickness": 0
+          },
+          {
+            "index": 7,
+            "uid": 7,
+            "name": "Node_7",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 132.3362274169922,
+            "thickness": 0
+          },
+          {
+            "index": 8,
+            "uid": 8,
+            "name": "Node_8",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 132.3362274169922,
+            "thickness": 0
+          },
+          {
+            "index": 9,
+            "uid": 9,
+            "name": "Node_9",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 132.3362274169922,
+            "thickness": 0
+          },
+          {
+            "index": 10,
+            "uid": 10,
+            "name": "Node_10",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 132.3362274169922,
+            "thickness": 0
+          },
+          {
+            "index": 11,
+            "uid": 11,
+            "name": "Node_11",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 132.3362274169922,
+            "thickness": 0
+          },
+          {
+            "index": 12,
+            "uid": 12,
+            "name": "Node_12",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 132.3362274169922,
+            "thickness": 0
+          },
+          {
+            "index": 13,
+            "uid": 13,
+            "name": "Node_13",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 132.3362274169922,
+            "thickness": 0
+          },
+          {
+            "index": 14,
+            "uid": 14,
+            "name": "Node_14",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 132.3362274169922,
+            "thickness": 0
+          },
+          {
+            "index": 15,
+            "uid": 15,
+            "name": "Node_15",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 132.3362274169922,
+            "thickness": 0
+          },
+          {
+            "index": 16,
+            "uid": 16,
+            "name": "Node_16",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 132.3362274169922,
+            "thickness": 0
+          },
+          {
+            "index": 17,
+            "uid": 17,
+            "name": "Node_17",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 132.3362274169922,
+            "thickness": 0
+          },
+          {
+            "index": 18,
+            "uid": 18,
+            "name": "Node_18",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 132.3362274169922,
+            "thickness": 0
+          },
+          {
+            "index": 19,
+            "uid": 19,
+            "name": "Node_19",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 132.3362274169922,
+            "thickness": 0
+          },
+          {
+            "index": 20,
+            "uid": 20,
+            "name": "Node_20",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 132.3362274169922,
+            "thickness": 0
+          },
+          {
+            "index": 21,
+            "uid": 21,
+            "name": "Node_21",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 132.3362274169922,
+            "thickness": 0
+          },
+          {
+            "index": 22,
+            "uid": 22,
+            "name": "Node_22",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 132.3362274169922,
+            "thickness": 0
+          },
+          {
+            "index": 23,
+            "uid": 23,
+            "name": "Node_23",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 132.3362274169922,
+            "thickness": 0
+          },
+          {
+            "index": 24,
+            "uid": 24,
+            "name": "Node_24",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 132.3362274169922,
+            "thickness": 0
+          },
+          {
+            "index": 25,
+            "uid": 25,
+            "name": "Node_25",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 132.3362274169922,
+            "thickness": 0
+          },
+          {
+            "index": 26,
+            "uid": 26,
+            "name": "Node_26",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 132.3362274169922,
+            "thickness": 0
+          },
+          {
+            "index": 27,
+            "uid": 27,
+            "name": "Node_27",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 132.3362274169922,
+            "thickness": 0
+          },
+          {
+            "index": 28,
+            "uid": 28,
+            "name": "Node_28",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 132.3362274169922,
+            "thickness": 0
+          },
+          {
+            "index": 29,
+            "uid": 29,
+            "name": "Node_29",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 132.3362274169922,
+            "thickness": 0
+          },
+          {
+            "index": 30,
+            "uid": 30,
+            "name": "Node_30",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 132.3362274169922,
+            "thickness": 0
+          },
+          {
+            "index": 31,
+            "uid": 31,
+            "name": "Node_31",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 132.3362274169922,
+            "thickness": 0
+          },
+          {
+            "index": 32,
+            "uid": 32,
+            "name": "Node_32",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 132.3362274169922,
+            "thickness": 0
+          },
+          {
+            "index": 33,
+            "uid": 33,
+            "name": "Node_33",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 132.3362274169922,
+            "thickness": 0
+          },
+          {
+            "index": 34,
+            "uid": 34,
+            "name": "Node_34",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 132.3362274169922,
+            "thickness": 0
+          },
+          {
+            "index": 35,
+            "uid": 35,
+            "name": "Node_35",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 132.3362274169922,
+            "thickness": 0
+          },
+          {
+            "index": 36,
+            "uid": 36,
+            "name": "Node_36",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 132.3362274169922,
+            "thickness": 0
+          },
+          {
+            "index": 37,
+            "uid": 37,
+            "name": "Node_37",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 132.3362274169922,
+            "thickness": 0
+          },
+          {
+            "index": 38,
+            "uid": 38,
+            "name": "Node_38",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 132.3362274169922,
+            "thickness": 0
+          },
+          {
+            "index": 39,
+            "uid": 39,
+            "name": "Node_39",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 132.3362274169922,
+            "thickness": 0
+          },
+          {
+            "index": 40,
+            "uid": 40,
+            "name": "Node_40",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 132.3362274169922,
+            "thickness": 0
+          },
+          {
+            "index": 41,
+            "uid": 41,
+            "name": "Node_41",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 132.3362274169922,
+            "thickness": 0
+          },
+          {
+            "index": 42,
+            "uid": 42,
+            "name": "Node_42",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 132.3362274169922,
+            "thickness": 0
+          },
+          {
+            "index": 43,
+            "uid": 43,
+            "name": "Node_43",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 132.3362274169922,
+            "thickness": 0
+          },
+          {
+            "index": 44,
+            "uid": 44,
+            "name": "Node_44",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 132.3362274169922,
+            "thickness": 0
+          },
+          {
+            "index": 45,
+            "uid": 45,
+            "name": "Node_45",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 132.3362274169922,
+            "thickness": 0
+          },
+          {
+            "index": 46,
+            "uid": 46,
+            "name": "Node_46",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 132.3362274169922,
+            "thickness": 0
+          },
+          {
+            "index": 47,
+            "uid": 47,
+            "name": "Node_47",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 132.3362274169922,
+            "thickness": 0
+          },
+          {
+            "index": 48,
+            "uid": 48,
+            "name": "Node_48",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 132.3362274169922,
+            "thickness": 0
+          },
+          {
+            "index": 49,
+            "uid": 49,
+            "name": "Node_49",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 132.3362274169922,
+            "thickness": 0
+          },
+          {
+            "index": 50,
+            "uid": 50,
+            "name": "Node_50",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 132.3362274169922,
+            "thickness": 0
+          },
+          {
+            "index": 51,
+            "uid": 51,
+            "name": "Node_51",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 132.3362274169922,
+            "thickness": 0
+          },
+          {
+            "index": 52,
+            "uid": 52,
+            "name": "Node_52",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 132.3362274169922,
+            "thickness": 0
+          },
+          {
+            "index": 53,
+            "uid": 53,
+            "name": "Node_53",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 132.3362274169922,
+            "thickness": 0
+          },
+          {
+            "index": 54,
+            "uid": 54,
+            "name": "Node_54",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 132.3362274169922,
+            "thickness": 0
+          },
+          {
+            "index": 55,
+            "uid": 55,
+            "name": "Node_55",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 132.3362274169922,
+            "thickness": 0
+          },
+          {
+            "index": 56,
+            "uid": 56,
+            "name": "Node_56",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 132.3362274169922,
+            "thickness": 0
+          },
+          {
+            "index": 57,
+            "uid": 57,
+            "name": "Node_57",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 132.3362274169922,
+            "thickness": 0
+          },
+          {
+            "index": 58,
+            "uid": 58,
+            "name": "Node_58",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 132.3362274169922,
+            "thickness": 0
+          },
+          {
+            "index": 59,
+            "uid": 59,
+            "name": "Node_59",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 132.3362274169922,
+            "thickness": 0
+          },
+          {
+            "index": 60,
+            "uid": 60,
+            "name": "Node_60",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 132.3362274169922,
+            "thickness": 0
+          },
+          {
+            "index": 61,
+            "uid": 61,
+            "name": "Node_61",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 132.3362274169922,
+            "thickness": 0
+          },
+          {
+            "index": 62,
+            "uid": 62,
+            "name": "Node_62",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 132.3362274169922,
+            "thickness": 0
+          },
+          {
+            "index": 63,
+            "uid": 63,
+            "name": "Node_63",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 132.3362274169922,
+            "thickness": 0
+          }
+        ],
+        "rootIndex": 0,
+        "kineticChains": [
+          {
+            "name": "Main Hierarchy",
+            "jointIndices": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40,
+              41,
+              42,
+              43,
+              44,
+              45,
+              46,
+              47,
+              48,
+              49,
+              50,
+              51,
+              52,
+              53,
+              54,
+              55,
+              56,
+              57,
+              58,
+              59,
+              60,
+              61,
+              62,
+              63
+            ]
+          }
+        ]
+      }
+    ],
+    "hasCameraData": false,
+    "hasAudioData": false,
+    "fileSizeBytes": 233736,
+    "decompressedSizeBytes": 2138215,
+    "analyzedAt": "2026-10-08T21:07:23.969Z"
+  },
+  {
+    "id": "proj_a6c2ac9e9a1a",
+    "fileName": "buddy.stknds",
+    "filePath": "templates/buddy.stknds",
+    "sha256": "a6c2ac9e9a1ab63deb3d840d7a1dd8a22a0c1025b23c1e58f32bf09df7a04bf5",
+    "projectName": "buddy",
+    "fps": 18,
+    "tweenedFrames": 5,
+    "frameCount": 6821,
+    "durationSeconds": 378.94444444444446,
+    "category": "reference",
+    "characterCount": 1,
+    "characters": [
+      {
+        "figureName": "MaleB_man_svvsbs",
+        "nodeCount": 7,
+        "nodes": [
+          {
+            "index": 0,
+            "uid": 0,
+            "name": "Node_0",
+            "parentIndex": -1,
+            "childrenIndices": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6
+            ],
+            "length": 0,
+            "thickness": 32,
+            "role": "root"
+          },
+          {
+            "index": 1,
+            "uid": 4,
+            "name": "Node_1",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 46.37479019165039,
+            "thickness": 50
+          },
+          {
+            "index": 2,
+            "uid": 2,
+            "name": "Node_2",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 18,
+            "thickness": 55
+          },
+          {
+            "index": 3,
+            "uid": 1,
+            "name": "Node_3",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 26,
+            "thickness": 3
+          },
+          {
+            "index": 4,
+            "uid": 3,
+            "name": "Node_4",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 45,
+            "thickness": 55
+          },
+          {
+            "index": 5,
+            "uid": 6,
+            "name": "Node_5",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 15,
+            "thickness": 50
+          },
+          {
+            "index": 6,
+            "uid": 5,
+            "name": "Node_6",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 23.60564613342285,
+            "thickness": 3
+          }
+        ],
+        "rootIndex": 0,
+        "kineticChains": [
+          {
+            "name": "Main Hierarchy",
+            "jointIndices": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6
+            ]
+          }
+        ]
+      }
+    ],
+    "hasCameraData": false,
+    "hasAudioData": false,
+    "fileSizeBytes": 1003826,
+    "decompressedSizeBytes": 8168050,
+    "analyzedAt": "2026-10-08T21:07:24.133Z"
+  },
+  {
+    "id": "proj_38ed5e259930",
+    "fileName": "clean-up.stknds",
+    "filePath": "templates/clean-up.stknds",
+    "sha256": "38ed5e2599308aeafc0a4322b69bc80f1ee89fcae188b57925a1a7b6428b93e4",
+    "projectName": "clean-up",
+    "fps": 18,
+    "tweenedFrames": 5,
+    "frameCount": 1487,
+    "durationSeconds": 82.61111111111111,
+    "category": "reference",
+    "characterCount": 1,
+    "characters": [
+      {
+        "figureName": "Outlined Pivot Base stick",
+        "nodeCount": 29,
+        "nodes": [
+          {
+            "index": 0,
+            "uid": 0,
+            "name": "Node_0",
+            "parentIndex": -1,
+            "childrenIndices": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28
+            ],
+            "length": 0,
+            "thickness": 32,
+            "role": "root"
+          },
+          {
+            "index": 1,
+            "uid": 14,
+            "name": "Node_1",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 111.36426544189453,
+            "thickness": 72
+          },
+          {
+            "index": 2,
+            "uid": 8,
+            "name": "Node_2",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 111.36426544189453,
+            "thickness": 80
+          },
+          {
+            "index": 3,
+            "uid": 15,
+            "name": "Node_3",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 102.17631530761719,
+            "thickness": 72
+          },
+          {
+            "index": 4,
+            "uid": 7,
+            "name": "Node_4",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 102.17631530761719,
+            "thickness": 80
+          },
+          {
+            "index": 5,
+            "uid": 19,
+            "name": "Node_5",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 148.97650146484375,
+            "thickness": 72
+          },
+          {
+            "index": 6,
+            "uid": 6,
+            "name": "Node_6",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 148.97650146484375,
+            "thickness": 80
+          },
+          {
+            "index": 7,
+            "uid": 20,
+            "name": "Node_7",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 118.98319244384766,
+            "thickness": 72
+          },
+          {
+            "index": 8,
+            "uid": 5,
+            "name": "Node_8",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 118.98319244384766,
+            "thickness": 80
+          },
+          {
+            "index": 9,
+            "uid": 21,
+            "name": "Node_9",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 31.890438079833984,
+            "thickness": 72
+          },
+          {
+            "index": 10,
+            "uid": 2,
+            "name": "Node_10",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 31.890438079833984,
+            "thickness": 80
+          },
+          {
+            "index": 11,
+            "uid": 22,
+            "name": "Node_11",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 58.72208023071289,
+            "thickness": 90
+          },
+          {
+            "index": 12,
+            "uid": 1,
+            "name": "Node_12",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 58.72208023071289,
+            "thickness": 100
+          },
+          {
+            "index": 13,
+            "uid": 26,
+            "name": "Node_13",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 148.97650146484375,
+            "thickness": 72
+          },
+          {
+            "index": 14,
+            "uid": 3,
+            "name": "Node_14",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 148.97650146484375,
+            "thickness": 80
+          },
+          {
+            "index": 15,
+            "uid": 27,
+            "name": "Node_15",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 118.98319244384766,
+            "thickness": 72
+          },
+          {
+            "index": 16,
+            "uid": 4,
+            "name": "Node_16",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 118.98319244384766,
+            "thickness": 80
+          },
+          {
+            "index": 17,
+            "uid": 28,
+            "name": "Node_17",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 171.60418701171875,
+            "thickness": 72
+          },
+          {
+            "index": 18,
+            "uid": 13,
+            "name": "Node_18",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 171.60418701171875,
+            "thickness": 80
+          },
+          {
+            "index": 19,
+            "uid": 17,
+            "name": "Node_19",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 164.23458862304688,
+            "thickness": 72
+          },
+          {
+            "index": 20,
+            "uid": 12,
+            "name": "Node_20",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 164.23458862304688,
+            "thickness": 80
+          },
+          {
+            "index": 21,
+            "uid": 18,
+            "name": "Node_21",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 33.35350799560547,
+            "thickness": 72
+          },
+          {
+            "index": 22,
+            "uid": 16,
+            "name": "Node_22",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 33.35350799560547,
+            "thickness": 80
+          },
+          {
+            "index": 23,
+            "uid": 23,
+            "name": "Node_23",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 171.60418701171875,
+            "thickness": 72
+          },
+          {
+            "index": 24,
+            "uid": 11,
+            "name": "Node_24",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 171.60418701171875,
+            "thickness": 80
+          },
+          {
+            "index": 25,
+            "uid": 24,
+            "name": "Node_25",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 164.23458862304688,
+            "thickness": 72
+          },
+          {
+            "index": 26,
+            "uid": 10,
+            "name": "Node_26",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 164.23458862304688,
+            "thickness": 80
+          },
+          {
+            "index": 27,
+            "uid": 25,
+            "name": "Node_27",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 33.35350799560547,
+            "thickness": 72
+          },
+          {
+            "index": 28,
+            "uid": 9,
+            "name": "Node_28",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 33.35350799560547,
+            "thickness": 80
+          }
+        ],
+        "rootIndex": 0,
+        "kineticChains": [
+          {
+            "name": "Main Hierarchy",
+            "jointIndices": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28
+            ]
+          }
+        ]
+      }
+    ],
+    "hasCameraData": false,
+    "hasAudioData": false,
+    "fileSizeBytes": 360401,
+    "decompressedSizeBytes": 1781216,
+    "analyzedAt": "2026-10-08T21:07:24.157Z"
+  },
+  {
+    "id": "proj_0a0e90a60b1d",
+    "fileName": "combo testrrr.stknds",
+    "filePath": "templates/combo testrrr.stknds",
+    "sha256": "0a0e90a60b1d04ff4a303ccf87b28556a75624c73facfad82eaa04d68067002a",
+    "projectName": "combo testrrr",
+    "fps": 20,
+    "tweenedFrames": 5,
+    "frameCount": 893,
+    "durationSeconds": 44.65,
+    "category": "test",
+    "characterCount": 1,
+    "characters": [
+      {
+        "figureName": "sticky base",
+        "nodeCount": 16,
+        "nodes": [
+          {
+            "index": 0,
+            "uid": 0,
+            "name": "Node_0",
+            "parentIndex": -1,
+            "childrenIndices": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15
+            ],
+            "length": 0,
+            "thickness": 32,
+            "role": "root"
+          },
+          {
+            "index": 1,
+            "uid": 7,
+            "name": "Node_1",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 70,
+            "thickness": 70
+          },
+          {
+            "index": 2,
+            "uid": 8,
+            "name": "Node_2",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 70,
+            "thickness": 70
+          },
+          {
+            "index": 3,
+            "uid": 9,
+            "name": "Node_3",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 70,
+            "thickness": 70
+          },
+          {
+            "index": 4,
+            "uid": 14,
+            "name": "Node_4",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 25,
+            "thickness": 40
+          },
+          {
+            "index": 5,
+            "uid": 15,
+            "name": "Node_5",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 100,
+            "thickness": 40
+          },
+          {
+            "index": 6,
+            "uid": 12,
+            "name": "Node_6",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 105,
+            "thickness": 70
+          },
+          {
+            "index": 7,
+            "uid": 13,
+            "name": "Node_7",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 105,
+            "thickness": 70
+          },
+          {
+            "index": 8,
+            "uid": 10,
+            "name": "Node_8",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 105,
+            "thickness": 70
+          },
+          {
+            "index": 9,
+            "uid": 11,
+            "name": "Node_9",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 105,
+            "thickness": 70
+          },
+          {
+            "index": 10,
+            "uid": 4,
+            "name": "Node_10",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 125,
+            "thickness": 70
+          },
+          {
+            "index": 11,
+            "uid": 5,
+            "name": "Node_11",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 125,
+            "thickness": 70
+          },
+          {
+            "index": 12,
+            "uid": 6,
+            "name": "Node_12",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 15,
+            "thickness": 70
+          },
+          {
+            "index": 13,
+            "uid": 1,
+            "name": "Node_13",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 125,
+            "thickness": 70
+          },
+          {
+            "index": 14,
+            "uid": 2,
+            "name": "Node_14",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 125,
+            "thickness": 70
+          },
+          {
+            "index": 15,
+            "uid": 3,
+            "name": "Node_15",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 15,
+            "thickness": 70
+          }
+        ],
+        "rootIndex": 0,
+        "kineticChains": [
+          {
+            "name": "Main Hierarchy",
+            "jointIndices": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15
+            ]
+          }
+        ]
+      }
+    ],
+    "hasCameraData": false,
+    "hasAudioData": false,
+    "fileSizeBytes": 47221,
+    "decompressedSizeBytes": 1070290,
+    "analyzedAt": "2026-10-08T21:07:24.168Z"
+  },
+  {
+    "id": "proj_7d74cf157b01",
+    "fileName": "hsjsjshs.stknds",
+    "filePath": "templates/hsjsjshs.stknds",
+    "sha256": "7d74cf157b0143945b9429093981930a488c7cc35a8d7eb2eeede2356fb4af92",
+    "projectName": "hsjsjshs",
+    "fps": 20,
+    "tweenedFrames": 5,
+    "frameCount": 4276,
+    "durationSeconds": 213.8,
+    "category": "reference",
+    "characterCount": 1,
+    "characters": [
+      {
+        "figureName": "_Naruto (Kurama Chakra) 2",
+        "nodeCount": 61,
+        "nodes": [
+          {
+            "index": 0,
+            "uid": 0,
+            "name": "Node_0",
+            "parentIndex": -1,
+            "childrenIndices": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40,
+              41,
+              42,
+              43,
+              44,
+              45,
+              46,
+              47,
+              48,
+              49,
+              50,
+              51,
+              52,
+              53,
+              54,
+              55,
+              56,
+              57,
+              58,
+              59,
+              60
+            ],
+            "length": 0,
+            "thickness": 32,
+            "role": "root"
+          },
+          {
+            "index": 1,
+            "uid": 67,
+            "name": "Node_1",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 71.52561950683594,
+            "thickness": 64
+          },
+          {
+            "index": 2,
+            "uid": 65,
+            "name": "Node_2",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 30,
+            "thickness": 90
+          },
+          {
+            "index": 3,
+            "uid": 69,
+            "name": "Node_3",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 15,
+            "thickness": 0
+          },
+          {
+            "index": 4,
+            "uid": 70,
+            "name": "Node_4",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 40.264766693115234,
+            "thickness": 30
+          },
+          {
+            "index": 5,
+            "uid": 71,
+            "name": "Node_5",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 1,
+            "thickness": 0
+          },
+          {
+            "index": 6,
+            "uid": 73,
+            "name": "Node_6",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 38,
+            "thickness": 28
+          },
+          {
+            "index": 7,
+            "uid": 72,
+            "name": "Node_7",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 4,
+            "thickness": 0
+          },
+          {
+            "index": 8,
+            "uid": 74,
+            "name": "Node_8",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 30,
+            "thickness": 20
+          },
+          {
+            "index": 9,
+            "uid": 75,
+            "name": "Node_9",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 1,
+            "thickness": 0
+          },
+          {
+            "index": 10,
+            "uid": 76,
+            "name": "Node_10",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 28,
+            "thickness": 18
+          },
+          {
+            "index": 11,
+            "uid": 77,
+            "name": "Node_11",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 4,
+            "thickness": 0
+          },
+          {
+            "index": 12,
+            "uid": 78,
+            "name": "Node_12",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 20,
+            "thickness": 12
+          },
+          {
+            "index": 13,
+            "uid": 79,
+            "name": "Node_13",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 1,
+            "thickness": 0
+          },
+          {
+            "index": 14,
+            "uid": 80,
+            "name": "Node_14",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 18,
+            "thickness": 10
+          },
+          {
+            "index": 15,
+            "uid": 68,
+            "name": "Node_15",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 56.043277740478516,
+            "thickness": 64
+          },
+          {
+            "index": 16,
+            "uid": 66,
+            "name": "Node_16",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 48.57510757446289,
+            "thickness": 80
+          },
+          {
+            "index": 17,
+            "uid": 95,
+            "name": "Node_17",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 15,
+            "thickness": 0
+          },
+          {
+            "index": 18,
+            "uid": 96,
+            "name": "Node_18",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 40,
+            "thickness": 10
+          },
+          {
+            "index": 19,
+            "uid": 97,
+            "name": "Node_19",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 12,
+            "thickness": 10
+          },
+          {
+            "index": 20,
+            "uid": 98,
+            "name": "Node_20",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 12,
+            "thickness": 0
+          },
+          {
+            "index": 21,
+            "uid": 99,
+            "name": "Node_21",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 19.309906005859375,
+            "thickness": 6
+          },
+          {
+            "index": 22,
+            "uid": 100,
+            "name": "Node_22",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 15.340545654296875,
+            "thickness": 6
+          },
+          {
+            "index": 23,
+            "uid": 101,
+            "name": "Node_23",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 50,
+            "thickness": 6
+          },
+          {
+            "index": 24,
+            "uid": 102,
+            "name": "Node_24",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 17,
+            "thickness": 6
+          },
+          {
+            "index": 25,
+            "uid": 81,
+            "name": "Node_25",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 42,
+            "thickness": 70
+          },
+          {
+            "index": 26,
+            "uid": 60,
+            "name": "Node_26",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 35,
+            "thickness": 85
+          },
+          {
+            "index": 27,
+            "uid": 187,
+            "name": "Node_27",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 19.549306869506836,
+            "thickness": 0
+          },
+          {
+            "index": 28,
+            "uid": 232,
+            "name": "Node_28",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 35.32253646850586,
+            "thickness": 0
+          },
+          {
+            "index": 29,
+            "uid": 233,
+            "name": "Node_29",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 121.1791000366211,
+            "thickness": 57
+          },
+          {
+            "index": 30,
+            "uid": 235,
+            "name": "Node_30",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 100.88346862792969,
+            "thickness": 0
+          },
+          {
+            "index": 31,
+            "uid": 236,
+            "name": "Node_31",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 15,
+            "thickness": 35
+          },
+          {
+            "index": 32,
+            "uid": 237,
+            "name": "Node_32",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 14,
+            "thickness": 33
+          },
+          {
+            "index": 33,
+            "uid": 238,
+            "name": "Node_33",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 12,
+            "thickness": 30
+          },
+          {
+            "index": 34,
+            "uid": 239,
+            "name": "Node_34",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 11,
+            "thickness": 28
+          },
+          {
+            "index": 35,
+            "uid": 240,
+            "name": "Node_35",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 9,
+            "thickness": 24
+          },
+          {
+            "index": 36,
+            "uid": 241,
+            "name": "Node_36",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 8,
+            "thickness": 22
+          },
+          {
+            "index": 37,
+            "uid": 247,
+            "name": "Node_37",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 10,
+            "thickness": 22
+          },
+          {
+            "index": 38,
+            "uid": 246,
+            "name": "Node_38",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 11,
+            "thickness": 24
+          },
+          {
+            "index": 39,
+            "uid": 245,
+            "name": "Node_39",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 12.856175422668457,
+            "thickness": 28
+          },
+          {
+            "index": 40,
+            "uid": 244,
+            "name": "Node_40",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 14,
+            "thickness": 30
+          },
+          {
+            "index": 41,
+            "uid": 243,
+            "name": "Node_41",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 16,
+            "thickness": 33
+          },
+          {
+            "index": 42,
+            "uid": 242,
+            "name": "Node_42",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 17.403839111328125,
+            "thickness": 35
+          },
+          {
+            "index": 43,
+            "uid": 248,
+            "name": "Node_43",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 25,
+            "thickness": 0
+          },
+          {
+            "index": 44,
+            "uid": 256,
+            "name": "Node_44",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 16,
+            "thickness": 10
+          },
+          {
+            "index": 45,
+            "uid": 249,
+            "name": "Node_45",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 9.998330116271973,
+            "thickness": 10
+          },
+          {
+            "index": 46,
+            "uid": 250,
+            "name": "Node_46",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 10,
+            "thickness": 10
+          },
+          {
+            "index": 47,
+            "uid": 251,
+            "name": "Node_47",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 10,
+            "thickness": 10
+          },
+          {
+            "index": 48,
+            "uid": 252,
+            "name": "Node_48",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 20,
+            "thickness": 10
+          },
+          {
+            "index": 49,
+            "uid": 253,
+            "name": "Node_49",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 10,
+            "thickness": 10
+          },
+          {
+            "index": 50,
+            "uid": 254,
+            "name": "Node_50",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 10,
+            "thickness": 8
+          },
+          {
+            "index": 51,
+            "uid": 255,
+            "name": "Node_51",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 10,
+            "thickness": 7
+          },
+          {
+            "index": 52,
+            "uid": 234,
+            "name": "Node_52",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 120.6126708984375,
+            "thickness": 45
+          },
+          {
+            "index": 53,
+            "uid": 258,
+            "name": "Node_53",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 121.25533294677734,
+            "thickness": 57
+          },
+          {
+            "index": 54,
+            "uid": 257,
+            "name": "Node_54",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 121.31411743164062,
+            "thickness": 0
+          },
+          {
+            "index": 55,
+            "uid": 262,
+            "name": "Node_55",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 15.967226028442383,
+            "thickness": 57
+          },
+          {
+            "index": 56,
+            "uid": 264,
+            "name": "Node_56",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 80,
+            "thickness": 45
+          },
+          {
+            "index": 57,
+            "uid": 263,
+            "name": "Node_57",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 90,
+            "thickness": 57
+          },
+          {
+            "index": 58,
+            "uid": 259,
+            "name": "Node_58",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 22.631149291992188,
+            "thickness": 57
+          },
+          {
+            "index": 59,
+            "uid": 261,
+            "name": "Node_59",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 22,
+            "thickness": 45
+          },
+          {
+            "index": 60,
+            "uid": 260,
+            "name": "Node_60",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 122.89178466796875,
+            "thickness": 42
+          }
+        ],
+        "rootIndex": 0,
+        "kineticChains": [
+          {
+            "name": "Main Hierarchy",
+            "jointIndices": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40,
+              41,
+              42,
+              43,
+              44,
+              45,
+              46,
+              47,
+              48,
+              49,
+              50,
+              51,
+              52,
+              53,
+              54,
+              55,
+              56,
+              57,
+              58,
+              59,
+              60
+            ]
+          }
+        ]
+      }
+    ],
+    "hasCameraData": false,
+    "hasAudioData": false,
+    "fileSizeBytes": 459257,
+    "decompressedSizeBytes": 5120434,
+    "analyzedAt": "2026-10-08T21:07:24.251Z"
+  },
+  {
+    "id": "proj_9192d165dbd7",
+    "fileName": "mob ohysco.stknds",
+    "filePath": "templates/mob ohysco.stknds",
+    "sha256": "9192d165dbd7daca99b9b570ed9f9fa9a9ea9b77a3ce6e2ab5704902e04a51c9",
+    "projectName": "mob ohysco",
+    "fps": 20,
+    "tweenedFrames": 5,
+    "frameCount": 2829,
+    "durationSeconds": 141.45,
+    "category": "reference",
+    "characterCount": 1,
+    "characters": [
+      {
+        "figureName": "PolyCircle",
+        "nodeCount": 17,
+        "nodes": [
+          {
+            "index": 0,
+            "uid": 0,
+            "name": "00: Root (Pelvis)",
+            "parentIndex": -1,
+            "childrenIndices": [
+              1,
+              4,
+              7
+            ],
+            "length": 0,
+            "thickness": 32,
+            "role": "pelvis"
+          },
+          {
+            "index": 1,
+            "uid": 1,
+            "name": "01: Right Thigh",
+            "parentIndex": 0,
+            "childrenIndices": [
+              2
+            ],
+            "length": 100,
+            "thickness": 0,
+            "role": "leg"
+          },
+          {
+            "index": 2,
+            "uid": 2,
+            "name": "02: Right Shin",
+            "parentIndex": 1,
+            "childrenIndices": [
+              3
+            ],
+            "length": 100,
+            "thickness": 0,
+            "role": "leg"
+          },
+          {
+            "index": 3,
+            "uid": 3,
+            "name": "03: Right Foot",
+            "parentIndex": 2,
+            "childrenIndices": [],
+            "length": 100,
+            "thickness": 0,
+            "role": "foot"
+          },
+          {
+            "index": 4,
+            "uid": 4,
+            "name": "04: Left Thigh",
+            "parentIndex": 0,
+            "childrenIndices": [
+              5
+            ],
+            "length": 100,
+            "thickness": 0,
+            "role": "leg"
+          },
+          {
+            "index": 5,
+            "uid": 5,
+            "name": "05: Left Shin",
+            "parentIndex": 4,
+            "childrenIndices": [
+              6
+            ],
+            "length": 100,
+            "thickness": 0,
+            "role": "leg"
+          },
+          {
+            "index": 6,
+            "uid": 6,
+            "name": "06: Left Foot",
+            "parentIndex": 5,
+            "childrenIndices": [],
+            "length": 100,
+            "thickness": 0,
+            "role": "foot"
+          },
+          {
+            "index": 7,
+            "uid": 7,
+            "name": "07: Lower Spine",
+            "parentIndex": 0,
+            "childrenIndices": [
+              8
+            ],
+            "length": 100,
+            "thickness": 0,
+            "role": "torso"
+          },
+          {
+            "index": 8,
+            "uid": 8,
+            "name": "08: Upper Chest",
+            "parentIndex": 7,
+            "childrenIndices": [
+              9,
+              12,
+              14
+            ],
+            "length": 100,
+            "thickness": 0,
+            "role": "torso"
+          },
+          {
+            "index": 9,
+            "uid": 9,
+            "name": "09: Right Bicep",
+            "parentIndex": 8,
+            "childrenIndices": [
+              10
+            ],
+            "length": 100,
+            "thickness": 0,
+            "role": "arm"
+          },
+          {
+            "index": 10,
+            "uid": 10,
+            "name": "10: Right Forearm",
+            "parentIndex": 9,
+            "childrenIndices": [
+              11
+            ],
+            "length": 100,
+            "thickness": 0,
+            "role": "arm"
+          },
+          {
+            "index": 11,
+            "uid": 11,
+            "name": "11: Right Hand",
+            "parentIndex": 10,
+            "childrenIndices": [],
+            "length": 100,
+            "thickness": 0,
+            "role": "hand"
+          },
+          {
+            "index": 12,
+            "uid": 12,
+            "name": "12: Neck",
+            "parentIndex": 8,
+            "childrenIndices": [
+              13
+            ],
+            "length": 100,
+            "thickness": 0,
+            "role": "head"
+          },
+          {
+            "index": 13,
+            "uid": 13,
+            "name": "13: Head (Circle)",
+            "parentIndex": 12,
+            "childrenIndices": [],
+            "length": 100,
+            "thickness": 0,
+            "role": "head"
+          },
+          {
+            "index": 14,
+            "uid": 14,
+            "name": "14: Left Bicep",
+            "parentIndex": 8,
+            "childrenIndices": [
+              15
+            ],
+            "length": 100,
+            "thickness": 0,
+            "role": "arm"
+          },
+          {
+            "index": 15,
+            "uid": 15,
+            "name": "15: Left Forearm",
+            "parentIndex": 14,
+            "childrenIndices": [
+              16
+            ],
+            "length": 100,
+            "thickness": 0,
+            "role": "arm"
+          },
+          {
+            "index": 16,
+            "uid": 16,
+            "name": "16: Left Hand",
+            "parentIndex": 15,
+            "childrenIndices": [],
+            "length": 100,
+            "thickness": 0,
+            "role": "hand"
+          }
+        ],
+        "rootIndex": 0,
+        "headIndex": 13,
+        "pelvisIndex": 0,
+        "leftHandIndex": 16,
+        "rightHandIndex": 11,
+        "leftFootIndex": 6,
+        "rightFootIndex": 3,
+        "kineticChains": [
+          {
+            "name": "Right Leg",
+            "jointIndices": [
+              0,
+              1,
+              2,
+              3
+            ]
+          },
+          {
+            "name": "Left Leg",
+            "jointIndices": [
+              0,
+              4,
+              5,
+              6
+            ]
+          },
+          {
+            "name": "Spine / Torso / Head",
+            "jointIndices": [
+              0,
+              7,
+              8,
+              12,
+              13
+            ]
+          },
+          {
+            "name": "Right Arm",
+            "jointIndices": [
+              8,
+              9,
+              10,
+              11
+            ]
+          },
+          {
+            "name": "Left Arm",
+            "jointIndices": [
+              8,
+              14,
+              15,
+              16
+            ]
+          }
+        ]
+      }
+    ],
+    "hasCameraData": false,
+    "hasAudioData": false,
+    "fileSizeBytes": 434749,
+    "decompressedSizeBytes": 3387622,
+    "analyzedAt": "2026-10-08T21:07:24.352Z"
+  },
+  {
+    "id": "proj_8f17898ad0a0",
+    "fileName": "project6.stknds",
+    "filePath": "templates/project6.stknds",
+    "sha256": "8f17898ad0a06b38852719819a29d420d29bfb10b7fe4b8668417daa05bf33b5",
+    "projectName": "project6",
+    "fps": 24,
+    "tweenedFrames": 5,
+    "frameCount": 22,
+    "durationSeconds": 0.9166666666666666,
+    "category": "reference",
+    "characterCount": 1,
+    "characters": [
+      {
+        "figureName": "MyBase(long foot)",
+        "nodeCount": 17,
+        "nodes": [
+          {
+            "index": 0,
+            "uid": 0,
+            "name": "00: Root (Pelvis)",
+            "parentIndex": -1,
+            "childrenIndices": [
+              1,
+              4,
+              7
+            ],
+            "length": 0,
+            "thickness": 32,
+            "role": "pelvis"
+          },
+          {
+            "index": 1,
+            "uid": 1,
+            "name": "01: Right Thigh",
+            "parentIndex": 0,
+            "childrenIndices": [
+              2
+            ],
+            "length": 280,
+            "thickness": 60,
+            "role": "leg"
+          },
+          {
+            "index": 2,
+            "uid": 2,
+            "name": "02: Right Shin",
+            "parentIndex": 1,
+            "childrenIndices": [
+              3
+            ],
+            "length": 250,
+            "thickness": 60,
+            "role": "leg"
+          },
+          {
+            "index": 3,
+            "uid": 3,
+            "name": "03: Right Foot",
+            "parentIndex": 2,
+            "childrenIndices": [],
+            "length": 53.47413635253906,
+            "thickness": 48,
+            "role": "foot"
+          },
+          {
+            "index": 4,
+            "uid": 7,
+            "name": "04: Left Thigh",
+            "parentIndex": 0,
+            "childrenIndices": [
+              5
+            ],
+            "length": 280,
+            "thickness": 60,
+            "role": "leg"
+          },
+          {
+            "index": 5,
+            "uid": 4,
+            "name": "05: Left Shin",
+            "parentIndex": 4,
+            "childrenIndices": [
+              6
+            ],
+            "length": 250,
+            "thickness": 60,
+            "role": "leg"
+          },
+          {
+            "index": 6,
+            "uid": 5,
+            "name": "06: Left Foot",
+            "parentIndex": 5,
+            "childrenIndices": [],
+            "length": 53.47413635253906,
+            "thickness": 48,
+            "role": "foot"
+          },
+          {
+            "index": 7,
+            "uid": 6,
+            "name": "07: Lower Spine",
+            "parentIndex": 0,
+            "childrenIndices": [
+              8
+            ],
+            "length": 107.70927429199219,
+            "thickness": 62,
+            "role": "torso"
+          },
+          {
+            "index": 8,
+            "uid": 8,
+            "name": "08: Upper Chest",
+            "parentIndex": 7,
+            "childrenIndices": [
+              9,
+              12,
+              14
+            ],
+            "length": 99.41217041015625,
+            "thickness": 60,
+            "role": "torso"
+          },
+          {
+            "index": 9,
+            "uid": 13,
+            "name": "09: Right Bicep",
+            "parentIndex": 8,
+            "childrenIndices": [
+              10
+            ],
+            "length": 147.45236206054688,
+            "thickness": 60,
+            "role": "arm"
+          },
+          {
+            "index": 10,
+            "uid": 14,
+            "name": "10: Right Forearm",
+            "parentIndex": 9,
+            "childrenIndices": [
+              11
+            ],
+            "length": 177.82601928710938,
+            "thickness": 60,
+            "role": "arm"
+          },
+          {
+            "index": 11,
+            "uid": 15,
+            "name": "11: Right Hand",
+            "parentIndex": 10,
+            "childrenIndices": [],
+            "length": 16.228057861328125,
+            "thickness": 47,
+            "role": "hand"
+          },
+          {
+            "index": 12,
+            "uid": 12,
+            "name": "12: Neck",
+            "parentIndex": 8,
+            "childrenIndices": [
+              13
+            ],
+            "length": 27.45516014099121,
+            "thickness": 40,
+            "role": "head"
+          },
+          {
+            "index": 13,
+            "uid": 16,
+            "name": "13: Head (Circle)",
+            "parentIndex": 12,
+            "childrenIndices": [],
+            "length": 180,
+            "thickness": 2,
+            "role": "head"
+          },
+          {
+            "index": 14,
+            "uid": 9,
+            "name": "14: Left Bicep",
+            "parentIndex": 8,
+            "childrenIndices": [
+              15
+            ],
+            "length": 156.46522521972656,
+            "thickness": 60,
+            "role": "arm"
+          },
+          {
+            "index": 15,
+            "uid": 10,
+            "name": "15: Left Forearm",
+            "parentIndex": 14,
+            "childrenIndices": [
+              16
+            ],
+            "length": 181.98793029785156,
+            "thickness": 60,
+            "role": "arm"
+          },
+          {
+            "index": 16,
+            "uid": 11,
+            "name": "16: Left Hand",
+            "parentIndex": 15,
+            "childrenIndices": [],
+            "length": 16.228057861328125,
+            "thickness": 47,
+            "role": "hand"
+          }
+        ],
+        "rootIndex": 0,
+        "headIndex": 13,
+        "pelvisIndex": 0,
+        "leftHandIndex": 16,
+        "rightHandIndex": 11,
+        "leftFootIndex": 6,
+        "rightFootIndex": 3,
+        "kineticChains": [
+          {
+            "name": "Right Leg",
+            "jointIndices": [
+              0,
+              1,
+              2,
+              3
+            ]
+          },
+          {
+            "name": "Left Leg",
+            "jointIndices": [
+              0,
+              4,
+              5,
+              6
+            ]
+          },
+          {
+            "name": "Spine / Torso / Head",
+            "jointIndices": [
+              0,
+              7,
+              8,
+              12,
+              13
+            ]
+          },
+          {
+            "name": "Right Arm",
+            "jointIndices": [
+              8,
+              9,
+              10,
+              11
+            ]
+          },
+          {
+            "name": "Left Arm",
+            "jointIndices": [
+              8,
+              14,
+              15,
+              16
+            ]
+          }
+        ]
+      }
+    ],
+    "hasCameraData": true,
+    "hasAudioData": false,
+    "fileSizeBytes": 3383,
+    "decompressedSizeBytes": 28969,
+    "analyzedAt": "2026-10-08T21:07:24.361Z"
+  },
+  {
+    "id": "proj_6fa677f2cf02",
+    "fileName": "red guy.stknds",
+    "filePath": "templates/red guy.stknds",
+    "sha256": "6fa677f2cf02a1a19734715c1d54c5c5a75dbae4dd0ef24943f06a848509eb50",
+    "projectName": "red guy",
+    "fps": 22,
+    "tweenedFrames": 5,
+    "frameCount": 2901,
+    "durationSeconds": 131.86363636363637,
+    "category": "reference",
+    "characterCount": 1,
+    "characters": [
+      {
+        "figureName": "segs",
+        "nodeCount": 2,
+        "nodes": [
+          {
+            "index": 0,
+            "uid": 0,
+            "name": "Node_0",
+            "parentIndex": -1,
+            "childrenIndices": [
+              1
+            ],
+            "length": 0,
+            "thickness": 32,
+            "role": "root"
+          },
+          {
+            "index": 1,
+            "uid": 1,
+            "name": "Node_1",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 100,
+            "thickness": 32
+          }
+        ],
+        "rootIndex": 0,
+        "kineticChains": [
+          {
+            "name": "Main Hierarchy",
+            "jointIndices": [
+              0,
+              1
+            ]
+          }
+        ]
+      }
+    ],
+    "hasCameraData": false,
+    "hasAudioData": false,
+    "fileSizeBytes": 505171,
+    "decompressedSizeBytes": 3474201,
+    "analyzedAt": "2026-10-08T21:07:24.418Z"
+  },
+  {
+    "id": "proj_842d304bdf64",
+    "fileName": "rpoject5.stknds",
+    "filePath": "templates/rpoject5.stknds",
+    "sha256": "842d304bdf6490e4ce521c9e421cd3469e9378a4635e3274b987e1b6b1c65a11",
+    "projectName": "rpoject5",
+    "fps": 24,
+    "tweenedFrames": 5,
+    "frameCount": 27,
+    "durationSeconds": 1.125,
+    "category": "reference",
+    "characterCount": 1,
+    "characters": [
+      {
+        "figureName": "MyBase(long foot)",
+        "nodeCount": 17,
+        "nodes": [
+          {
+            "index": 0,
+            "uid": 0,
+            "name": "00: Root (Pelvis)",
+            "parentIndex": -1,
+            "childrenIndices": [
+              1,
+              4,
+              7
+            ],
+            "length": 0,
+            "thickness": 32,
+            "role": "pelvis"
+          },
+          {
+            "index": 1,
+            "uid": 1,
+            "name": "01: Right Thigh",
+            "parentIndex": 0,
+            "childrenIndices": [
+              2
+            ],
+            "length": 280,
+            "thickness": 60,
+            "role": "leg"
+          },
+          {
+            "index": 2,
+            "uid": 2,
+            "name": "02: Right Shin",
+            "parentIndex": 1,
+            "childrenIndices": [
+              3
+            ],
+            "length": 250,
+            "thickness": 60,
+            "role": "leg"
+          },
+          {
+            "index": 3,
+            "uid": 3,
+            "name": "03: Right Foot",
+            "parentIndex": 2,
+            "childrenIndices": [],
+            "length": 53.47413635253906,
+            "thickness": 48,
+            "role": "foot"
+          },
+          {
+            "index": 4,
+            "uid": 7,
+            "name": "04: Left Thigh",
+            "parentIndex": 0,
+            "childrenIndices": [
+              5
+            ],
+            "length": 280,
+            "thickness": 60,
+            "role": "leg"
+          },
+          {
+            "index": 5,
+            "uid": 4,
+            "name": "05: Left Shin",
+            "parentIndex": 4,
+            "childrenIndices": [
+              6
+            ],
+            "length": 250,
+            "thickness": 60,
+            "role": "leg"
+          },
+          {
+            "index": 6,
+            "uid": 5,
+            "name": "06: Left Foot",
+            "parentIndex": 5,
+            "childrenIndices": [],
+            "length": 53.47413635253906,
+            "thickness": 48,
+            "role": "foot"
+          },
+          {
+            "index": 7,
+            "uid": 6,
+            "name": "07: Lower Spine",
+            "parentIndex": 0,
+            "childrenIndices": [
+              8
+            ],
+            "length": 107.70927429199219,
+            "thickness": 62,
+            "role": "torso"
+          },
+          {
+            "index": 8,
+            "uid": 8,
+            "name": "08: Upper Chest",
+            "parentIndex": 7,
+            "childrenIndices": [
+              9,
+              12,
+              14
+            ],
+            "length": 99.41217041015625,
+            "thickness": 60,
+            "role": "torso"
+          },
+          {
+            "index": 9,
+            "uid": 13,
+            "name": "09: Right Bicep",
+            "parentIndex": 8,
+            "childrenIndices": [
+              10
+            ],
+            "length": 147.45236206054688,
+            "thickness": 60,
+            "role": "arm"
+          },
+          {
+            "index": 10,
+            "uid": 14,
+            "name": "10: Right Forearm",
+            "parentIndex": 9,
+            "childrenIndices": [
+              11
+            ],
+            "length": 177.82601928710938,
+            "thickness": 60,
+            "role": "arm"
+          },
+          {
+            "index": 11,
+            "uid": 15,
+            "name": "11: Right Hand",
+            "parentIndex": 10,
+            "childrenIndices": [],
+            "length": 16.228057861328125,
+            "thickness": 47,
+            "role": "hand"
+          },
+          {
+            "index": 12,
+            "uid": 12,
+            "name": "12: Neck",
+            "parentIndex": 8,
+            "childrenIndices": [
+              13
+            ],
+            "length": 27.45516014099121,
+            "thickness": 40,
+            "role": "head"
+          },
+          {
+            "index": 13,
+            "uid": 16,
+            "name": "13: Head (Circle)",
+            "parentIndex": 12,
+            "childrenIndices": [],
+            "length": 180,
+            "thickness": 2,
+            "role": "head"
+          },
+          {
+            "index": 14,
+            "uid": 9,
+            "name": "14: Left Bicep",
+            "parentIndex": 8,
+            "childrenIndices": [
+              15
+            ],
+            "length": 156.46522521972656,
+            "thickness": 60,
+            "role": "arm"
+          },
+          {
+            "index": 15,
+            "uid": 10,
+            "name": "15: Left Forearm",
+            "parentIndex": 14,
+            "childrenIndices": [
+              16
+            ],
+            "length": 181.98793029785156,
+            "thickness": 60,
+            "role": "arm"
+          },
+          {
+            "index": 16,
+            "uid": 11,
+            "name": "16: Left Hand",
+            "parentIndex": 15,
+            "childrenIndices": [],
+            "length": 16.228057861328125,
+            "thickness": 47,
+            "role": "hand"
+          }
+        ],
+        "rootIndex": 0,
+        "headIndex": 13,
+        "pelvisIndex": 0,
+        "leftHandIndex": 16,
+        "rightHandIndex": 11,
+        "leftFootIndex": 6,
+        "rightFootIndex": 3,
+        "kineticChains": [
+          {
+            "name": "Right Leg",
+            "jointIndices": [
+              0,
+              1,
+              2,
+              3
+            ]
+          },
+          {
+            "name": "Left Leg",
+            "jointIndices": [
+              0,
+              4,
+              5,
+              6
+            ]
+          },
+          {
+            "name": "Spine / Torso / Head",
+            "jointIndices": [
+              0,
+              7,
+              8,
+              12,
+              13
+            ]
+          },
+          {
+            "name": "Right Arm",
+            "jointIndices": [
+              8,
+              9,
+              10,
+              11
+            ]
+          },
+          {
+            "name": "Left Arm",
+            "jointIndices": [
+              8,
+              14,
+              15,
+              16
+            ]
+          }
+        ]
+      }
+    ],
+    "hasCameraData": true,
+    "hasAudioData": false,
+    "fileSizeBytes": 3709,
+    "decompressedSizeBytes": 34954,
+    "analyzedAt": "2026-10-08T21:07:24.421Z"
+  },
+  {
+    "id": "proj_b0fe7137447e",
+    "fileName": "sjjsjsjsnajakaka.stknds",
+    "filePath": "templates/sjjsjsjsnajakaka.stknds",
+    "sha256": "b0fe7137447e270d829eb3892d43f4ad622fc9440ec793a8032d4afcbc2ac0c4",
+    "projectName": "sjjsjsjsnajakaka",
+    "fps": 18,
+    "tweenedFrames": 5,
+    "frameCount": 0,
+    "durationSeconds": 0,
+    "category": "reference",
+    "characterCount": 1,
+    "characters": [
+      {
+        "figureName": "Embedded Figure",
+        "nodeCount": 0,
+        "nodes": [],
+        "rootIndex": 0,
+        "kineticChains": [
+          {
+            "name": "Main Hierarchy",
+            "jointIndices": []
+          }
+        ]
+      }
+    ],
+    "hasCameraData": false,
+    "hasAudioData": false,
+    "fileSizeBytes": 275287,
+    "decompressedSizeBytes": 2209960,
+    "analyzedAt": "2026-10-08T21:07:24.447Z"
+  },
+  {
+    "id": "proj_3c683644ac5a",
+    "fileName": "teleport_ambush_12fps.stknds",
+    "filePath": "templates/teleport_ambush_12fps.stknds",
+    "sha256": "3c683644ac5a356198156d9ae3b7b4c45682a26000f6927e2296b5764974427f",
+    "projectName": "rpoject5",
+    "fps": 12,
+    "tweenedFrames": 5,
+    "frameCount": 1,
+    "durationSeconds": 0.08333333333333333,
+    "category": "reference",
+    "characterCount": 1,
+    "characters": [
+      {
+        "figureName": "MyBase(long foot)",
+        "nodeCount": 17,
+        "nodes": [
+          {
+            "index": 0,
+            "uid": 0,
+            "name": "00: Root (Pelvis)",
+            "parentIndex": -1,
+            "childrenIndices": [
+              1,
+              4,
+              7
+            ],
+            "length": 0,
+            "thickness": 32,
+            "role": "pelvis"
+          },
+          {
+            "index": 1,
+            "uid": 1,
+            "name": "01: Right Thigh",
+            "parentIndex": 0,
+            "childrenIndices": [
+              2
+            ],
+            "length": 280,
+            "thickness": 60,
+            "role": "leg"
+          },
+          {
+            "index": 2,
+            "uid": 2,
+            "name": "02: Right Shin",
+            "parentIndex": 1,
+            "childrenIndices": [
+              3
+            ],
+            "length": 250,
+            "thickness": 60,
+            "role": "leg"
+          },
+          {
+            "index": 3,
+            "uid": 3,
+            "name": "03: Right Foot",
+            "parentIndex": 2,
+            "childrenIndices": [],
+            "length": 53.47413635253906,
+            "thickness": 48,
+            "role": "foot"
+          },
+          {
+            "index": 4,
+            "uid": 7,
+            "name": "04: Left Thigh",
+            "parentIndex": 0,
+            "childrenIndices": [
+              5
+            ],
+            "length": 280,
+            "thickness": 60,
+            "role": "leg"
+          },
+          {
+            "index": 5,
+            "uid": 4,
+            "name": "05: Left Shin",
+            "parentIndex": 4,
+            "childrenIndices": [
+              6
+            ],
+            "length": 250,
+            "thickness": 60,
+            "role": "leg"
+          },
+          {
+            "index": 6,
+            "uid": 5,
+            "name": "06: Left Foot",
+            "parentIndex": 5,
+            "childrenIndices": [],
+            "length": 53.47413635253906,
+            "thickness": 48,
+            "role": "foot"
+          },
+          {
+            "index": 7,
+            "uid": 6,
+            "name": "07: Lower Spine",
+            "parentIndex": 0,
+            "childrenIndices": [
+              8
+            ],
+            "length": 107.70927429199219,
+            "thickness": 62,
+            "role": "torso"
+          },
+          {
+            "index": 8,
+            "uid": 8,
+            "name": "08: Upper Chest",
+            "parentIndex": 7,
+            "childrenIndices": [
+              9,
+              12,
+              14
+            ],
+            "length": 99.41217041015625,
+            "thickness": 60,
+            "role": "torso"
+          },
+          {
+            "index": 9,
+            "uid": 13,
+            "name": "09: Right Bicep",
+            "parentIndex": 8,
+            "childrenIndices": [
+              10
+            ],
+            "length": 147.45236206054688,
+            "thickness": 60,
+            "role": "arm"
+          },
+          {
+            "index": 10,
+            "uid": 14,
+            "name": "10: Right Forearm",
+            "parentIndex": 9,
+            "childrenIndices": [
+              11
+            ],
+            "length": 177.82601928710938,
+            "thickness": 60,
+            "role": "arm"
+          },
+          {
+            "index": 11,
+            "uid": 15,
+            "name": "11: Right Hand",
+            "parentIndex": 10,
+            "childrenIndices": [],
+            "length": 16.228057861328125,
+            "thickness": 47,
+            "role": "hand"
+          },
+          {
+            "index": 12,
+            "uid": 12,
+            "name": "12: Neck",
+            "parentIndex": 8,
+            "childrenIndices": [
+              13
+            ],
+            "length": 27.45516014099121,
+            "thickness": 40,
+            "role": "head"
+          },
+          {
+            "index": 13,
+            "uid": 16,
+            "name": "13: Head (Circle)",
+            "parentIndex": 12,
+            "childrenIndices": [],
+            "length": 180,
+            "thickness": 2,
+            "role": "head"
+          },
+          {
+            "index": 14,
+            "uid": 9,
+            "name": "14: Left Bicep",
+            "parentIndex": 8,
+            "childrenIndices": [
+              15
+            ],
+            "length": 156.46522521972656,
+            "thickness": 60,
+            "role": "arm"
+          },
+          {
+            "index": 15,
+            "uid": 10,
+            "name": "15: Left Forearm",
+            "parentIndex": 14,
+            "childrenIndices": [
+              16
+            ],
+            "length": 181.98793029785156,
+            "thickness": 60,
+            "role": "arm"
+          },
+          {
+            "index": 16,
+            "uid": 11,
+            "name": "16: Left Hand",
+            "parentIndex": 15,
+            "childrenIndices": [],
+            "length": 16.228057861328125,
+            "thickness": 47,
+            "role": "hand"
+          }
+        ],
+        "rootIndex": 0,
+        "headIndex": 13,
+        "pelvisIndex": 0,
+        "leftHandIndex": 16,
+        "rightHandIndex": 11,
+        "leftFootIndex": 6,
+        "rightFootIndex": 3,
+        "kineticChains": [
+          {
+            "name": "Right Leg",
+            "jointIndices": [
+              0,
+              1,
+              2,
+              3
+            ]
+          },
+          {
+            "name": "Left Leg",
+            "jointIndices": [
+              0,
+              4,
+              5,
+              6
+            ]
+          },
+          {
+            "name": "Spine / Torso / Head",
+            "jointIndices": [
+              0,
+              7,
+              8,
+              12,
+              13
+            ]
+          },
+          {
+            "name": "Right Arm",
+            "jointIndices": [
+              8,
+              9,
+              10,
+              11
+            ]
+          },
+          {
+            "name": "Left Arm",
+            "jointIndices": [
+              8,
+              14,
+              15,
+              16
+            ]
+          }
+        ]
+      }
+    ],
+    "hasCameraData": true,
+    "hasAudioData": false,
+    "fileSizeBytes": 3055,
+    "decompressedSizeBytes": 80863,
+    "analyzedAt": "2026-10-08T21:07:24.449Z"
+  },
+  {
+    "id": "proj_453eff8bc3d6",
+    "fileName": "teleport_ambush_24fps.stknds",
+    "filePath": "templates/teleport_ambush_24fps.stknds",
+    "sha256": "453eff8bc3d622730f442904015451f0cf74c12caecfc3983d256d96db8664bd",
+    "projectName": "rpoject5",
+    "fps": 24,
+    "tweenedFrames": 5,
+    "frameCount": 1,
+    "durationSeconds": 0.041666666666666664,
+    "category": "reference",
+    "characterCount": 1,
+    "characters": [
+      {
+        "figureName": "MyBase(long foot)",
+        "nodeCount": 17,
+        "nodes": [
+          {
+            "index": 0,
+            "uid": 0,
+            "name": "00: Root (Pelvis)",
+            "parentIndex": -1,
+            "childrenIndices": [
+              1,
+              4,
+              7
+            ],
+            "length": 0,
+            "thickness": 32,
+            "role": "pelvis"
+          },
+          {
+            "index": 1,
+            "uid": 1,
+            "name": "01: Right Thigh",
+            "parentIndex": 0,
+            "childrenIndices": [
+              2
+            ],
+            "length": 280,
+            "thickness": 60,
+            "role": "leg"
+          },
+          {
+            "index": 2,
+            "uid": 2,
+            "name": "02: Right Shin",
+            "parentIndex": 1,
+            "childrenIndices": [
+              3
+            ],
+            "length": 250,
+            "thickness": 60,
+            "role": "leg"
+          },
+          {
+            "index": 3,
+            "uid": 3,
+            "name": "03: Right Foot",
+            "parentIndex": 2,
+            "childrenIndices": [],
+            "length": 53.47413635253906,
+            "thickness": 48,
+            "role": "foot"
+          },
+          {
+            "index": 4,
+            "uid": 7,
+            "name": "04: Left Thigh",
+            "parentIndex": 0,
+            "childrenIndices": [
+              5
+            ],
+            "length": 280,
+            "thickness": 60,
+            "role": "leg"
+          },
+          {
+            "index": 5,
+            "uid": 4,
+            "name": "05: Left Shin",
+            "parentIndex": 4,
+            "childrenIndices": [
+              6
+            ],
+            "length": 250,
+            "thickness": 60,
+            "role": "leg"
+          },
+          {
+            "index": 6,
+            "uid": 5,
+            "name": "06: Left Foot",
+            "parentIndex": 5,
+            "childrenIndices": [],
+            "length": 53.47413635253906,
+            "thickness": 48,
+            "role": "foot"
+          },
+          {
+            "index": 7,
+            "uid": 6,
+            "name": "07: Lower Spine",
+            "parentIndex": 0,
+            "childrenIndices": [
+              8
+            ],
+            "length": 107.70927429199219,
+            "thickness": 62,
+            "role": "torso"
+          },
+          {
+            "index": 8,
+            "uid": 8,
+            "name": "08: Upper Chest",
+            "parentIndex": 7,
+            "childrenIndices": [
+              9,
+              12,
+              14
+            ],
+            "length": 99.41217041015625,
+            "thickness": 60,
+            "role": "torso"
+          },
+          {
+            "index": 9,
+            "uid": 13,
+            "name": "09: Right Bicep",
+            "parentIndex": 8,
+            "childrenIndices": [
+              10
+            ],
+            "length": 147.45236206054688,
+            "thickness": 60,
+            "role": "arm"
+          },
+          {
+            "index": 10,
+            "uid": 14,
+            "name": "10: Right Forearm",
+            "parentIndex": 9,
+            "childrenIndices": [
+              11
+            ],
+            "length": 177.82601928710938,
+            "thickness": 60,
+            "role": "arm"
+          },
+          {
+            "index": 11,
+            "uid": 15,
+            "name": "11: Right Hand",
+            "parentIndex": 10,
+            "childrenIndices": [],
+            "length": 16.228057861328125,
+            "thickness": 47,
+            "role": "hand"
+          },
+          {
+            "index": 12,
+            "uid": 12,
+            "name": "12: Neck",
+            "parentIndex": 8,
+            "childrenIndices": [
+              13
+            ],
+            "length": 27.45516014099121,
+            "thickness": 40,
+            "role": "head"
+          },
+          {
+            "index": 13,
+            "uid": 16,
+            "name": "13: Head (Circle)",
+            "parentIndex": 12,
+            "childrenIndices": [],
+            "length": 180,
+            "thickness": 2,
+            "role": "head"
+          },
+          {
+            "index": 14,
+            "uid": 9,
+            "name": "14: Left Bicep",
+            "parentIndex": 8,
+            "childrenIndices": [
+              15
+            ],
+            "length": 156.46522521972656,
+            "thickness": 60,
+            "role": "arm"
+          },
+          {
+            "index": 15,
+            "uid": 10,
+            "name": "15: Left Forearm",
+            "parentIndex": 14,
+            "childrenIndices": [
+              16
+            ],
+            "length": 181.98793029785156,
+            "thickness": 60,
+            "role": "arm"
+          },
+          {
+            "index": 16,
+            "uid": 11,
+            "name": "16: Left Hand",
+            "parentIndex": 15,
+            "childrenIndices": [],
+            "length": 16.228057861328125,
+            "thickness": 47,
+            "role": "hand"
+          }
+        ],
+        "rootIndex": 0,
+        "headIndex": 13,
+        "pelvisIndex": 0,
+        "leftHandIndex": 16,
+        "rightHandIndex": 11,
+        "leftFootIndex": 6,
+        "rightFootIndex": 3,
+        "kineticChains": [
+          {
+            "name": "Right Leg",
+            "jointIndices": [
+              0,
+              1,
+              2,
+              3
+            ]
+          },
+          {
+            "name": "Left Leg",
+            "jointIndices": [
+              0,
+              4,
+              5,
+              6
+            ]
+          },
+          {
+            "name": "Spine / Torso / Head",
+            "jointIndices": [
+              0,
+              7,
+              8,
+              12,
+              13
+            ]
+          },
+          {
+            "name": "Right Arm",
+            "jointIndices": [
+              8,
+              9,
+              10,
+              11
+            ]
+          },
+          {
+            "name": "Left Arm",
+            "jointIndices": [
+              8,
+              14,
+              15,
+              16
+            ]
+          }
+        ]
+      }
+    ],
+    "hasCameraData": true,
+    "hasAudioData": false,
+    "fileSizeBytes": 3055,
+    "decompressedSizeBytes": 80863,
+    "analyzedAt": "2026-10-08T21:07:24.451Z"
+  },
+  {
+    "id": "proj_b7d4d982c609",
+    "fileName": "teleport_ambush_24fps_smooth.stknds",
+    "filePath": "templates/teleport_ambush_24fps_smooth.stknds",
+    "sha256": "b7d4d982c60986905e04c3a490dc99384b961488f236834aa8e2a98c91056df7",
+    "projectName": "rpoject5",
+    "fps": 24,
+    "tweenedFrames": 5,
+    "frameCount": 1,
+    "durationSeconds": 0.041666666666666664,
+    "category": "reference",
+    "characterCount": 1,
+    "characters": [
+      {
+        "figureName": "MyBase(long foot)",
+        "nodeCount": 17,
+        "nodes": [
+          {
+            "index": 0,
+            "uid": 0,
+            "name": "00: Root (Pelvis)",
+            "parentIndex": -1,
+            "childrenIndices": [
+              1,
+              4,
+              7
+            ],
+            "length": 0,
+            "thickness": 32,
+            "role": "pelvis"
+          },
+          {
+            "index": 1,
+            "uid": 1,
+            "name": "01: Right Thigh",
+            "parentIndex": 0,
+            "childrenIndices": [
+              2
+            ],
+            "length": 280,
+            "thickness": 60,
+            "role": "leg"
+          },
+          {
+            "index": 2,
+            "uid": 2,
+            "name": "02: Right Shin",
+            "parentIndex": 1,
+            "childrenIndices": [
+              3
+            ],
+            "length": 250,
+            "thickness": 60,
+            "role": "leg"
+          },
+          {
+            "index": 3,
+            "uid": 3,
+            "name": "03: Right Foot",
+            "parentIndex": 2,
+            "childrenIndices": [],
+            "length": 53.47413635253906,
+            "thickness": 48,
+            "role": "foot"
+          },
+          {
+            "index": 4,
+            "uid": 7,
+            "name": "04: Left Thigh",
+            "parentIndex": 0,
+            "childrenIndices": [
+              5
+            ],
+            "length": 280,
+            "thickness": 60,
+            "role": "leg"
+          },
+          {
+            "index": 5,
+            "uid": 4,
+            "name": "05: Left Shin",
+            "parentIndex": 4,
+            "childrenIndices": [
+              6
+            ],
+            "length": 250,
+            "thickness": 60,
+            "role": "leg"
+          },
+          {
+            "index": 6,
+            "uid": 5,
+            "name": "06: Left Foot",
+            "parentIndex": 5,
+            "childrenIndices": [],
+            "length": 53.47413635253906,
+            "thickness": 48,
+            "role": "foot"
+          },
+          {
+            "index": 7,
+            "uid": 6,
+            "name": "07: Lower Spine",
+            "parentIndex": 0,
+            "childrenIndices": [
+              8
+            ],
+            "length": 107.70927429199219,
+            "thickness": 62,
+            "role": "torso"
+          },
+          {
+            "index": 8,
+            "uid": 8,
+            "name": "08: Upper Chest",
+            "parentIndex": 7,
+            "childrenIndices": [
+              9,
+              12,
+              14
+            ],
+            "length": 99.41217041015625,
+            "thickness": 60,
+            "role": "torso"
+          },
+          {
+            "index": 9,
+            "uid": 13,
+            "name": "09: Right Bicep",
+            "parentIndex": 8,
+            "childrenIndices": [
+              10
+            ],
+            "length": 147.45236206054688,
+            "thickness": 60,
+            "role": "arm"
+          },
+          {
+            "index": 10,
+            "uid": 14,
+            "name": "10: Right Forearm",
+            "parentIndex": 9,
+            "childrenIndices": [
+              11
+            ],
+            "length": 177.82601928710938,
+            "thickness": 60,
+            "role": "arm"
+          },
+          {
+            "index": 11,
+            "uid": 15,
+            "name": "11: Right Hand",
+            "parentIndex": 10,
+            "childrenIndices": [],
+            "length": 16.228057861328125,
+            "thickness": 47,
+            "role": "hand"
+          },
+          {
+            "index": 12,
+            "uid": 12,
+            "name": "12: Neck",
+            "parentIndex": 8,
+            "childrenIndices": [
+              13
+            ],
+            "length": 27.45516014099121,
+            "thickness": 40,
+            "role": "head"
+          },
+          {
+            "index": 13,
+            "uid": 16,
+            "name": "13: Head (Circle)",
+            "parentIndex": 12,
+            "childrenIndices": [],
+            "length": 180,
+            "thickness": 2,
+            "role": "head"
+          },
+          {
+            "index": 14,
+            "uid": 9,
+            "name": "14: Left Bicep",
+            "parentIndex": 8,
+            "childrenIndices": [
+              15
+            ],
+            "length": 156.46522521972656,
+            "thickness": 60,
+            "role": "arm"
+          },
+          {
+            "index": 15,
+            "uid": 10,
+            "name": "15: Left Forearm",
+            "parentIndex": 14,
+            "childrenIndices": [
+              16
+            ],
+            "length": 181.98793029785156,
+            "thickness": 60,
+            "role": "arm"
+          },
+          {
+            "index": 16,
+            "uid": 11,
+            "name": "16: Left Hand",
+            "parentIndex": 15,
+            "childrenIndices": [],
+            "length": 16.228057861328125,
+            "thickness": 47,
+            "role": "hand"
+          }
+        ],
+        "rootIndex": 0,
+        "headIndex": 13,
+        "pelvisIndex": 0,
+        "leftHandIndex": 16,
+        "rightHandIndex": 11,
+        "leftFootIndex": 6,
+        "rightFootIndex": 3,
+        "kineticChains": [
+          {
+            "name": "Right Leg",
+            "jointIndices": [
+              0,
+              1,
+              2,
+              3
+            ]
+          },
+          {
+            "name": "Left Leg",
+            "jointIndices": [
+              0,
+              4,
+              5,
+              6
+            ]
+          },
+          {
+            "name": "Spine / Torso / Head",
+            "jointIndices": [
+              0,
+              7,
+              8,
+              12,
+              13
+            ]
+          },
+          {
+            "name": "Right Arm",
+            "jointIndices": [
+              8,
+              9,
+              10,
+              11
+            ]
+          },
+          {
+            "name": "Left Arm",
+            "jointIndices": [
+              8,
+              14,
+              15,
+              16
+            ]
+          }
+        ]
+      }
+    ],
+    "hasCameraData": true,
+    "hasAudioData": false,
+    "fileSizeBytes": 4618,
+    "decompressedSizeBytes": 156796,
+    "analyzedAt": "2026-10-08T21:07:24.454Z"
+  },
+  {
+    "id": "proj_34be09956fba",
+    "fileName": "ultra inst.stknds",
+    "filePath": "templates/ultra inst.stknds",
+    "sha256": "34be09956fba8e2b243edc4bd59e357fcfb13ecf8d7ee1a7887d61548f0a8009",
+    "projectName": "ultra inst",
+    "fps": 20,
+    "tweenedFrames": 5,
+    "frameCount": 12082,
+    "durationSeconds": 604.1,
+    "category": "reference",
+    "characterCount": 1,
+    "characters": [
+      {
+        "figureName": "Embedded Figure",
+        "nodeCount": 64,
+        "nodes": [
+          {
+            "index": 0,
+            "uid": 0,
+            "name": "Node_0",
+            "parentIndex": -1,
+            "childrenIndices": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40,
+              41,
+              42,
+              43,
+              44,
+              45,
+              46,
+              47,
+              48,
+              49,
+              50,
+              51,
+              52,
+              53,
+              54,
+              55,
+              56,
+              57,
+              58,
+              59,
+              60,
+              61,
+              62,
+              63
+            ],
+            "length": 0,
+            "thickness": 32,
+            "role": "root"
+          },
+          {
+            "index": 1,
+            "uid": 68,
+            "name": "Node_1",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 107.27117919921875,
+            "thickness": 32
+          },
+          {
+            "index": 2,
+            "uid": 69,
+            "name": "Node_2",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 1610.7802734375,
+            "thickness": 32
+          },
+          {
+            "index": 3,
+            "uid": 1,
+            "name": "Node_3",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 42.900230407714844,
+            "thickness": 32
+          },
+          {
+            "index": 4,
+            "uid": 2,
+            "name": "Node_4",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 45.090579986572266,
+            "thickness": 32
+          },
+          {
+            "index": 5,
+            "uid": 3,
+            "name": "Node_5",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 56.568424224853516,
+            "thickness": 32
+          },
+          {
+            "index": 6,
+            "uid": 4,
+            "name": "Node_6",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 109.88658905029297,
+            "thickness": 32
+          },
+          {
+            "index": 7,
+            "uid": 5,
+            "name": "Node_7",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 82.34683990478516,
+            "thickness": 32
+          },
+          {
+            "index": 8,
+            "uid": 6,
+            "name": "Node_8",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 84.69769287109375,
+            "thickness": 32
+          },
+          {
+            "index": 9,
+            "uid": 7,
+            "name": "Node_9",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 25.5390567779541,
+            "thickness": 32
+          },
+          {
+            "index": 10,
+            "uid": 8,
+            "name": "Node_10",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 84.54729461669922,
+            "thickness": 32
+          },
+          {
+            "index": 11,
+            "uid": 9,
+            "name": "Node_11",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 88.18574523925781,
+            "thickness": 32
+          },
+          {
+            "index": 12,
+            "uid": 10,
+            "name": "Node_12",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 64.05599212646484,
+            "thickness": 32
+          },
+          {
+            "index": 13,
+            "uid": 11,
+            "name": "Node_13",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 90.41728210449219,
+            "thickness": 32
+          },
+          {
+            "index": 14,
+            "uid": 12,
+            "name": "Node_14",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 104.68168640136719,
+            "thickness": 32
+          },
+          {
+            "index": 15,
+            "uid": 13,
+            "name": "Node_15",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 102.08992004394531,
+            "thickness": 32
+          },
+          {
+            "index": 16,
+            "uid": 14,
+            "name": "Node_16",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 47.1167106628418,
+            "thickness": 32
+          },
+          {
+            "index": 17,
+            "uid": 15,
+            "name": "Node_17",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 57.5351676940918,
+            "thickness": 32
+          },
+          {
+            "index": 18,
+            "uid": 16,
+            "name": "Node_18",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 97.19343566894531,
+            "thickness": 32
+          },
+          {
+            "index": 19,
+            "uid": 17,
+            "name": "Node_19",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 49.01234817504883,
+            "thickness": 32
+          },
+          {
+            "index": 20,
+            "uid": 18,
+            "name": "Node_20",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 99.03239440917969,
+            "thickness": 32
+          },
+          {
+            "index": 21,
+            "uid": 19,
+            "name": "Node_21",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 57.85890197753906,
+            "thickness": 32
+          },
+          {
+            "index": 22,
+            "uid": 20,
+            "name": "Node_22",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 99.48704528808594,
+            "thickness": 32
+          },
+          {
+            "index": 23,
+            "uid": 21,
+            "name": "Node_23",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 35.774253845214844,
+            "thickness": 32
+          },
+          {
+            "index": 24,
+            "uid": 22,
+            "name": "Node_24",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 88.30960083007812,
+            "thickness": 32
+          },
+          {
+            "index": 25,
+            "uid": 23,
+            "name": "Node_25",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 39.93366241455078,
+            "thickness": 32
+          },
+          {
+            "index": 26,
+            "uid": 24,
+            "name": "Node_26",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 60.1469841003418,
+            "thickness": 32
+          },
+          {
+            "index": 27,
+            "uid": 25,
+            "name": "Node_27",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 91.94247436523438,
+            "thickness": 32
+          },
+          {
+            "index": 28,
+            "uid": 26,
+            "name": "Node_28",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 95.97091674804688,
+            "thickness": 32
+          },
+          {
+            "index": 29,
+            "uid": 27,
+            "name": "Node_29",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 55.27961730957031,
+            "thickness": 32
+          },
+          {
+            "index": 30,
+            "uid": 28,
+            "name": "Node_30",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 117.14149475097656,
+            "thickness": 32
+          },
+          {
+            "index": 31,
+            "uid": 29,
+            "name": "Node_31",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 33.750484466552734,
+            "thickness": 32
+          },
+          {
+            "index": 32,
+            "uid": 30,
+            "name": "Node_32",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 47.582523345947266,
+            "thickness": 32
+          },
+          {
+            "index": 33,
+            "uid": 31,
+            "name": "Node_33",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 97.49861145019531,
+            "thickness": 32
+          },
+          {
+            "index": 34,
+            "uid": 32,
+            "name": "Node_34",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 53.9827880859375,
+            "thickness": 32
+          },
+          {
+            "index": 35,
+            "uid": 33,
+            "name": "Node_35",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 99.42828369140625,
+            "thickness": 32
+          },
+          {
+            "index": 36,
+            "uid": 34,
+            "name": "Node_36",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 34.8828010559082,
+            "thickness": 32
+          },
+          {
+            "index": 37,
+            "uid": 35,
+            "name": "Node_37",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 55.896427154541016,
+            "thickness": 32
+          },
+          {
+            "index": 38,
+            "uid": 36,
+            "name": "Node_38",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 99.6978759765625,
+            "thickness": 32
+          },
+          {
+            "index": 39,
+            "uid": 37,
+            "name": "Node_39",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 35.70103073120117,
+            "thickness": 32
+          },
+          {
+            "index": 40,
+            "uid": 38,
+            "name": "Node_40",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 63.625247955322266,
+            "thickness": 32
+          },
+          {
+            "index": 41,
+            "uid": 39,
+            "name": "Node_41",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 31.832937240600586,
+            "thickness": 32
+          },
+          {
+            "index": 42,
+            "uid": 40,
+            "name": "Node_42",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 30.39973258972168,
+            "thickness": 32
+          },
+          {
+            "index": 43,
+            "uid": 41,
+            "name": "Node_43",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 16.934995651245117,
+            "thickness": 32
+          },
+          {
+            "index": 44,
+            "uid": 42,
+            "name": "Node_44",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 85.8869857788086,
+            "thickness": 32
+          },
+          {
+            "index": 45,
+            "uid": 43,
+            "name": "Node_45",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 109.54332733154297,
+            "thickness": 32
+          },
+          {
+            "index": 46,
+            "uid": 44,
+            "name": "Node_46",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 26.092973709106445,
+            "thickness": 32
+          },
+          {
+            "index": 47,
+            "uid": 45,
+            "name": "Node_47",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 76.53022003173828,
+            "thickness": 32
+          },
+          {
+            "index": 48,
+            "uid": 46,
+            "name": "Node_48",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 17.951255798339844,
+            "thickness": 32
+          },
+          {
+            "index": 49,
+            "uid": 47,
+            "name": "Node_49",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 92.0201187133789,
+            "thickness": 32
+          },
+          {
+            "index": 50,
+            "uid": 48,
+            "name": "Node_50",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 61.6978759765625,
+            "thickness": 32
+          },
+          {
+            "index": 51,
+            "uid": 49,
+            "name": "Node_51",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 28.596332550048828,
+            "thickness": 32
+          },
+          {
+            "index": 52,
+            "uid": 50,
+            "name": "Node_52",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 19.143714904785156,
+            "thickness": 32
+          },
+          {
+            "index": 53,
+            "uid": 51,
+            "name": "Node_53",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 22.238855361938477,
+            "thickness": 32
+          },
+          {
+            "index": 54,
+            "uid": 52,
+            "name": "Node_54",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 19.995023727416992,
+            "thickness": 32
+          },
+          {
+            "index": 55,
+            "uid": 53,
+            "name": "Node_55",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 64.3173599243164,
+            "thickness": 32
+          },
+          {
+            "index": 56,
+            "uid": 54,
+            "name": "Node_56",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 70.66366577148438,
+            "thickness": 32
+          },
+          {
+            "index": 57,
+            "uid": 55,
+            "name": "Node_57",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 25.850370407104492,
+            "thickness": 32
+          },
+          {
+            "index": 58,
+            "uid": 56,
+            "name": "Node_58",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 17.451622009277344,
+            "thickness": 32
+          },
+          {
+            "index": 59,
+            "uid": 57,
+            "name": "Node_59",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 77.87657928466797,
+            "thickness": 32
+          },
+          {
+            "index": 60,
+            "uid": 58,
+            "name": "Node_60",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 41.75456619262695,
+            "thickness": 32
+          },
+          {
+            "index": 61,
+            "uid": 59,
+            "name": "Node_61",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 50.40460968017578,
+            "thickness": 32
+          },
+          {
+            "index": 62,
+            "uid": 60,
+            "name": "Node_62",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 115.65870666503906,
+            "thickness": 32
+          },
+          {
+            "index": 63,
+            "uid": 61,
+            "name": "Node_63",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 27.14873695373535,
+            "thickness": 32
+          }
+        ],
+        "rootIndex": 0,
+        "kineticChains": [
+          {
+            "name": "Main Hierarchy",
+            "jointIndices": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40,
+              41,
+              42,
+              43,
+              44,
+              45,
+              46,
+              47,
+              48,
+              49,
+              50,
+              51,
+              52,
+              53,
+              54,
+              55,
+              56,
+              57,
+              58,
+              59,
+              60,
+              61,
+              62,
+              63
+            ]
+          }
+        ]
+      }
+    ],
+    "hasCameraData": false,
+    "hasAudioData": false,
+    "fileSizeBytes": 1836239,
+    "decompressedSizeBytes": 14463743,
+    "analyzedAt": "2026-10-08T21:07:24.713Z"
+  },
+  {
+    "id": "proj_b8ac14143479",
+    "fileName": "vege.stknds",
+    "filePath": "templates/vege.stknds",
+    "sha256": "b8ac141434794c7969ce5c9e217a660927666300a49cda6e51612a4edda8f272",
+    "projectName": "vege",
+    "fps": 20,
+    "tweenedFrames": 5,
+    "frameCount": 3212,
+    "durationSeconds": 160.6,
+    "category": "reference",
+    "characterCount": 1,
+    "characters": [
+      {
+        "figureName": "_Freeza 1",
+        "nodeCount": 64,
+        "nodes": [
+          {
+            "index": 0,
+            "uid": 0,
+            "name": "Node_0",
+            "parentIndex": -1,
+            "childrenIndices": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40,
+              41,
+              42,
+              43,
+              44,
+              45,
+              46,
+              47,
+              48,
+              49,
+              50,
+              51,
+              52,
+              53,
+              54,
+              55,
+              56,
+              57,
+              58,
+              59,
+              60,
+              61,
+              62,
+              63
+            ],
+            "length": 0,
+            "thickness": 32,
+            "role": "root"
+          },
+          {
+            "index": 1,
+            "uid": 18,
+            "name": "Node_1",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 140.03329467773438,
+            "thickness": 65
+          },
+          {
+            "index": 2,
+            "uid": 19,
+            "name": "Node_2",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 50,
+            "thickness": 65
+          },
+          {
+            "index": 3,
+            "uid": 20,
+            "name": "Node_3",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 40,
+            "thickness": 78
+          },
+          {
+            "index": 4,
+            "uid": 21,
+            "name": "Node_4",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 50,
+            "thickness": 72
+          },
+          {
+            "index": 5,
+            "uid": 22,
+            "name": "Node_5",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 145,
+            "thickness": 60
+          },
+          {
+            "index": 6,
+            "uid": 26,
+            "name": "Node_6",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 100,
+            "thickness": 66
+          },
+          {
+            "index": 7,
+            "uid": 24,
+            "name": "Node_7",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 10,
+            "thickness": 65
+          },
+          {
+            "index": 8,
+            "uid": 27,
+            "name": "Node_8",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 34,
+            "thickness": 0
+          },
+          {
+            "index": 9,
+            "uid": 30,
+            "name": "Node_9",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 34.553558349609375,
+            "thickness": 20
+          },
+          {
+            "index": 10,
+            "uid": 28,
+            "name": "Node_10",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 8,
+            "thickness": 20
+          },
+          {
+            "index": 11,
+            "uid": 29,
+            "name": "Node_11",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 35,
+            "thickness": 20
+          },
+          {
+            "index": 12,
+            "uid": 31,
+            "name": "Node_12",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 45,
+            "thickness": 20
+          },
+          {
+            "index": 13,
+            "uid": 23,
+            "name": "Node_13",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 1,
+            "thickness": 66
+          },
+          {
+            "index": 14,
+            "uid": 25,
+            "name": "Node_14",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 21.786767959594727,
+            "thickness": 50
+          },
+          {
+            "index": 15,
+            "uid": 32,
+            "name": "Node_15",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 26.22966766357422,
+            "thickness": 50
+          },
+          {
+            "index": 16,
+            "uid": 33,
+            "name": "Node_16",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 40,
+            "thickness": 50
+          },
+          {
+            "index": 17,
+            "uid": 34,
+            "name": "Node_17",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 30,
+            "thickness": 30
+          },
+          {
+            "index": 18,
+            "uid": 73,
+            "name": "Node_18",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 140,
+            "thickness": 65
+          },
+          {
+            "index": 19,
+            "uid": 74,
+            "name": "Node_19",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 50,
+            "thickness": 65
+          },
+          {
+            "index": 20,
+            "uid": 75,
+            "name": "Node_20",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 40,
+            "thickness": 78
+          },
+          {
+            "index": 21,
+            "uid": 76,
+            "name": "Node_21",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 50,
+            "thickness": 72
+          },
+          {
+            "index": 22,
+            "uid": 77,
+            "name": "Node_22",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 145,
+            "thickness": 60
+          },
+          {
+            "index": 23,
+            "uid": 81,
+            "name": "Node_23",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 100,
+            "thickness": 66
+          },
+          {
+            "index": 24,
+            "uid": 79,
+            "name": "Node_24",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 10,
+            "thickness": 65
+          },
+          {
+            "index": 25,
+            "uid": 82,
+            "name": "Node_25",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 34,
+            "thickness": 0
+          },
+          {
+            "index": 26,
+            "uid": 85,
+            "name": "Node_26",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 34.553558349609375,
+            "thickness": 20
+          },
+          {
+            "index": 27,
+            "uid": 83,
+            "name": "Node_27",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 8,
+            "thickness": 20
+          },
+          {
+            "index": 28,
+            "uid": 84,
+            "name": "Node_28",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 35,
+            "thickness": 20
+          },
+          {
+            "index": 29,
+            "uid": 86,
+            "name": "Node_29",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 45,
+            "thickness": 20
+          },
+          {
+            "index": 30,
+            "uid": 78,
+            "name": "Node_30",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 1,
+            "thickness": 66
+          },
+          {
+            "index": 31,
+            "uid": 80,
+            "name": "Node_31",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 21.786767959594727,
+            "thickness": 50
+          },
+          {
+            "index": 32,
+            "uid": 87,
+            "name": "Node_32",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 26.22966766357422,
+            "thickness": 50
+          },
+          {
+            "index": 33,
+            "uid": 88,
+            "name": "Node_33",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 40,
+            "thickness": 50
+          },
+          {
+            "index": 34,
+            "uid": 89,
+            "name": "Node_34",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 30,
+            "thickness": 30
+          },
+          {
+            "index": 35,
+            "uid": 36,
+            "name": "Node_35",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 59.09314727783203,
+            "thickness": 60
+          },
+          {
+            "index": 36,
+            "uid": 8,
+            "name": "Node_36",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 52,
+            "thickness": 0
+          },
+          {
+            "index": 37,
+            "uid": 16,
+            "name": "Node_37",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 100,
+            "thickness": 80
+          },
+          {
+            "index": 38,
+            "uid": 15,
+            "name": "Node_38",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 100,
+            "thickness": 72
+          },
+          {
+            "index": 39,
+            "uid": 17,
+            "name": "Node_39",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 100,
+            "thickness": 72
+          },
+          {
+            "index": 40,
+            "uid": 9,
+            "name": "Node_40",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 100,
+            "thickness": 65
+          },
+          {
+            "index": 41,
+            "uid": 10,
+            "name": "Node_41",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 100,
+            "thickness": 65
+          },
+          {
+            "index": 42,
+            "uid": 11,
+            "name": "Node_42",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 100,
+            "thickness": 59
+          },
+          {
+            "index": 43,
+            "uid": 12,
+            "name": "Node_43",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 100,
+            "thickness": 59
+          },
+          {
+            "index": 44,
+            "uid": 13,
+            "name": "Node_44",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 100,
+            "thickness": 47
+          },
+          {
+            "index": 45,
+            "uid": 14,
+            "name": "Node_45",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 130,
+            "thickness": 47
+          },
+          {
+            "index": 46,
+            "uid": 37,
+            "name": "Node_46",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 42,
+            "thickness": 60
+          },
+          {
+            "index": 47,
+            "uid": 38,
+            "name": "Node_47",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 40,
+            "thickness": 0
+          },
+          {
+            "index": 48,
+            "uid": 41,
+            "name": "Node_48",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 14,
+            "thickness": 6
+          },
+          {
+            "index": 49,
+            "uid": 39,
+            "name": "Node_49",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 3,
+            "thickness": 30
+          },
+          {
+            "index": 50,
+            "uid": 40,
+            "name": "Node_50",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 5,
+            "thickness": 30
+          },
+          {
+            "index": 51,
+            "uid": 42,
+            "name": "Node_51",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 42,
+            "thickness": 72
+          },
+          {
+            "index": 52,
+            "uid": 1,
+            "name": "Node_52",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 100,
+            "thickness": 50
+          },
+          {
+            "index": 53,
+            "uid": 2,
+            "name": "Node_53",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 40,
+            "thickness": 50
+          },
+          {
+            "index": 54,
+            "uid": 3,
+            "name": "Node_54",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 40,
+            "thickness": 60
+          },
+          {
+            "index": 55,
+            "uid": 4,
+            "name": "Node_55",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 100,
+            "thickness": 50
+          },
+          {
+            "index": 56,
+            "uid": 6,
+            "name": "Node_56",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 70,
+            "thickness": 50
+          },
+          {
+            "index": 57,
+            "uid": 5,
+            "name": "Node_57",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 15,
+            "thickness": 55
+          },
+          {
+            "index": 58,
+            "uid": 7,
+            "name": "Node_58",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 22,
+            "thickness": 53
+          },
+          {
+            "index": 59,
+            "uid": 90,
+            "name": "Node_59",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 10,
+            "thickness": 0
+          },
+          {
+            "index": 60,
+            "uid": 91,
+            "name": "Node_60",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 100,
+            "thickness": 50
+          },
+          {
+            "index": 61,
+            "uid": 92,
+            "name": "Node_61",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 40,
+            "thickness": 50
+          },
+          {
+            "index": 62,
+            "uid": 93,
+            "name": "Node_62",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 40,
+            "thickness": 60
+          },
+          {
+            "index": 63,
+            "uid": 94,
+            "name": "Node_63",
+            "parentIndex": 0,
+            "childrenIndices": [],
+            "length": 12,
+            "thickness": 0
+          }
+        ],
+        "rootIndex": 0,
+        "kineticChains": [
+          {
+            "name": "Main Hierarchy",
+            "jointIndices": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40,
+              41,
+              42,
+              43,
+              44,
+              45,
+              46,
+              47,
+              48,
+              49,
+              50,
+              51,
+              52,
+              53,
+              54,
+              55,
+              56,
+              57,
+              58,
+              59,
+              60,
+              61,
+              62,
+              63
+            ]
+          }
+        ]
+      }
+    ],
+    "hasCameraData": false,
+    "hasAudioData": false,
+    "fileSizeBytes": 400045,
+    "decompressedSizeBytes": 3845675,
+    "analyzedAt": "2026-10-08T21:07:24.769Z"
+  }
+]
