@@ -40,7 +40,8 @@ export type SkillCategory =
   | 'Timing, Composition & Arcs'
   | 'Spatial Consistency & Interaction'
   | 'Quality Assurance'
-  | 'General Physics & Load Intelligence';
+  | 'General Physics & Load Intelligence'
+  | 'Physics & Scientific Mass Variations';
 
 export interface MotionSkillDefinition {
   id: number;
@@ -319,8 +320,8 @@ export const SKILL_HIERARCHY: SkillHierarchyBranch[] = [
   {
     id: 'general-physics-intelligence',
     name: '9. General Physics & Biomechanical Intelligence',
-    description: 'General-purpose mass ratios, lever-arm torque dynamics, Hof dynamic balance, momentum braking, and multi-entity physical causality.',
-    skills: [54, 55, 56, 57, 58, 59, 60, 61, 62, 63],
+    description: 'General-purpose mass ratios, lever-arm torque dynamics, Hof dynamic balance, momentum braking, multi-entity physical causality, and scientific mass variations.',
+    skills: [54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68],
     autoInvokes: ['anatomy', 'kinematics', 'balance', 'spatial-interaction'],
     subBranches: [
       {
@@ -349,6 +350,13 @@ export const SKILL_HIERARCHY: SkillHierarchyBranch[] = [
         name: '7-Domain Biomechanical Audit Gate',
         description: 'Quantitative physical critic measuring bone invariance, knee polarity, contact slip, and torque proportionality.',
         skills: [63],
+        autoInvokes: [],
+      },
+      {
+        id: 'physics-scientific-mass-variations',
+        name: 'Physics & Scientific Mass Variations',
+        description: 'Inertial Mass (F=ma), Gravitational Mass (active/passive & Weak Equivalence Principle), Rest Mass (Invariant Mass & E=mc²), Relativistic Mass (Lorentz γ), and Sub-Category Scientific Mass Variations (Reduced μ, Added m_added, Effective m*).',
+        skills: [64, 65, 66, 67, 68],
         autoInvokes: [],
       },
     ],
@@ -1789,10 +1797,127 @@ export const EXPANDED_46_MOTION_SKILLS: MotionSkillDefinition[] = [
       'Overall Biomechanical Score >= 90/100 required for full certification',
     ],
   },
+  {
+    id: 64,
+    slug: 'inertial-mass-dynamics',
+    name: '64. Inertial Mass & Force Acceleration Dynamics',
+    category: 'Physics & Scientific Mass Variations',
+    priority: 'CRITICAL',
+    summary:
+      'Quantifies an object\'s resistance to linear acceleration (F = ma) and rotational angular acceleration (τ = I α) under applied forces and torques.',
+    causalQuestion: 'How much net force and torque is required to accelerate or decelerate an object of given inertial mass?',
+    biomechanicalRules: [
+      'Translational acceleration scales inversely with inertial mass: a = F / m_i.',
+      'Linear momentum (p = m_i v) dictates impulse energy transfer during collisions and push/pull actions.',
+      'Rotational moment of inertia scales with distance squared (I = m_i r²); tucking limbs reduces I, accelerating spin rates.',
+    ],
+    failureModesPrevented: [
+      'Instantaneous acceleration without force application',
+      'Heavy and light objects accelerating identically under equal applied force',
+    ],
+    verificationMetrics: [
+      'Translational acceleration verified against a = F / m_i within float precision',
+      'Rotational spin rate scales proportionally with moment of inertia changes',
+    ],
+  },
+  {
+    id: 65,
+    slug: 'gravitational-mass-equivalence',
+    name: '65. Gravitational Mass & Equivalence Principle',
+    category: 'Physics & Scientific Mass Variations',
+    priority: 'CRITICAL',
+    summary:
+      'Governs active and passive gravitational mass attraction, local weight force (W = m_g g), and the Weak Equivalence Principle (m_i = m_g).',
+    causalQuestion: 'Does gravitational attraction scale with mass while preserving uniform freefall acceleration in vacuum?',
+    biomechanicalRules: [
+      'Passive gravitational mass responds to external gravitational fields; local weight force equals W = m_g g.',
+      'Active gravitational mass generates central gravitational attraction fields (F_g = G M m / r²).',
+      'Weak Equivalence Principle dictates m_i = m_g, causing all objects to fall at identical acceleration g in vacuum.',
+    ],
+    failureModesPrevented: [
+      'Mass-dependent freefall speeds in gravitational vacuum',
+      'Violation of local weight force proportionality',
+    ],
+    verificationMetrics: [
+      'Equivalence ratio |m_i / m_g - 1.0| < 1e-12 in vacuum gravity simulations',
+      '100% synchronous freefall displacement for unequal masses in vacuum',
+    ],
+  },
+  {
+    id: 66,
+    slug: 'rest-mass-invariant-equivalence',
+    name: '66. Rest Mass (Invariant Mass) & Mass-Energy Equivalence',
+    category: 'Physics & Scientific Mass Variations',
+    priority: 'HIGH',
+    summary:
+      'Defines intrinsic rest frame mass m_0, mass-energy equivalence (E_0 = m_0 c²), multi-particle system invariant mass, and binding mass defect.',
+    causalQuestion: 'What is the frame-independent intrinsic mass and rest energy of the system, and how is mass defect conserved?',
+    biomechanicalRules: [
+      'Rest mass m_0 is measured in the object\'s own center-of-momentum frame (v = 0) and remains constant across all inertial frames.',
+      'Rest mass converts directly to rest energy via Einstein\'s relation E_0 = m_0 c².',
+      'System invariant mass M_inv is conserved in closed particle systems: M_inv² c⁴ = (Σ E)² - ||Σ p c||².',
+    ],
+    failureModesPrevented: [
+      'Frame-dependent rest mass corruption',
+      'Non-conservation of multi-particle system invariant mass',
+    ],
+    verificationMetrics: [
+      'Invariant mass M_inv preserved strictly across Lorentz coordinate transformations',
+      'Mass-energy conversion verified against E_0 = m_0 c²',
+    ],
+  },
+  {
+    id: 67,
+    slug: 'relativistic-mass-lorentz-dynamics',
+    name: '67. Relativistic Mass & Lorentz Velocity Dynamics',
+    category: 'Physics & Scientific Mass Variations',
+    priority: 'HIGH',
+    summary:
+      'Models velocity-dependent mass expansion (m_rel = γ m_0), Lorentz factor scaling, relativistic momentum, and total energy near light speed.',
+    causalQuestion: 'How does an object\'s effective mass and resistance to acceleration increase non-linearly as its velocity approaches c?',
+    biomechanicalRules: [
+      'Relativistic mass expands with velocity according to m_rel(v) = γ(v) m_0, where Lorentz factor γ = 1 / √(1 - v²/c²).',
+      'Relativistic momentum equals p = γ m_0 v, and total relativistic energy equals E = γ m_0 c².',
+      'As v → c, Lorentz factor γ → ∞, making it impossible for massive bodies to reach or exceed light speed c.',
+    ],
+    failureModesPrevented: [
+      'Superluminal movement of massive objects (v >= c)',
+      'Linear force-acceleration behavior at near-relativistic velocities',
+    ],
+    verificationMetrics: [
+      'Lorentz factor γ calculated continuously for high-velocity entities',
+      'Relativistic momentum and energy satisfied via E² = p²c² + m_0²c⁴',
+    ],
+  },
+  {
+    id: 68,
+    slug: 'scientific-mass-subcategories',
+    name: '68. Scientific Variations & Sub-Categories of Mass',
+    category: 'Physics & Scientific Mass Variations',
+    priority: 'HIGH',
+    summary:
+      'Formulates specialized scientific mass variations: Reduced Mass (μ) in two-body systems, Hydrodynamic Added Mass (m_added) in fluid media, and Effective Mass (m*).',
+    causalQuestion: 'How do coupled two-body systems and surrounding media alter the effective mass during physical interactions?',
+    biomechanicalRules: [
+      'Two-body orbital and collision systems reduce to an equivalent single-body problem via reduced mass μ = m_1 m_2 / (m_1 + m_2).',
+      'Objects accelerating through fluids experience hydrodynamic added mass m_added = C_v ρ V, increasing effective inertial mass to m_0 + m_added.',
+      'Condensed matter and lattice interactions modify charge transport via effective quantum mass m*.',
+    ],
+    failureModesPrevented: [
+      'Ignoring fluid displaced mass during aquatic character movement',
+      'Inaccurate two-body orbital or collision trajectory calculations',
+    ],
+    verificationMetrics: [
+      'Reduced mass μ calculated for 100% of paired entity interactions',
+      'Fluid acceleration reflects effective virtual mass m_eff = m_0 + C_v ρ V',
+    ],
+  },
 ];
 
+export const EXPANDED_68_MOTION_SKILLS = EXPANDED_46_MOTION_SKILLS;
 export const EXPANDED_63_MOTION_SKILLS = EXPANDED_46_MOTION_SKILLS;
 export const EXPANDED_53_MOTION_SKILLS = EXPANDED_46_MOTION_SKILLS;
+export const ALL_MOTION_SKILLS = EXPANDED_46_MOTION_SKILLS;
 
 /**
  * Backward compatibility: export original 33 skills
