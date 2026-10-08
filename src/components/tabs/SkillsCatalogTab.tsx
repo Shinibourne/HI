@@ -126,19 +126,46 @@ export const SkillsCatalogTab: React.FC<SkillsCatalogTabProps> = ({
                     </h3>
                   </div>
 
-                  <div className="flex flex-wrap items-center gap-2">
-                    <div className="relative">
-                      <Search className="w-3.5 h-3.5 absolute left-2.5 top-2 text-[#94A3B8]" />
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 w-full lg:w-auto">
+                    <div className="relative w-full sm:w-48">
+                      <Search className="w-3.5 h-3.5 absolute left-2.5 top-2.5 text-[#94A3B8]" />
                       <input
                         type="text"
                         placeholder="Search skills, formulas..."
                         value={skillSearchQuery}
                         onChange={(e) => setSkillSearchQuery(e.target.value)}
-                        className="pl-8 pr-3 py-1 bg-[#F1F5F9] rounded-lg text-xs border border-transparent focus:border-[#0284C7] focus:bg-white outline-none w-48"
+                        className="w-full pl-8 pr-3 py-1.5 bg-[#F1F5F9] rounded-lg text-xs border border-transparent focus:border-[#0284C7] focus:bg-white outline-none"
                       />
                     </div>
 
-                    <div className="flex flex-wrap items-center gap-1 bg-[#F1F5F9] p-1 rounded-lg text-xs">
+                    {/* Mobile select dropdown */}
+                    <div className="sm:hidden w-full">
+                      <select
+                        value={selectedSkillCategory}
+                        onChange={(e) => setSelectedSkillCategory(e.target.value)}
+                        className="w-full text-xs font-medium bg-[#F1F5F9] border border-[#CBD5E1] rounded-lg px-2.5 py-1.5 text-[#0F172A]"
+                        aria-label="Skill category filter"
+                      >
+                        {[
+                          'ALL',
+                          'Master & Foundation',
+                          'Anatomical & Skeletal',
+                          'Kinematics & Limb Solving',
+                          'Balance & Mechanics',
+                          'Locomotion & Action Mechanics',
+                          'Physics, Secondary & Inertia',
+                          'Timing, Composition & Arcs',
+                          'Spatial Consistency & Interaction',
+                        ].map((cat) => (
+                          <option key={cat} value={cat}>
+                            Category: {cat}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    {/* Desktop button strip */}
+                    <div className="hidden sm:flex flex-wrap items-center gap-1 bg-[#F1F5F9] p-1 rounded-lg text-xs">
                       {[
                         'ALL',
                         'Master & Foundation',
@@ -154,7 +181,7 @@ export const SkillsCatalogTab: React.FC<SkillsCatalogTabProps> = ({
                           key={cat}
                           type="button"
                           onClick={() => setSelectedSkillCategory(cat)}
-                          className={`px-2 py-1 rounded font-medium transition-colors text-[11px] ${
+                          className={`px-2 py-1 rounded font-medium transition-colors text-[11px] cursor-pointer ${
                             selectedSkillCategory === cat
                               ? 'bg-white text-[#0F172A] shadow-xs'
                               : 'text-[#475569] hover:text-[#0F172A]'

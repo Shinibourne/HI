@@ -199,38 +199,54 @@ export const SpatialInteractionTab: React.FC<SpatialInteractionTabProps> = ({
 
                       <div className="my-2 flex items-center justify-center">
                         <svg viewBox="0 0 760 380" className="w-full h-[340px] select-none">
-                          {/* Background Grid Lines */}
+                          {/* Background Grid Lines & Platform Gradient */}
                           <defs>
                             <pattern id="arena-grid" width="40" height="40" patternUnits="userSpaceOnUse">
-                              <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1E293B" strokeWidth="0.8" />
+                              <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#334155" strokeWidth="0.8" />
                             </pattern>
+                            <linearGradient id="spatialPlatformGrad" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="0%" stopColor="#F8FAFC" />
+                              <stop offset="12%" stopColor="#EDF2F7" />
+                              <stop offset="100%" stopColor="#CBD5E1" />
+                            </linearGradient>
+                            <linearGradient id="spatialGroundGrad" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="0%" stopColor="#E2E8F0" />
+                              <stop offset="15%" stopColor="#EDF2F7" />
+                              <stop offset="100%" stopColor="#CBD5E1" />
+                            </linearGradient>
                           </defs>
-                          <rect width="760" height="380" fill="url(#arena-grid)" />
+                          <rect width="760" height={arenaGroundY} fill="url(#arena-grid)" />
+
+                          {/* Light High-Contrast Ground Floor (Never black - perfect limb visibility) */}
+                          <rect x="0" y={arenaGroundY} width="760" height={380 - arenaGroundY} fill="url(#spatialGroundGrad)" />
 
                           {/* Master Ground Plane (Y = 755px standard in Stick Nodes) */}
-                          <line x1="20" y1={arenaGroundY} x2="740" y2={arenaGroundY} stroke="#0284C7" strokeWidth="2.5" />
-                          <line x1="20" y1={arenaGroundY + 1} x2="740" y2={arenaGroundY + 1} stroke="#38BDF8" strokeWidth="1" strokeDasharray="3 3" />
+                          <line x1="0" y1={arenaGroundY} x2="760" y2={arenaGroundY} stroke="#334155" strokeWidth="2.5" />
+                          <line x1="0" y1={arenaGroundY + 1} x2="760" y2={arenaGroundY + 1} stroke="#0284C7" strokeWidth="1" strokeDasharray="3 3" />
                           <text x="30" y={arenaGroundY - 8} fill="#38BDF8" fontSize="11" fontFamily="monospace" fontWeight="bold">
                             MASTER GROUND PLANE (Stick Nodes Y = 755.0 px)
                           </text>
 
                           {/* Ground contact shadow puddles */}
-                          <ellipse cx={spatialDefenderX} cy={arenaGroundY + 2} rx="28" ry="4" fill="#0284C7" opacity="0.3" />
-                          <ellipse cx={effectiveAttackerX} cy={arenaGroundY + 2} rx="28" ry="4" fill="#38BDF8" opacity="0.3" />
+                          <ellipse cx={spatialDefenderX} cy={arenaGroundY + 2} rx="28" ry="4" fill="#64748B" opacity="0.4" />
+                          <ellipse cx={effectiveAttackerX} cy={arenaGroundY + 2} rx="28" ry="4" fill="#0284C7" opacity="0.4" />
 
-                          {/* Elevated Platform Surface (Skill #51) */}
+                          {/* Elevated Platform Dais (Skill #51 - High-Contrast Light Surface, Not Black) */}
                           <g>
                             <rect
                               x="40"
                               y={platformY}
                               width="200"
                               height={arenaGroundY - platformY}
-                              fill="#1E293B"
-                              stroke="#64748B"
+                              fill="url(#spatialPlatformGrad)"
+                              stroke="#94A3B8"
                               strokeWidth="1.5"
+                              rx="2"
                             />
-                            <line x1="40" y1={platformY} x2="240" y2={platformY} stroke="#F59E0B" strokeWidth="3" />
-                            <text x="45" y={platformY - 6} fill="#FCD34D" fontSize="10" fontFamily="monospace" fontWeight="bold">
+                            {/* Platform Top Landing Highlight */}
+                            <line x1="40" y1={platformY} x2="240" y2={platformY} stroke="#0284C7" strokeWidth="3" />
+                            <line x1="40" y1={platformY + 2} x2="240" y2={platformY + 2} stroke="#38BDF8" strokeWidth="1" />
+                            <text x="45" y={platformY - 7} fill="#0284C7" fontSize="10" fontFamily="monospace" fontWeight="bold">
                               Platform Dais (Y = {(755 - spatialPlatformHeight).toFixed(0)} px)
                             </text>
                           </g>

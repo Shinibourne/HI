@@ -1,17 +1,11 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import {
   Sparkles,
-  Download,
-  Target,
-  Play,
-  Pause,
-  Layers,
-  Compass,
-  Activity,
-  GitBranch,
-  Cpu,
-  ShieldCheck,
   BookOpen,
+  Sliders,
+  Layers,
+  Activity,
+  FileCode2,
 } from 'lucide-react';
 
 import { CORPUS_PRESETS } from './data/corpusPresets';
@@ -60,19 +54,10 @@ import {
   validateMultiCharacterSpatialConsistency,
 } from './lib/humanMotionSkills';
 
-import { AppCanvas } from './components/canvas/AppCanvas';
-import { ModeControlsPanel } from './components/panels/ModeControlsPanel';
-import { AuditMetricsPanel } from './components/panels/AuditMetricsPanel';
-
-import { KinematicsIkTab } from './components/tabs/KinematicsIkTab';
-import { FullBodyReactivityTab } from './components/tabs/FullBodyReactivityTab';
-import { ProceduralKinematicsTab } from './components/tabs/ProceduralKinematicsTab';
-import { SpatialInteractionTab } from './components/tabs/SpatialInteractionTab';
-import { ProceduralMotionTab } from './components/tabs/ProceduralMotionTab';
-import { SkillsCatalogTab } from './components/tabs/SkillsCatalogTab';
-import { FrameInspectorTab } from './components/tabs/FrameInspectorTab';
-import { BoneHierarchyTab } from './components/tabs/BoneHierarchyTab';
-import { MethodologyTab } from './components/tabs/MethodologyTab';
+import { AppHeader } from './components/layout/AppHeader';
+import { AnimationStudioStage } from './components/workspace/AnimationStudioStage';
+import { StudioInspectorPanel } from './components/panels/StudioInspectorPanel';
+import { EngineeringSuite } from './components/workspace/EngineeringSuite';
 
 export function App() {
   const [activeAnimationMode, setActiveAnimationMode] = useState<
@@ -197,6 +182,11 @@ export function App() {
   const [showTrajectoryArc, setShowTrajectoryArc] = useState<boolean>(true);
   const [showKinematicsCoM, setShowKinematicsCoM] = useState<boolean>(true);
   const [vcamFollow, setVcamFollow] = useState<boolean>(true);
+
+  // Responsive UI state
+  const [mobileActiveView, setMobileActiveView] = useState<'stage' | 'inspector' | 'engineering'>('stage');
+  const [isInspectorCollapsed, setIsInspectorCollapsed] = useState<boolean>(false);
+
   const [activeDocTab, setActiveDocTab] = useState<
     'kinematics-ik' | 'full-body-reactivity' | 'procedural-kinematics' | 'spatial-interaction' | 'procedural-motion' | 'hierarchy' | 'research' | 'skills' | 'frames' | 'bone-hierarchy' | 'methodology'
   >('kinematics-ik');
@@ -554,121 +544,89 @@ export function App() {
   const safeBounceFrame = computedBounceFrames[currentFrame % 22];
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-[#0F172A] font-sans antialiased selection:bg-[#0284C7] selection:text-white pb-16">
-      {/* Top Navigation & App Header */}
-      <header className="border-b border-[#E2E8F0] bg-white sticky top-0 z-40 shadow-xs">
-        <div className="max-w-[1360px] mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg bg-[#0F172A] flex items-center justify-center text-white font-mono text-sm font-bold shadow-sm">
-              SN
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h1 className="font-display font-bold text-base text-[#0F172A] tracking-tight">
-                  Stick Nodes Animation Forge
-                </h1>
-                <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-[#E0F2FE] text-[#0369A1]">
-                  v334 GZIP BINARY
-                </span>
-              </div>
-              <p className="text-xs text-[#64748B] hidden sm:block">
-                Physics-Aware Articulated Body Engine, 2-Bone IK &amp; Biomechanical Audit Suite
-              </p>
-            </div>
-          </div>
+    <div className="min-h-screen bg-[#F8FAFC] text-slate-900 font-sans antialiased selection:bg-sky-500 selection:text-white flex flex-col">
+      {/* 1. Header (Sticky, 3-zone contract, responsive navigation) */}
+      <AppHeader
+        activeAnimationMode={activeAnimationMode}
+        setActiveAnimationMode={setActiveAnimationMode}
+        globalFps={globalFps}
+        handleSelectFps={handleSelectFps}
+        synthesizing={synthesizing}
+        handleSynthesizeAndDownload={handleSynthesizeAndDownload}
+        setSelectedPresetPath={setSelectedPresetPath}
+        setCurrentFrame={setCurrentFrame}
+        setIsPlaying={setIsPlaying}
+        setBinaryStageOverride={setBinaryStageOverride}
+        mobileActiveView={mobileActiveView}
+        setMobileActiveView={setMobileActiveView}
+        isInspectorCollapsed={isInspectorCollapsed}
+        setIsInspectorCollapsed={setIsInspectorCollapsed}
+      />
 
-          <div className="flex items-center gap-3">
-            {/* Persistent Global FPS Switcher */}
-            <div className="flex items-center bg-[#F1F5F9] p-1 rounded-lg border border-[#E2E8F0]">
-              <button
-                type="button"
-                onClick={() => handleSelectFps(12)}
-                className={`px-3 py-1 text-xs font-mono font-semibold rounded-md transition-all ${
-                  globalFps === 12
-                    ? 'bg-white text-[#0F172A] shadow-xs'
-                    : 'text-[#64748B] hover:text-[#0F172A]'
-                }`}
-              >
-                12 FPS
-              </button>
-              <button
-                type="button"
-                onClick={() => handleSelectFps(24)}
-                className={`px-3 py-1 text-xs font-mono font-semibold rounded-md transition-all ${
-                  globalFps === 24
-                    ? 'bg-[#0284C7] text-white shadow-xs'
-                    : 'text-[#64748B] hover:text-[#0F172A]'
-                }`}
-              >
-                24 FPS (Sky Flight Engine)
-              </button>
-            </div>
-
-            <button
-              type="button"
-              disabled={synthesizing}
-              onClick={handleSynthesizeAndDownload}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#0F172A] text-white text-xs font-semibold hover:bg-[#1E293B] transition-colors shadow-sm disabled:opacity-50 cursor-pointer"
-            >
-              <Download className="w-3.5 h-3.5" />
-              <span className="hidden md:inline">Export Current (.stknds)</span>
-            </button>
-          </div>
+      {/* Mobile Top Segmented View Selector (shows on mobile < 768px for easy thumb switching) */}
+      <div className="lg:hidden bg-white border-b border-slate-200 px-3 py-2">
+        <div className="flex items-center gap-1 p-0.5 bg-slate-100 rounded-lg text-xs">
+          <button
+            type="button"
+            onClick={() => setMobileActiveView('stage')}
+            className={`flex-1 py-1.5 px-2 rounded-md font-medium text-center transition-colors cursor-pointer text-xs ${
+              mobileActiveView === 'stage'
+                ? 'bg-white text-slate-900 shadow-xs font-semibold'
+                : 'text-slate-600'
+            }`}
+          >
+            Stage &amp; Playback
+          </button>
+          <button
+            type="button"
+            onClick={() => setMobileActiveView('inspector')}
+            className={`flex-1 py-1.5 px-2 rounded-md font-medium text-center transition-colors cursor-pointer text-xs ${
+              mobileActiveView === 'inspector'
+                ? 'bg-white text-slate-900 shadow-xs font-semibold'
+                : 'text-slate-600'
+            }`}
+          >
+            Audit &amp; Telemetry
+          </button>
+          <button
+            type="button"
+            onClick={() => setMobileActiveView('engineering')}
+            className={`flex-1 py-1.5 px-2 rounded-md font-medium text-center transition-colors cursor-pointer text-xs ${
+              mobileActiveView === 'engineering'
+                ? 'bg-white text-slate-900 shadow-xs font-semibold'
+                : 'text-slate-600'
+            }`}
+          >
+            Tools (9 Tabs)
+          </button>
         </div>
-      </header>
+      </div>
 
-      <main className="max-w-[1360px] mx-auto px-4 sm:px-6 pt-6 space-y-6">
-        {/* Main Stage & Stage Controls */}
-        <section className="bg-white border border-[#E2E8F0] rounded-xl p-5 space-y-5 shadow-xs">
-          <ModeControlsPanel
-            activeAnimationMode={activeAnimationMode}
-            setActiveAnimationMode={setActiveAnimationMode}
-            binaryStageOverride={binaryStageOverride}
-            setBinaryStageOverride={setBinaryStageOverride}
-            setCurrentFrame={setCurrentFrame}
-            setIsPlaying={setIsPlaying}
-            basketballConfig={basketballConfig}
-            setBasketballConfig={setBasketballConfig}
-            strollKickConfig={strollKickConfig}
-            setStrollKickConfig={setStrollKickConfig}
-            phantomConfig={phantomConfig}
-            setPhantomConfig={setPhantomConfig}
-            teleportConfig={teleportConfig}
-            setTeleportConfig={setTeleportConfig}
-            speedStrengthConfig={speedStrengthConfig}
-            setSpeedStrengthConfig={setSpeedStrengthConfig}
-            sneezeConfig={sneezeConfig}
-            setSneezeConfig={setSneezeConfig}
-            heroConfig={heroConfig}
-            setHeroConfig={setHeroConfig}
-            bounceConfig={bounceConfig}
-            setBounceConfig={setBounceConfig}
-            currentFrame={currentFrame}
-            totalModeFrames={totalModeFrames}
-            vcamFollow={vcamFollow}
-            setVcamFollow={setVcamFollow}
-            safeBasketballFrame={safeBasketballFrame}
-            safeStrollKickFrame={safeStrollKickFrame}
-            safePhantomFrame={safePhantomFrame}
-            safeTeleportFrame={safeTeleportFrame}
-            safeSpeedStrengthFrame={safeSpeedStrengthFrame}
-            safeHeroFrame={safeHeroFrame}
-            safeBounceFrame={safeBounceFrame}
-            setSelectedPresetPath={setSelectedPresetPath}
-            strollKickFrames={strollKickFrames}
-          />
-
-          {/* Canvas Rendering Stage */}
-          <div className="relative rounded-xl overflow-hidden shadow-inner border border-[#1E293B] bg-[#090D16]">
-            <AppCanvas
+      {/* Main Studio Workspace Container */}
+      <main className="flex-1 w-full max-w-[1800px] mx-auto px-3 sm:px-5 lg:px-8 py-4 sm:py-6 space-y-6">
+        {/* On Mobile: Conditionally render the active tab view */}
+        <div className="lg:hidden">
+          {mobileActiveView === 'stage' && (
+            <AnimationStudioStage
               canvasRef={canvasRef}
               activeAnimationMode={activeAnimationMode}
               currentFrame={currentFrame}
+              setCurrentFrame={setCurrentFrame}
+              isPlaying={isPlaying}
+              setIsPlaying={setIsPlaying}
+              totalModeFrames={totalModeFrames}
               showOnionSkin={showOnionSkin}
+              setShowOnionSkin={setShowOnionSkin}
               showTrajectoryArc={showTrajectoryArc}
+              setShowTrajectoryArc={setShowTrajectoryArc}
               showKinematicsCoM={showKinematicsCoM}
+              setShowKinematicsCoM={setShowKinematicsCoM}
               vcamFollow={vcamFollow}
+              setVcamFollow={setVcamFollow}
               globalFps={globalFps}
+              binaryStageOverride={binaryStageOverride}
+              setBinaryStageOverride={setBinaryStageOverride}
+              activeInspection={activeInspection}
               basketballConfig={basketballConfig}
               strollKickConfig={strollKickConfig}
               phantomConfig={phantomConfig}
@@ -692,250 +650,55 @@ export function App() {
               safeSpeedStrengthFrame={safeSpeedStrengthFrame}
               safeHeroFrame={safeHeroFrame}
               safeBounceFrame={safeBounceFrame}
-              binaryStageOverride={binaryStageOverride}
-              activeInspection={activeInspection}
             />
-          </div>
+          )}
 
-          {/* Playback & Frame Scrubber Bar */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-1">
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => setIsPlaying((p) => !p)}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold bg-[#0F172A] text-white rounded-lg hover:bg-[#1E293B] transition-colors whitespace-nowrap cursor-pointer"
-              >
-                {isPlaying ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
-                {isPlaying ? 'Pause' : 'Play'}
-              </button>
-              <span className="text-xs font-mono font-medium text-[#475569] bg-[#F1F5F9] px-2.5 py-2 rounded-lg border border-[#E2E8F0]">
-                Frame {currentFrame.toString().padStart(2, '0')} / {(totalModeFrames - 1).toString().padStart(2, '0')}
-              </span>
-            </div>
+          {mobileActiveView === 'inspector' && (
+            <StudioInspectorPanel
+              activeAnimationMode={activeAnimationMode}
+              globalFps={globalFps}
+              currentFrame={currentFrame}
+              totalModeFrames={totalModeFrames}
+              basketballAudit={basketballAudit}
+              strollKickAudit={strollKickAudit}
+              safeBasketballFrame={safeBasketballFrame}
+              safeStrollKickFrame={safeStrollKickFrame}
+              safePhantomFrame={safePhantomFrame}
+              safeTeleportFrame={safeTeleportFrame}
+              safeSpeedStrengthFrame={safeSpeedStrengthFrame}
+              safeHeroFrame={safeHeroFrame}
+              safeBounceFrame={safeBounceFrame}
+              basketballConfig={basketballConfig}
+              setBasketballConfig={setBasketballConfig}
+              strollKickConfig={strollKickConfig}
+              setStrollKickConfig={setStrollKickConfig}
+              phantomConfig={phantomConfig}
+              setPhantomConfig={setPhantomConfig}
+              speedStrengthConfig={speedStrengthConfig}
+              setSpeedStrengthConfig={setSpeedStrengthConfig}
+              teleportConfig={teleportConfig}
+              setTeleportConfig={setTeleportConfig}
+              sneezeConfig={sneezeConfig}
+              setSneezeConfig={setSneezeConfig}
+              heroConfig={heroConfig}
+              setHeroConfig={setHeroConfig}
+              bounceConfig={bounceConfig}
+              setBounceConfig={setBounceConfig}
+              baseTemplate22={baseTemplate22}
+              baseTemplate27={baseTemplate27}
+              synthesizing={synthesizing}
+              handleSynthesizeAndDownload={handleSynthesizeAndDownload}
+              basketballFrames={basketballFrames}
+              strollKickFrames={strollKickFrames}
+              phantomFrames={phantomFrames}
+              teleportFrames={teleportFrames}
+            />
+          )}
 
-            <div className="flex-1 max-w-xl mx-2">
-              <input
-                type="range"
-                min={0}
-                max={totalModeFrames - 1}
-                value={currentFrame % totalModeFrames}
-                onChange={(e) => {
-                  setIsPlaying(false);
-                  setCurrentFrame(Number(e.target.value));
-                }}
-                className="w-full accent-[#0284C7] cursor-pointer"
-              />
-            </div>
-
-            <div className="flex flex-wrap items-center gap-2 text-xs font-medium text-[#475569]">
-              <label className="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-[#F1F5F9] rounded-lg border border-[#E2E8F0] cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={showOnionSkin}
-                  onChange={(e) => setShowOnionSkin(e.target.checked)}
-                  className="rounded text-[#0284C7] focus:ring-0"
-                />
-                <Layers className="w-3.5 h-3.5 text-[#0284C7]" />
-                Onion Skin
-              </label>
-              <label className="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-[#F1F5F9] rounded-lg border border-[#E2E8F0] cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={showTrajectoryArc}
-                  onChange={(e) => setShowTrajectoryArc(e.target.checked)}
-                  className="rounded text-[#0284C7] focus:ring-0"
-                />
-                <Compass className="w-3.5 h-3.5 text-[#EA580C]" />
-                Trajectory
-              </label>
-              <label className="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-[#F1F5F9] rounded-lg border border-[#E2E8F0] cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={showKinematicsCoM}
-                  onChange={(e) => setShowKinematicsCoM(e.target.checked)}
-                  className="rounded text-[#0284C7] focus:ring-0"
-                />
-                <Activity className="w-3.5 h-3.5 text-[#059669]" />
-                COM &amp; Ground
-              </label>
-            </div>
-          </div>
-        </section>
-
-        {/* Audit Metrics Dashboard */}
-        <AuditMetricsPanel
-          activeAnimationMode={activeAnimationMode}
-          globalFps={globalFps}
-          basketballAudit={basketballAudit}
-          strollKickAudit={strollKickAudit}
-          safeBasketballFrame={safeBasketballFrame}
-          safeStrollKickFrame={safeStrollKickFrame}
-          safePhantomFrame={safePhantomFrame}
-          safeTeleportFrame={safeTeleportFrame}
-          safeSpeedStrengthFrame={safeSpeedStrengthFrame}
-          safeHeroFrame={safeHeroFrame}
-          safeBounceFrame={safeBounceFrame}
-          currentFrame={currentFrame}
-          totalModeFrames={totalModeFrames}
-          sneezeFrames={sneezeFrames}
-          superheroFrames={superheroFrames}
-          speedStrengthFrames={speedStrengthFrames}
-          basketballConfig={basketballConfig}
-          setBasketballConfig={setBasketballConfig}
-          strollKickConfig={strollKickConfig}
-          setStrollKickConfig={setStrollKickConfig}
-          phantomConfig={phantomConfig}
-          setPhantomConfig={setPhantomConfig}
-          speedStrengthConfig={speedStrengthConfig}
-          setSpeedStrengthConfig={setSpeedStrengthConfig}
-          teleportConfig={teleportConfig}
-          setTeleportConfig={setTeleportConfig}
-          sneezeConfig={sneezeConfig}
-          setSneezeConfig={setSneezeConfig}
-          heroConfig={heroConfig}
-          setHeroConfig={setHeroConfig}
-          bounceConfig={bounceConfig}
-          setBounceConfig={setBounceConfig}
-          baseTemplate22={baseTemplate22}
-          baseTemplate27={baseTemplate27}
-          setCurrentFrame={setCurrentFrame}
-          synthesizing={synthesizing}
-          handleSynthesizeAndDownload={handleSynthesizeAndDownload}
-          basketballFrames={basketballFrames}
-          strollKickFrames={strollKickFrames}
-          phantomFrames={phantomFrames}
-          teleportFrames={teleportFrames}
-        />
-
-        {/* Tab Navigation & Subviews */}
-        <section className="space-y-6">
-          <div className="border-b border-[#E2E8F0] pb-4 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-            <div>
-              <div className="flex items-center gap-2 mb-1">
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-mono font-bold bg-[#0284C7]/10 text-[#0284C7]">
-                  <Sparkles className="w-3 h-3" />
-                  KNOWLEDGE INTEGRATION ENGINE v3.0
-                </span>
-                <span className="text-xs text-[#64748B] font-mono">
-                  5 GitHub Research Repositories · 46 Biomechanical Skills
-                </span>
-              </div>
-              <h2 className="font-display text-2xl font-semibold text-[#0F172A]">
-                03. Universal Human Motion Framework &amp; Procedural Kinematics
-              </h2>
-            </div>
-
-            <div className="flex flex-wrap items-center gap-1 p-1 bg-[#E2E8F0]/70 rounded-lg self-start">
-              <button
-                type="button"
-                onClick={() => setActiveDocTab('kinematics-ik')}
-                className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap ${
-                  activeDocTab === 'kinematics-ik'
-                    ? 'bg-white text-[#0F172A] shadow-xs'
-                    : 'text-[#475569] hover:text-[#0F172A]'
-                }`}
-              >
-                <Target className="w-3.5 h-3.5 text-[#0284C7]" />
-                1. Kinematics &amp; Limb IK
-              </button>
-              <button
-                type="button"
-                onClick={() => setActiveDocTab('full-body-reactivity')}
-                className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap ${
-                  activeDocTab === 'full-body-reactivity'
-                    ? 'bg-white text-[#0F172A] shadow-xs font-semibold'
-                    : 'text-[#475569] hover:text-[#0F172A]'
-                }`}
-              >
-                <Sparkles className="w-3.5 h-3.5 text-[#2563EB]" />
-                Full-Body Reactive Movement Skill
-              </button>
-              <button
-                type="button"
-                onClick={() => setActiveDocTab('procedural-kinematics')}
-                className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap ${
-                  activeDocTab === 'procedural-kinematics'
-                    ? 'bg-white text-[#0F172A] shadow-xs font-semibold'
-                    : 'text-[#475569] hover:text-[#0F172A]'
-                }`}
-              >
-                <Sparkles className="w-3.5 h-3.5 text-[#D97706]" />
-                2. Procedural Character Kinematics Skill
-              </button>
-              <button
-                type="button"
-                onClick={() => setActiveDocTab('spatial-interaction')}
-                className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap ${
-                  activeDocTab === 'spatial-interaction'
-                    ? 'bg-white text-[#0F172A] shadow-xs'
-                    : 'text-[#475569] hover:text-[#0F172A]'
-                }`}
-              >
-                <Compass className="w-3.5 h-3.5 text-[#DC2626]" />
-                3. Spatial Consistency &amp; Interaction
-              </button>
-              <button
-                type="button"
-                onClick={() => setActiveDocTab('procedural-motion')}
-                className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap ${
-                  activeDocTab === 'procedural-motion'
-                    ? 'bg-white text-[#0F172A] shadow-xs'
-                    : 'text-[#475569] hover:text-[#0F172A]'
-                }`}
-              >
-                <Activity className="w-3.5 h-3.5 text-[#059669]" />
-                3. Procedural Locomotion &amp; COM
-              </button>
-              <button
-                type="button"
-                onClick={() => setActiveDocTab('skills')}
-                className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap ${
-                  activeDocTab === 'skills'
-                    ? 'bg-white text-[#0F172A] shadow-xs'
-                    : 'text-[#475569] hover:text-[#0F172A]'
-                }`}
-              >
-                <ShieldCheck className="w-3.5 h-3.5 text-[#059669]" />
-                6. 53-Skill Library &amp; QC
-              </button>
-              <button
-                type="button"
-                onClick={() => setActiveDocTab('frames')}
-                className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap ${
-                  activeDocTab === 'frames'
-                    ? 'bg-white text-[#0F172A] shadow-xs'
-                    : 'text-[#475569] hover:text-[#0F172A]'
-                }`}
-              >
-                7. Act Mechanics
-              </button>
-              <button
-                type="button"
-                onClick={() => setActiveDocTab('bone-hierarchy')}
-                className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap ${
-                  activeDocTab === 'bone-hierarchy'
-                    ? 'bg-white text-[#0F172A] shadow-xs'
-                    : 'text-[#475569] hover:text-[#0F172A]'
-                }`}
-              >
-                8. Bone Transform Table
-              </button>
-              <button
-                type="button"
-                onClick={() => setActiveDocTab('methodology')}
-                className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap ${
-                  activeDocTab === 'methodology'
-                    ? 'bg-white text-[#0F172A] shadow-xs'
-                    : 'text-[#475569] hover:text-[#0F172A]'
-                }`}
-              >
-                9. Binary Spec
-              </button>
-            </div>
-          </div>
-
-          {activeDocTab === 'kinematics-ik' && (
-            <KinematicsIkTab
+          {mobileActiveView === 'engineering' && (
+            <EngineeringSuite
+              activeDocTab={activeDocTab}
+              setActiveDocTab={setActiveDocTab}
               ikLimbType={ikLimbType}
               setIkLimbType={setIkLimbType}
               ikFacingRight={ikFacingRight}
@@ -950,23 +713,10 @@ export function App() {
               setIkTargetHandY={setIkTargetHandY}
               ikFootPlanted={ikFootPlanted}
               setIkFootPlanted={setIkFootPlanted}
-            />
-          )}
-
-          {activeDocTab === 'full-body-reactivity' && (
-            <FullBodyReactivityTab strollKickAudit={strollKickAudit} />
-          )}
-
-          {activeDocTab === 'procedural-kinematics' && (
-            <ProceduralKinematicsTab
+              strollKickAudit={strollKickAudit}
               safeStrollKickFrame={safeStrollKickFrame}
               currentFrame={currentFrame}
               strollKickFrames={strollKickFrames}
-            />
-          )}
-
-          {activeDocTab === 'spatial-interaction' && (
-            <SpatialInteractionTab
               spatialDebugMode={spatialDebugMode}
               setSpatialDebugMode={setSpatialDebugMode}
               spatialShowAnchors={spatialShowAnchors}
@@ -992,24 +742,12 @@ export function App() {
               spatialPlatformHeight={spatialPlatformHeight}
               setSpatialPlatformHeight={setSpatialPlatformHeight}
               liveSpatialAudit={liveSpatialAudit}
-            />
-          )}
-
-          {activeDocTab === 'procedural-motion' && (
-            <ProceduralMotionTab
               gaitProgress={gaitProgress}
               setGaitProgress={setGaitProgress}
               gaitStrideLength={gaitStrideLength}
               setGaitStrideLength={setGaitStrideLength}
               gaitStepHeight={gaitStepHeight}
               setGaitStepHeight={setGaitStepHeight}
-              ikFacingRight={ikFacingRight}
-              setIkFacingRight={setIkFacingRight}
-            />
-          )}
-
-          {activeDocTab === 'skills' && (
-            <SkillsCatalogTab
               liveBiomechanicsAudit={liveBiomechanicsAudit}
               selectedSkillCategory={selectedSkillCategory}
               setSelectedSkillCategory={setSelectedSkillCategory}
@@ -1017,44 +755,20 @@ export function App() {
               setSkillSearchQuery={setSkillSearchQuery}
               synthesizing={synthesizing}
               handleSynthesizeAndDownload={handleSynthesizeAndDownload}
-            />
-          )}
-
-          {activeDocTab === 'frames' && (
-            <FrameInspectorTab
               activeAnimationMode={activeAnimationMode}
               sneezeFrames={sneezeFrames}
               superheroFrames={superheroFrames}
-            />
-          )}
-
-          {activeDocTab === 'bone-hierarchy' && (
-            <BoneHierarchyTab
-              currentFrame={currentFrame}
               totalModeFrames={totalModeFrames}
-              activeAnimationMode={activeAnimationMode}
               selectedBoneFigure={selectedBoneFigure}
               setSelectedBoneFigure={setSelectedBoneFigure}
               safeTeleportFrame={safeTeleportFrame}
               safeHeroJoints={safeHeroJoints}
-            />
-          )}
-
-          {activeDocTab === 'methodology' && (
-            <MethodologyTab
-              activeAnimationMode={activeAnimationMode}
               globalFps={globalFps}
-              totalModeFrames={totalModeFrames}
               basketballAudit={basketballAudit}
-              strollKickAudit={strollKickAudit}
               basketballFrames={basketballFrames}
-              strollKickFrames={strollKickFrames}
               phantomFrames={phantomFrames}
               speedStrengthFrames={speedStrengthFrames}
               teleportFrames={teleportFrames}
-              sneezeFrames={sneezeFrames}
-              superheroFrames={superheroFrames}
-              currentFrame={currentFrame}
               selectedPresetPath={selectedPresetPath}
               setSelectedPresetPath={setSelectedPresetPath}
               syncAnimationModeFromPath={syncAnimationModeFromPath}
@@ -1069,40 +783,231 @@ export function App() {
               inspectorCanvasRef={inspectorCanvasRef}
             />
           )}
-        </section>
+        </div>
+
+        {/* On Desktop/Laptop: Side-by-Side Studio Stage & Inspector */}
+        <div className="hidden lg:grid lg:grid-cols-12 gap-5 items-start">
+          {/* Main Stage Viewport Column */}
+          <div
+            className={`transition-all duration-200 ${
+              isInspectorCollapsed ? 'lg:col-span-12' : 'lg:col-span-8 xl:col-span-8'
+            }`}
+          >
+            <AnimationStudioStage
+              canvasRef={canvasRef}
+              activeAnimationMode={activeAnimationMode}
+              currentFrame={currentFrame}
+              setCurrentFrame={setCurrentFrame}
+              isPlaying={isPlaying}
+              setIsPlaying={setIsPlaying}
+              totalModeFrames={totalModeFrames}
+              showOnionSkin={showOnionSkin}
+              setShowOnionSkin={setShowOnionSkin}
+              showTrajectoryArc={showTrajectoryArc}
+              setShowTrajectoryArc={setShowTrajectoryArc}
+              showKinematicsCoM={showKinematicsCoM}
+              setShowKinematicsCoM={setShowKinematicsCoM}
+              vcamFollow={vcamFollow}
+              setVcamFollow={setVcamFollow}
+              globalFps={globalFps}
+              binaryStageOverride={binaryStageOverride}
+              setBinaryStageOverride={setBinaryStageOverride}
+              activeInspection={activeInspection}
+              basketballConfig={basketballConfig}
+              strollKickConfig={strollKickConfig}
+              phantomConfig={phantomConfig}
+              teleportConfig={teleportConfig}
+              speedStrengthConfig={speedStrengthConfig}
+              sneezeConfig={sneezeConfig}
+              heroConfig={heroConfig}
+              bounceConfig={bounceConfig}
+              basketballFrames={basketballFrames}
+              strollKickFrames={strollKickFrames}
+              phantomFrames={phantomFrames}
+              teleportFrames={teleportFrames}
+              speedStrengthFrames={speedStrengthFrames}
+              sneezeFrames={sneezeFrames}
+              superheroFrames={superheroFrames}
+              computedBounceFrames={computedBounceFrames}
+              safeBasketballFrame={safeBasketballFrame}
+              safeStrollKickFrame={safeStrollKickFrame}
+              safePhantomFrame={safePhantomFrame}
+              safeTeleportFrame={safeTeleportFrame}
+              safeSpeedStrengthFrame={safeSpeedStrengthFrame}
+              safeHeroFrame={safeHeroFrame}
+              safeBounceFrame={safeBounceFrame}
+            />
+          </div>
+
+          {/* Right Inspector Panel Column */}
+          {!isInspectorCollapsed && (
+            <div className="lg:col-span-4 xl:col-span-4">
+              <StudioInspectorPanel
+                activeAnimationMode={activeAnimationMode}
+                globalFps={globalFps}
+                currentFrame={currentFrame}
+                totalModeFrames={totalModeFrames}
+                basketballAudit={basketballAudit}
+                strollKickAudit={strollKickAudit}
+                safeBasketballFrame={safeBasketballFrame}
+                safeStrollKickFrame={safeStrollKickFrame}
+                safePhantomFrame={safePhantomFrame}
+                safeTeleportFrame={safeTeleportFrame}
+                safeSpeedStrengthFrame={safeSpeedStrengthFrame}
+                safeHeroFrame={safeHeroFrame}
+                safeBounceFrame={safeBounceFrame}
+                basketballConfig={basketballConfig}
+                setBasketballConfig={setBasketballConfig}
+                strollKickConfig={strollKickConfig}
+                setStrollKickConfig={setStrollKickConfig}
+                phantomConfig={phantomConfig}
+                setPhantomConfig={setPhantomConfig}
+                speedStrengthConfig={speedStrengthConfig}
+                setSpeedStrengthConfig={setSpeedStrengthConfig}
+                teleportConfig={teleportConfig}
+                setTeleportConfig={setTeleportConfig}
+                sneezeConfig={sneezeConfig}
+                setSneezeConfig={setSneezeConfig}
+                heroConfig={heroConfig}
+                setHeroConfig={setHeroConfig}
+                bounceConfig={bounceConfig}
+                setBounceConfig={setBounceConfig}
+                baseTemplate22={baseTemplate22}
+                baseTemplate27={baseTemplate27}
+                synthesizing={synthesizing}
+                handleSynthesizeAndDownload={handleSynthesizeAndDownload}
+                basketballFrames={basketballFrames}
+                strollKickFrames={strollKickFrames}
+                phantomFrames={phantomFrames}
+                teleportFrames={teleportFrames}
+              />
+            </div>
+          )}
+        </div>
+
+        {/* Desktop Research & Engineering Suite (Below main studio workspace) */}
+        <div className="hidden lg:block pt-2">
+          <EngineeringSuite
+            activeDocTab={activeDocTab}
+            setActiveDocTab={setActiveDocTab}
+            ikLimbType={ikLimbType}
+            setIkLimbType={setIkLimbType}
+            ikFacingRight={ikFacingRight}
+            setIkFacingRight={setIkFacingRight}
+            ikTargetFootX={ikTargetFootX}
+            setIkTargetFootX={setIkTargetFootX}
+            ikTargetFootY={ikTargetFootY}
+            setIkTargetFootY={setIkTargetFootY}
+            ikTargetHandX={ikTargetHandX}
+            setIkTargetHandX={setIkTargetHandX}
+            ikTargetHandY={ikTargetHandY}
+            setIkTargetHandY={setIkTargetHandY}
+            ikFootPlanted={ikFootPlanted}
+            setIkFootPlanted={setIkFootPlanted}
+            strollKickAudit={strollKickAudit}
+            safeStrollKickFrame={safeStrollKickFrame}
+            currentFrame={currentFrame}
+            strollKickFrames={strollKickFrames}
+            spatialDebugMode={spatialDebugMode}
+            setSpatialDebugMode={setSpatialDebugMode}
+            spatialShowAnchors={spatialShowAnchors}
+            setSpatialShowAnchors={setSpatialShowAnchors}
+            spatialShowCameraFrame={spatialShowCameraFrame}
+            setSpatialShowCameraFrame={setSpatialShowCameraFrame}
+            spatialShowHitboxRing={spatialShowHitboxRing}
+            setSpatialShowHitboxRing={setSpatialShowHitboxRing}
+            spatialAutoSolveReach={spatialAutoSolveReach}
+            setSpatialAutoSolveReach={setSpatialAutoSolveReach}
+            spatialTargetClashFrame={spatialTargetClashFrame}
+            setSpatialTargetClashFrame={setSpatialTargetClashFrame}
+            spatialAttackerX={spatialAttackerX}
+            setSpatialAttackerX={setSpatialAttackerX}
+            spatialAttackerElevation={spatialAttackerElevation}
+            setSpatialAttackerElevation={setSpatialAttackerElevation}
+            spatialDefenderX={spatialDefenderX}
+            setSpatialDefenderX={setSpatialDefenderX}
+            spatialDefenderElevation={spatialDefenderElevation}
+            setSpatialDefenderElevation={setSpatialDefenderElevation}
+            spatialAttackType={spatialAttackType}
+            setSpatialAttackType={setSpatialAttackType}
+            spatialPlatformHeight={spatialPlatformHeight}
+            setSpatialPlatformHeight={setSpatialPlatformHeight}
+            liveSpatialAudit={liveSpatialAudit}
+            gaitProgress={gaitProgress}
+            setGaitProgress={setGaitProgress}
+            gaitStrideLength={gaitStrideLength}
+            setGaitStrideLength={setGaitStrideLength}
+            gaitStepHeight={gaitStepHeight}
+            setGaitStepHeight={setGaitStepHeight}
+            liveBiomechanicsAudit={liveBiomechanicsAudit}
+            selectedSkillCategory={selectedSkillCategory}
+            setSelectedSkillCategory={setSelectedSkillCategory}
+            skillSearchQuery={skillSearchQuery}
+            setSkillSearchQuery={setSkillSearchQuery}
+            synthesizing={synthesizing}
+            handleSynthesizeAndDownload={handleSynthesizeAndDownload}
+            activeAnimationMode={activeAnimationMode}
+            sneezeFrames={sneezeFrames}
+            superheroFrames={superheroFrames}
+            totalModeFrames={totalModeFrames}
+            selectedBoneFigure={selectedBoneFigure}
+            setSelectedBoneFigure={setSelectedBoneFigure}
+            safeTeleportFrame={safeTeleportFrame}
+            safeHeroJoints={safeHeroJoints}
+            globalFps={globalFps}
+            basketballAudit={basketballAudit}
+            basketballFrames={basketballFrames}
+            phantomFrames={phantomFrames}
+            speedStrengthFrames={speedStrengthFrames}
+            teleportFrames={teleportFrames}
+            selectedPresetPath={selectedPresetPath}
+            setSelectedPresetPath={setSelectedPresetPath}
+            syncAnimationModeFromPath={syncAnimationModeFromPath}
+            activeInspection={activeInspection}
+            inspectLoading={inspectLoading}
+            inspectError={inspectError}
+            binaryStageOverride={binaryStageOverride}
+            setBinaryStageOverride={setBinaryStageOverride}
+            handleFileUpload={handleFileUpload}
+            setCurrentFrame={setCurrentFrame}
+            setIsPlaying={setIsPlaying}
+            inspectorCanvasRef={inspectorCanvasRef}
+          />
+        </div>
       </main>
 
-      <footer className="border-t border-[#E2E8F0] bg-white px-6 py-5 mt-12">
-        <div className="max-w-[1360px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#64748B]">
+      {/* Modern Studio Footer */}
+      <footer className="border-t border-slate-200 bg-white px-4 sm:px-6 py-4 mt-auto">
+        <div className="max-w-[1800px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
           <div className="flex items-center gap-2">
-            <BookOpen className="w-3.5 h-3.5 text-[#0284C7]" />
+            <BookOpen className="w-4 h-4 text-sky-600" />
             <span>
               Stick Nodes Animation Forge · 12 FPS / 24 FPS Sky-Flight Engine &amp; Binary Corpus
             </span>
           </div>
-          <div className="flex flex-wrap items-center gap-4">
+          <div className="flex flex-wrap items-center gap-3 font-mono text-[11px]">
             <a
               href="/downloads/walk_scratch_fly_superhero_12fps.stknds"
               download
-              className="hover:text-[#0F172A] underline underline-offset-2"
+              className="hover:text-slate-900 transition-colors"
             >
-              walk_scratch_fly_superhero_12fps.stknds
+              superhero_12fps.stknds
             </a>
-            <span aria-hidden="true">·</span>
+            <span aria-hidden="true" className="text-slate-300">·</span>
             <a
               href="/downloads/walk_scratch_fly_superhero_24fps.stknds"
               download
-              className="hover:text-[#0F172A] underline underline-offset-2"
+              className="hover:text-slate-900 transition-colors"
             >
-              walk_scratch_fly_superhero_24fps.stknds
+              superhero_24fps.stknds
             </a>
-            <span aria-hidden="true">·</span>
+            <span aria-hidden="true" className="text-slate-300">·</span>
             <a
-              href="/downloads/walk_scratch_fly_superhero_24fps_53f.stknds"
+              href="/downloads/basketball_walk_pickup_dribble_24f.stknds"
               download
-              className="hover:text-[#0F172A] underline underline-offset-2"
+              className="hover:text-slate-900 transition-colors"
             >
-              walk_scratch_fly_superhero_24fps_53f.stknds
+              basketball_24f.stknds
             </a>
           </div>
         </div>
@@ -1112,3 +1017,4 @@ export function App() {
 }
 
 export default App;
+

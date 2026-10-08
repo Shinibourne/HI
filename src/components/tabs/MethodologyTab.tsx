@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { CheckCircle2, AlertTriangle, ShieldCheck, FileCode2, Upload, AlertCircle, Play, Layers } from 'lucide-react';
 import { BasketballAuditReport } from '../../lib/basketballChoreographyFrames';
 import { BiomechanicalAuditReport } from '../../lib/sitWalkKickBallFrames';
 import { StkndsInspectionResult } from '../../lib/stknds/stkndsCore';
 import { CORPUS_PRESETS } from '../../data/corpusPresets';
+import { computeForwardKinematics } from '../../lib/kinematics/forwardKinematics';
 
 interface MethodologyTabProps {
   activeAnimationMode: string;
@@ -60,6 +61,116 @@ export const MethodologyTab: React.FC<MethodologyTabProps> = ({
   setIsPlaying,
   inspectorCanvasRef,
 }) => {
+  useEffect(() => {
+    if (!inspectorCanvasRef?.current || !activeInspection || activeInspection.frames.length === 0) return;
+    const canvas = inspectorCanvasRef.current;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const w = canvas.width;
+    const h = canvas.height;
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, w, h);
+
+    const safeIdx = currentFrame % activeInspection.frames.length;
+    const binFrame = activeInspection.frames[safeIdx];
+    const instances = binFrame.instances ?? [
+      {
+        instanceIndex: 0,
+        instanceScale: binFrame.instanceScale,
+        sceneX: binFrame.sceneX,
+        sceneY: binFrame.sceneY,
+        instanceColorHex: binFrame.instanceColorHex,
+        nodes: binFrame.nodes,
+      },
+    ];
+
+    const scaleX = w / 1920;
+    const scaleY = h / 1080;
+    const groundSceneY = 755;
+    const groundCanvasY = groundSceneY * scaleY;
+
+    // Light High-Contrast Sky & Platform Floor (Never Black)
+    const skyGrad = ctx.createLinearGradient(0, 0, 0, groundCanvasY);
+    skyGrad.addColorStop(0, '#F8FAFC');
+    skyGrad.addColorStop(1, '#F1F5F9');
+    ctx.fillStyle = skyGrad;
+    ctx.fillRect(0, 0, w, groundCanvasY);
+
+    const floorGrad = ctx.createLinearGradient(0, groundCanvasY, 0, h);
+    floorGrad.addColorStop(0, '#E2E8F0');
+    floorGrad.addColorStop(0.15, '#EDF2F7');
+    floorGrad.addColorStop(1, '#CBD5E1');
+    ctx.fillStyle = floorGrad;
+    ctx.fillRect(0, groundCanvasY, w, h - groundCanvasY);
+
+    // Fine coordinate grid
+    ctx.strokeStyle = '#E2E8F0';
+    ctx.lineWidth = 1;
+    for (let gx = 0; gx < w; gx += 40) {
+      ctx.beginPath();
+      ctx.moveTo(gx, 0);
+      ctx.lineTo(gx, h);
+      ctx.stroke();
+    }
+
+    // Master Ground line
+    ctx.strokeStyle = '#334155';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(0, groundCanvasY);
+    ctx.lineTo(w, groundCanvasY);
+    ctx.stroke();
+
+    ctx.save();
+    const targetSceneX = 720;
+    const targetSceneY = 540;
+    ctx.translate(w * 0.5, h * 0.5);
+    const z = binFrame.camZoom && binFrame.camZoom > 0.2 ? binFrame.camZoom * 0.9 : 0.9;
+    ctx.scale(z, z);
+    ctx.translate(-targetSceneX * scaleX, -targetSceneY * scaleY);
+
+    for (const inst of instances) {
+      const wAngles = inst.nodes.map((n: any) => n.worldAngle);
+      const nonZeroLimbs = inst.nodes.filter((n: any, idx: number) => idx !== 0 && idx !== 13 && n.length > 1).length;
+      if (nonZeroLimbs === 0 && inst.nodes[13] && inst.nodes[13].length > 0) {
+        // Ball / Prop
+        const r = inst.nodes[13].length * 0.5 * inst.instanceScale * scaleX;
+        ctx.save();
+        ctx.fillStyle = inst.nodes[13].colorHex || inst.instanceColorHex;
+        ctx.beginPath();
+        ctx.arc(inst.sceneX * scaleX, inst.sceneY * scaleY, Math.max(3, r), 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      } else if (inst.nodes.length === 17) {
+        const joints = computeForwardKinematics(inst.sceneX, inst.sceneY, wAngles, inst.instanceScale);
+        ctx.save();
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        for (let i = 1; i < 17; i++) {
+          if (i === 13) continue;
+          const j = joints[i];
+          ctx.strokeStyle = inst.nodes[i]?.colorHex || inst.instanceColorHex;
+          ctx.lineWidth = Math.max(1.5, j.thickness * inst.instanceScale * scaleX);
+          ctx.beginPath();
+          ctx.moveTo(j.startX * scaleX, j.startY * scaleY);
+          ctx.lineTo(j.endX * scaleX, j.endY * scaleY);
+          ctx.stroke();
+        }
+        const headJ = joints[13];
+        const headCx = ((headJ.startX + headJ.endX) * 0.5) * scaleX;
+        const headCy = ((headJ.startY + headJ.endY) * 0.5) * scaleY;
+        const headR = (headJ.length * inst.instanceScale * 0.5) * scaleX;
+        ctx.fillStyle = inst.nodes[13]?.colorHex || inst.instanceColorHex;
+        ctx.beginPath();
+        ctx.arc(headCx, headCy, Math.max(3, headR), 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+    ctx.restore();
+  }, [inspectorCanvasRef, activeInspection, currentFrame]);
+
   return (
     <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -128,9 +239,9 @@ export const MethodologyTab: React.FC<MethodologyTabProps> = ({
             </span>
           </div>
 
-          <div className="overflow-x-auto max-h-[440px] overflow-y-auto">
+          <div className="overflow-x-auto max-h-[440px] overflow-y-auto border border-[#E2E8F0] rounded-lg">
             {activeAnimationMode === 'basketball' ? (
-              <table className="w-full text-left border-collapse text-xs font-mono">
+              <table className="w-full text-left border-collapse text-xs font-mono min-w-[760px]">
                 <thead className="sticky top-0 bg-[#F8FAFC] border-b border-[#E2E8F0] text-[#475569]">
                   <tr>
                     <th className="py-2.5 px-3">Frame</th>
@@ -189,7 +300,7 @@ export const MethodologyTab: React.FC<MethodologyTabProps> = ({
                 </tbody>
               </table>
             ) : activeAnimationMode === 'stroll-kick' ? (
-              <table className="w-full text-left border-collapse text-xs font-mono">
+              <table className="w-full text-left border-collapse text-xs font-mono min-w-[760px]">
                 <thead className="sticky top-0 bg-[#F8FAFC] border-b border-[#E2E8F0] text-[#475569]">
                   <tr>
                     <th className="py-2.5 px-3">Frame</th>
@@ -238,7 +349,7 @@ export const MethodologyTab: React.FC<MethodologyTabProps> = ({
                 </tbody>
               </table>
             ) : activeAnimationMode === 'phantom' ? (
-              <table className="w-full text-left border-collapse text-xs font-mono">
+              <table className="w-full text-left border-collapse text-xs font-mono min-w-[760px]">
                 <thead className="sticky top-0 bg-[#F8FAFC] border-b border-[#E2E8F0] text-[#475569]">
                   <tr>
                     <th className="py-2.5 px-3">Frame</th>
@@ -285,7 +396,7 @@ export const MethodologyTab: React.FC<MethodologyTabProps> = ({
                 </tbody>
               </table>
             ) : activeAnimationMode === 'speed-strength' ? (
-              <table className="w-full text-left border-collapse text-xs font-mono">
+              <table className="w-full text-left border-collapse text-xs font-mono min-w-[760px]">
                 <thead className="sticky top-0 bg-[#F8FAFC] border-b border-[#E2E8F0] text-[#475569]">
                   <tr>
                     <th className="py-2.5 px-3">Frame</th>
@@ -328,7 +439,7 @@ export const MethodologyTab: React.FC<MethodologyTabProps> = ({
                 </tbody>
               </table>
             ) : activeAnimationMode === 'teleport' ? (
-              <table className="w-full text-left border-collapse text-xs font-mono">
+              <table className="w-full text-left border-collapse text-xs font-mono min-w-[760px]">
                 <thead className="sticky top-0 bg-[#F8FAFC] border-b border-[#E2E8F0] text-[#475569]">
                   <tr>
                     <th className="py-2.5 px-3">Frame</th>
@@ -393,7 +504,7 @@ export const MethodologyTab: React.FC<MethodologyTabProps> = ({
                 </tbody>
               </table>
             ) : (
-              <table className="w-full text-left border-collapse text-xs font-mono">
+              <table className="w-full text-left border-collapse text-xs font-mono min-w-[760px]">
                 <thead className="sticky top-0 bg-[#F8FAFC] border-b border-[#E2E8F0] text-[#475569]">
                   <tr>
                     <th className="py-2.5 px-3">Frame</th>

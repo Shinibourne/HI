@@ -96,6 +96,20 @@ export const AppCanvas: React.FC<AppCanvasProps> = ({
     const scaleX = w / 1920;
     const scaleY = h / 1080;
 
+    // Base Studio Backdrop & Light High-Contrast Platform (Never pitch black, perfect visibility)
+    const baseSky = ctx.createLinearGradient(0, 0, 0, 755 * scaleY);
+    baseSky.addColorStop(0, '#F8FAFC');
+    baseSky.addColorStop(1, '#F1F5F9');
+    ctx.fillStyle = baseSky;
+    ctx.fillRect(0, 0, w, 755 * scaleY);
+
+    const basePlatform = ctx.createLinearGradient(0, 755 * scaleY, 0, h);
+    basePlatform.addColorStop(0, '#E2E8F0');
+    basePlatform.addColorStop(0.12, '#EDF2F7');
+    basePlatform.addColorStop(1, '#CBD5E1');
+    ctx.fillStyle = basePlatform;
+    ctx.fillRect(0, 755 * scaleY, w, h - 755 * scaleY);
+
     if (binaryStageOverride && activeInspection && activeInspection.frames.length > 0) {
       const safeIdx = currentFrame % activeInspection.frames.length;
       const binFrame = activeInspection.frames[safeIdx];
@@ -118,13 +132,22 @@ export const AppCanvas: React.FC<AppCanvasProps> = ({
       ctx.scale(z, z);
       ctx.translate(-targetSceneX * scaleX, -targetSceneY * scaleY);
 
-      const bgGrad = ctx.createLinearGradient(0, 0, 0, 755 * scaleY);
+      const groundCanvasY = 755 * scaleY;
+
+      const bgGrad = ctx.createLinearGradient(0, 0, 0, groundCanvasY);
       bgGrad.addColorStop(0, '#F8FAFC');
       bgGrad.addColorStop(1, '#F1F5F9');
       ctx.fillStyle = bgGrad;
-      ctx.fillRect(-1600, -1600, w + 3600, 755 * scaleY + 1600);
+      ctx.fillRect(-2400, -1600, w + 4800, groundCanvasY + 1600);
 
-      const groundCanvasY = 755 * scaleY;
+      // Studio Platform Floor (High-Contrast, not black)
+      const binFloor = ctx.createLinearGradient(0, groundCanvasY, 0, groundCanvasY + 600 * scaleY);
+      binFloor.addColorStop(0, '#E2E8F0');
+      binFloor.addColorStop(0.12, '#EDF2F7');
+      binFloor.addColorStop(1, '#CBD5E1');
+      ctx.fillStyle = binFloor;
+      ctx.fillRect(-2400, groundCanvasY, w + 4800, 1600);
+
       ctx.strokeStyle = '#334155';
       ctx.lineWidth = 2.5;
       ctx.beginPath();
@@ -197,8 +220,11 @@ export const AppCanvas: React.FC<AppCanvasProps> = ({
       }
       ctx.translate(-camCenterX * scaleX, -camCenterY * scaleY);
 
+      const groundSceneY = 755;
+      const groundCanvasY = groundSceneY * scaleY;
+
       // Studio Court Backdrop Gradient
-      const bgGrad = ctx.createLinearGradient(0, 0, 0, 755 * scaleY);
+      const bgGrad = ctx.createLinearGradient(0, 0, 0, groundCanvasY);
       if (activeSpec.ballState.includes('DRIBBLE')) {
         bgGrad.addColorStop(0, '#FEF3C7');
         bgGrad.addColorStop(1, '#FFFBEB');
@@ -210,7 +236,15 @@ export const AppCanvas: React.FC<AppCanvasProps> = ({
         bgGrad.addColorStop(1, '#F1F5F9');
       }
       ctx.fillStyle = bgGrad;
-      ctx.fillRect(-1600, -1600, w + 3600, 755 * scaleY + 1600);
+      ctx.fillRect(-2400, -1600, w + 4800, groundCanvasY + 1600);
+
+      // Court Platform Floor (High-Contrast, never black - warm polished maple gym surface)
+      const courtFloorGrad = ctx.createLinearGradient(0, groundCanvasY, 0, groundCanvasY + 600 * scaleY);
+      courtFloorGrad.addColorStop(0, '#FED7AA');
+      courtFloorGrad.addColorStop(0.12, '#FFEDD5');
+      courtFloorGrad.addColorStop(1, '#FDBA74');
+      ctx.fillStyle = courtFloorGrad;
+      ctx.fillRect(-2400, groundCanvasY, w + 4800, 1600);
 
       // Fine coordinate grid
       ctx.strokeStyle = '#E2E8F0';
@@ -227,9 +261,6 @@ export const AppCanvas: React.FC<AppCanvasProps> = ({
         ctx.lineTo(w + 1600, gy * scaleY);
         ctx.stroke();
       }
-
-      const groundSceneY = 755;
-      const groundCanvasY = groundSceneY * scaleY;
 
       // Master Ground Plane Line (Universal Y = 755.0 px)
       ctx.strokeStyle = '#334155';
@@ -506,9 +537,12 @@ export const AppCanvas: React.FC<AppCanvasProps> = ({
       ctx.scale(activeSpec.camZoom, activeSpec.camZoom);
       ctx.translate((-targetSceneX + activeSpec.camX) * scaleX, (-targetSceneY + activeSpec.camY) * scaleY);
 
+      const groundSceneY = 755;
+      const groundCanvasY = groundSceneY * scaleY;
+
       // Flash & impact pulse on Frame 174 (Hit-Stop Kick Frame)
       const isHitFrame = activeSpec.frame === 174;
-      const bgGrad = ctx.createLinearGradient(0, 0, 0, 755 * scaleY);
+      const bgGrad = ctx.createLinearGradient(0, 0, 0, groundCanvasY);
       if (isHitFrame) {
         bgGrad.addColorStop(0, '#FEF3C7');
         bgGrad.addColorStop(1, '#FDE68A');
@@ -523,7 +557,15 @@ export const AppCanvas: React.FC<AppCanvasProps> = ({
         bgGrad.addColorStop(1, '#F1F5F9');
       }
       ctx.fillStyle = bgGrad;
-      ctx.fillRect(-1600, -1600, w + 3600, 755 * scaleY + 1600);
+      ctx.fillRect(-2400, -1600, w + 4800, groundCanvasY + 1600);
+
+      // Studio Platform Floor (High-Contrast, not black)
+      const strollFloorGrad = ctx.createLinearGradient(0, groundCanvasY, 0, groundCanvasY + 600 * scaleY);
+      strollFloorGrad.addColorStop(0, '#E2E8F0');
+      strollFloorGrad.addColorStop(0.12, '#EDF2F7');
+      strollFloorGrad.addColorStop(1, '#CBD5E1');
+      ctx.fillStyle = strollFloorGrad;
+      ctx.fillRect(-2400, groundCanvasY, w + 4800, 1600);
 
       // Fine coordinate grid
       ctx.strokeStyle = '#E2E8F0';
@@ -540,9 +582,6 @@ export const AppCanvas: React.FC<AppCanvasProps> = ({
         ctx.lineTo(w + 1600, gy * scaleY);
         ctx.stroke();
       }
-
-      const groundSceneY = 755;
-      const groundCanvasY = groundSceneY * scaleY;
 
       // Master Ground Plane Line (Universal Y = 755.0 px)
       ctx.strokeStyle = '#334155';
@@ -859,8 +898,11 @@ export const AppCanvas: React.FC<AppCanvasProps> = ({
       }
       ctx.translate(shakeX * scaleX, shakeY * scaleY);
 
+      const groundSceneY = 755;
+      const groundCanvasY = groundSceneY * scaleY;
+
       // Studio Arena Backdrop - Dynamic Flash Tints
-      const skyGrad = ctx.createLinearGradient(0, 0, 0, 755 * scaleY);
+      const skyGrad = ctx.createLinearGradient(0, 0, 0, groundCanvasY);
       skyGrad.addColorStop(
         0,
         activeSpec.screenShake || activeSpec.frame === 46
@@ -877,7 +919,15 @@ export const AppCanvas: React.FC<AppCanvasProps> = ({
       );
       skyGrad.addColorStop(1, '#F8FAFC');
       ctx.fillStyle = skyGrad;
-      ctx.fillRect(-1200, -1200, w + 2400, 755 * scaleY + 1200);
+      ctx.fillRect(-2400, -1600, w + 4800, groundCanvasY + 1600);
+
+      // Arena Platform Floor (High-Contrast, not black)
+      const phantomFloorGrad = ctx.createLinearGradient(0, groundCanvasY, 0, groundCanvasY + 600 * scaleY);
+      phantomFloorGrad.addColorStop(0, '#E2E8F0');
+      phantomFloorGrad.addColorStop(0.12, '#EDF2F7');
+      phantomFloorGrad.addColorStop(1, '#CBD5E1');
+      ctx.fillStyle = phantomFloorGrad;
+      ctx.fillRect(-2400, groundCanvasY, w + 4800, 1600);
 
       // Fine coordinate grid
       ctx.strokeStyle = '#E2E8F0';
@@ -894,9 +944,6 @@ export const AppCanvas: React.FC<AppCanvasProps> = ({
         ctx.lineTo(w + 400, gy * scaleY);
         ctx.stroke();
       }
-
-      const groundSceneY = 755;
-      const groundCanvasY = groundSceneY * scaleY;
 
       // Ground plane line (Universal Ground Plane Y = 755.0 px)
       ctx.strokeStyle = '#334155';
@@ -1209,6 +1256,9 @@ export const AppCanvas: React.FC<AppCanvasProps> = ({
         ctx.translate(-targetSceneX * scaleX, -targetSceneY * scaleY);
       }
 
+      const groundSceneY = 755;
+      const groundCanvasY = groundSceneY * scaleY;
+
       // Studio Arena Backdrop
       const skyGrad = ctx.createLinearGradient(0, 0, 0, 600 * scaleY);
       skyGrad.addColorStop(
@@ -1223,7 +1273,15 @@ export const AppCanvas: React.FC<AppCanvasProps> = ({
       );
       skyGrad.addColorStop(1, '#F1F5F9');
       ctx.fillStyle = skyGrad;
-      ctx.fillRect(-1000, -1000, w + 2000, 640 * scaleY + 1000);
+      ctx.fillRect(-2400, -1600, w + 4800, groundCanvasY + 1600);
+
+      // Arena Platform Floor (High-Contrast, never black - clean gym/dojo studio floor)
+      const arenaFloorGrad = ctx.createLinearGradient(0, groundCanvasY, 0, groundCanvasY + 600 * scaleY);
+      arenaFloorGrad.addColorStop(0, '#E2E8F0');
+      arenaFloorGrad.addColorStop(0.12, '#EDF2F7');
+      arenaFloorGrad.addColorStop(1, '#CBD5E1');
+      ctx.fillStyle = arenaFloorGrad;
+      ctx.fillRect(-2400, groundCanvasY, w + 4800, 1600);
 
       // Coordinate grid
       ctx.strokeStyle = '#E2E8F0';
@@ -1240,9 +1298,6 @@ export const AppCanvas: React.FC<AppCanvasProps> = ({
         ctx.lineTo(w + 400, gy * scaleY);
         ctx.stroke();
       }
-
-      const groundSceneY = 755;
-      const groundCanvasY = groundSceneY * scaleY;
 
       // Ground plane (Invariant Y = 755.0 px)
       ctx.strokeStyle = '#334155';
@@ -1424,8 +1479,11 @@ export const AppCanvas: React.FC<AppCanvasProps> = ({
         ctx.translate(-targetSceneX * scaleX, -targetSceneY * scaleY);
       }
 
+      const groundSceneY = 755;
+      const groundCanvasY = groundSceneY * scaleY;
+
       // Studio / Anime Ambush Backdrop
-      const skyGrad = ctx.createLinearGradient(0, 0, 0, 580 * scaleY);
+      const skyGrad = ctx.createLinearGradient(0, 0, 0, groundCanvasY);
       skyGrad.addColorStop(
         0,
         activeSpec.act.includes('Screen Shake') || activeSpec.phase.includes('CLASH')
@@ -1436,18 +1494,26 @@ export const AppCanvas: React.FC<AppCanvasProps> = ({
       );
       skyGrad.addColorStop(1, '#F8FAFC');
       ctx.fillStyle = skyGrad;
-      ctx.fillRect(-800, -800, w + 1600, 620 * scaleY + 800);
+      ctx.fillRect(-2400, -1600, w + 4800, groundCanvasY + 1600);
+
+      // Arena Platform Floor (High-Contrast, never black - clean studio floor)
+      const teleportFloorGrad = ctx.createLinearGradient(0, groundCanvasY, 0, groundCanvasY + 600 * scaleY);
+      teleportFloorGrad.addColorStop(0, '#E2E8F0');
+      teleportFloorGrad.addColorStop(0.12, '#EDF2F7');
+      teleportFloorGrad.addColorStop(1, '#CBD5E1');
+      ctx.fillStyle = teleportFloorGrad;
+      ctx.fillRect(-2400, groundCanvasY, w + 4800, 1600);
 
       // Coordinate grid
       ctx.strokeStyle = '#E2E8F0';
       ctx.lineWidth = 1;
-      for (let gx = 0; gx < 1920; gx += 160) {
+      for (let gx = -400; gx < 2400; gx += 160) {
         ctx.beginPath();
         ctx.moveTo(gx * scaleX, -400);
         ctx.lineTo(gx * scaleX, h + 400);
         ctx.stroke();
       }
-      for (let gy = 0; gy < 1080; gy += 120) {
+      for (let gy = -200; gy < 1400; gy += 120) {
         ctx.beginPath();
         ctx.moveTo(-400, gy * scaleY);
         ctx.lineTo(w + 400, gy * scaleY);
@@ -1468,15 +1534,12 @@ export const AppCanvas: React.FC<AppCanvasProps> = ({
         ctx.restore();
       }
 
-      const groundSceneY = 755;
-      const groundCanvasY = groundSceneY * scaleY;
-
       // Ground plane
-      ctx.strokeStyle = '#475569';
-      ctx.lineWidth = 2;
+      ctx.strokeStyle = '#334155';
+      ctx.lineWidth = 2.5;
       ctx.beginPath();
-      ctx.moveTo(-200 * scaleX, groundCanvasY);
-      ctx.lineTo(1860 * scaleX, groundCanvasY);
+      ctx.moveTo(-400 * scaleX, groundCanvasY);
+      ctx.lineTo(2400 * scaleX, groundCanvasY);
       ctx.stroke();
 
       ctx.strokeStyle = '#94A3B8';
@@ -1695,8 +1758,11 @@ export const AppCanvas: React.FC<AppCanvasProps> = ({
         ctx.translate(-targetX, -targetY);
       }
 
+      const groundSceneY = 758;
+      const groundCanvasY = groundSceneY * scaleY;
+
       // Background sky & studio gradient
-      const skyGrad = ctx.createLinearGradient(0, 0, 0, 500 * scaleY);
+      const skyGrad = ctx.createLinearGradient(0, 0, 0, groundCanvasY);
       skyGrad.addColorStop(
         0,
         activeSpec.act.includes('Explosion')
@@ -1707,21 +1773,29 @@ export const AppCanvas: React.FC<AppCanvasProps> = ({
       );
       skyGrad.addColorStop(1, '#F8FAFC');
       ctx.fillStyle = skyGrad;
-      ctx.fillRect(-400, -400, w + 800, 500 * scaleY + 400);
+      ctx.fillRect(-2400, -1600, w + 4800, groundCanvasY + 1600);
+
+      // Sneeze Platform Floor (High-Contrast, never black - clean studio floor)
+      const sneezeFloorGrad = ctx.createLinearGradient(0, groundCanvasY, 0, groundCanvasY + 600 * scaleY);
+      sneezeFloorGrad.addColorStop(0, '#E2E8F0');
+      sneezeFloorGrad.addColorStop(0.12, '#EDF2F7');
+      sneezeFloorGrad.addColorStop(1, '#CBD5E1');
+      ctx.fillStyle = sneezeFloorGrad;
+      ctx.fillRect(-2400, groundCanvasY, w + 4800, 1600);
 
       // Coordinate grid
       ctx.strokeStyle = '#E2E8F0';
       ctx.lineWidth = 1;
-      for (let gx = 160; gx < 1920; gx += 160) {
+      for (let gx = -400; gx < 2400; gx += 160) {
         ctx.beginPath();
-        ctx.moveTo(gx * scaleX, 0);
-        ctx.lineTo(gx * scaleX, h);
+        ctx.moveTo(gx * scaleX, -400);
+        ctx.lineTo(gx * scaleX, h + 400);
         ctx.stroke();
       }
-      for (let gy = 120; gy < 1080; gy += 120) {
+      for (let gy = -200; gy < 1400; gy += 120) {
         ctx.beginPath();
-        ctx.moveTo(0, gy * scaleY);
-        ctx.lineTo(w, gy * scaleY);
+        ctx.moveTo(-400, gy * scaleY);
+        ctx.lineTo(w + 400, gy * scaleY);
         ctx.stroke();
       }
 
@@ -1745,15 +1819,12 @@ export const AppCanvas: React.FC<AppCanvasProps> = ({
         recoilApexCanvasY - 8
       );
 
-      const groundSceneY = 758;
-      const groundCanvasY = groundSceneY * scaleY;
-
       // Ground plane
-      ctx.strokeStyle = '#475569';
-      ctx.lineWidth = 2;
+      ctx.strokeStyle = '#334155';
+      ctx.lineWidth = 2.5;
       ctx.beginPath();
-      ctx.moveTo(60 * scaleX, groundCanvasY);
-      ctx.lineTo(1860 * scaleX, groundCanvasY);
+      ctx.moveTo(-400 * scaleX, groundCanvasY);
+      ctx.lineTo(2400 * scaleX, groundCanvasY);
       ctx.stroke();
 
       ctx.strokeStyle = '#94A3B8';
@@ -1950,26 +2021,37 @@ export const AppCanvas: React.FC<AppCanvasProps> = ({
         ctx.translate(-targetX, -targetY);
       }
 
-      // Upper Stratosphere Sky Band (Y: 0..380 in scene units)
-      const skyGrad = ctx.createLinearGradient(0, 0, 0, 420 * scaleY);
+      const groundSceneY = 758;
+      const groundCanvasY = groundSceneY * scaleY;
+
+      // Upper Stratosphere Sky Band (Y: 0..groundCanvasY in scene units)
+      const skyGrad = ctx.createLinearGradient(0, 0, 0, groundCanvasY);
       skyGrad.addColorStop(0, activeSpec.isFlightFrame ? '#E0F2FE' : '#F1F5F9');
       skyGrad.addColorStop(1, '#F8FAFC');
       ctx.fillStyle = skyGrad;
-      ctx.fillRect(-400, -400, w + 800, 420 * scaleY + 400);
+      ctx.fillRect(-2400, -1600, w + 4800, groundCanvasY + 1600);
+
+      // Superhero Platform Floor (High-Contrast, never black - clean studio floor)
+      const heroFloorGrad = ctx.createLinearGradient(0, groundCanvasY, 0, groundCanvasY + 600 * scaleY);
+      heroFloorGrad.addColorStop(0, '#E2E8F0');
+      heroFloorGrad.addColorStop(0.12, '#EDF2F7');
+      heroFloorGrad.addColorStop(1, '#CBD5E1');
+      ctx.fillStyle = heroFloorGrad;
+      ctx.fillRect(-2400, groundCanvasY, w + 4800, 1600);
 
       // Coordinate grid
       ctx.strokeStyle = '#E2E8F0';
       ctx.lineWidth = 1;
-      for (let gx = 160; gx < 1920; gx += 160) {
+      for (let gx = -400; gx < 2400; gx += 160) {
         ctx.beginPath();
-        ctx.moveTo(gx * scaleX, 0);
-        ctx.lineTo(gx * scaleX, h);
+        ctx.moveTo(gx * scaleX, -400);
+        ctx.lineTo(gx * scaleX, h + 400);
         ctx.stroke();
       }
-      for (let gy = 120; gy < 1080; gy += 120) {
+      for (let gy = -200; gy < 1400; gy += 120) {
         ctx.beginPath();
-        ctx.moveTo(0, gy * scaleY);
-        ctx.lineTo(w, gy * scaleY);
+        ctx.moveTo(-400, gy * scaleY);
+        ctx.lineTo(w + 400, gy * scaleY);
         ctx.stroke();
       }
 
@@ -2014,15 +2096,12 @@ export const AppCanvas: React.FC<AppCanvasProps> = ({
         corridorY - 8
       );
 
-      const groundSceneY = 758;
-      const groundCanvasY = groundSceneY * scaleY;
-
       // Ground plane
-      ctx.strokeStyle = '#475569';
-      ctx.lineWidth = 2;
+      ctx.strokeStyle = '#334155';
+      ctx.lineWidth = 2.5;
       ctx.beginPath();
-      ctx.moveTo(60 * scaleX, groundCanvasY);
-      ctx.lineTo(1860 * scaleX, groundCanvasY);
+      ctx.moveTo(-400 * scaleX, groundCanvasY);
+      ctx.lineTo(2400 * scaleX, groundCanvasY);
       ctx.stroke();
 
       ctx.strokeStyle = '#94A3B8';
@@ -2226,6 +2305,24 @@ export const AppCanvas: React.FC<AppCanvasProps> = ({
       ctx.restore();
     } else {
       // Ball Bounce Rendering Mode
+      const groundCanvasY =
+        (bounceConfig.groundY + bounceConfig.ballDiameter * 0.42) * scaleY;
+
+      // Studio Backdrop & Light High-Contrast Platform Floor
+      const bounceSky = ctx.createLinearGradient(0, 0, 0, groundCanvasY);
+      bounceSky.addColorStop(0, '#F8FAFC');
+      bounceSky.addColorStop(1, '#F1F5F9');
+      ctx.fillStyle = bounceSky;
+      ctx.fillRect(-2400, -1600, w + 4800, groundCanvasY + 1600);
+
+      const bounceFloor = ctx.createLinearGradient(0, groundCanvasY, 0, groundCanvasY + 600 * scaleY);
+      bounceFloor.addColorStop(0, '#E2E8F0');
+      bounceFloor.addColorStop(0.12, '#EDF2F7');
+      bounceFloor.addColorStop(1, '#CBD5E1');
+      ctx.fillStyle = bounceFloor;
+      ctx.fillRect(-2400, groundCanvasY, w + 4800, 1600);
+
+      // Coordinate grid
       ctx.strokeStyle = '#E2E8F0';
       ctx.lineWidth = 1;
       for (let gx = 160; gx < 1920; gx += 160) {
@@ -2241,10 +2338,8 @@ export const AppCanvas: React.FC<AppCanvasProps> = ({
         ctx.stroke();
       }
 
-      const groundCanvasY =
-        (bounceConfig.groundY + bounceConfig.ballDiameter * 0.42) * scaleY;
-      ctx.strokeStyle = '#475569';
-      ctx.lineWidth = 2;
+      ctx.strokeStyle = '#334155';
+      ctx.lineWidth = 2.5;
       ctx.beginPath();
       ctx.moveTo(80 * scaleX, groundCanvasY);
       ctx.lineTo(1840 * scaleX, groundCanvasY);
@@ -2344,7 +2439,7 @@ export const AppCanvas: React.FC<AppCanvasProps> = ({
       ref={canvasRef}
       width={1920}
       height={1080}
-      className="w-full h-auto bg-[#090D16] rounded-xl shadow-2xl border border-[#1E293B] block font-mono"
+      className="w-full h-full object-contain bg-[#F1F5F9] block font-mono select-none"
     />
   );
 };

@@ -84,7 +84,7 @@ export const BoneHierarchyTab: React.FC<BoneHierarchyTabProps> = ({
                 </div>
               </div>
               <div className="overflow-x-auto max-h-80 overflow-y-auto border border-[#E2E8F0] rounded-lg">
-                <table className="w-full text-left border-collapse text-xs font-mono">
+                <table className="w-full text-left border-collapse text-xs font-mono min-w-[700px]">
                   <thead className="sticky top-0 bg-[#F8FAFC] border-b border-[#E2E8F0] text-[#475569]">
                     <tr>
                       <th className="py-2 px-3">Bone Name</th>

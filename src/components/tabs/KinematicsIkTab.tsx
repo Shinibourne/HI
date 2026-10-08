@@ -125,18 +125,18 @@ export const KinematicsIkTab: React.FC<KinematicsIkTabProps> = ({
                           viewBox="0 0 540 380"
                           className="w-full h-[320px] select-none"
                         >
-                          {/* Ground plane */}
+                          {/* Ground platform floor (High-Contrast, not black) */}
+                          <rect x="0" y="350" width="540" height="30" fill="#E2E8F0" />
                           <line
-                            x1="20"
+                            x1="0"
                             y1="350"
-                            x2="520"
+                            x2="540"
                             y2="350"
-                            stroke="#475569"
-                            strokeWidth="2"
-                            strokeDasharray="4 4"
+                            stroke="#0284C7"
+                            strokeWidth="2.5"
                           />
-                          <text x="28" y="344" fill="#94A3B8" fontSize="10" fontFamily="monospace">
-                            Ground Surface Y = 350 px
+                          <text x="28" y="344" fill="#38BDF8" fontSize="10" fontFamily="monospace" fontWeight="bold">
+                            Ground Platform Surface Y = 350 px
                           </text>
 
                           {/* Max reach circle from root */}

@@ -75,7 +75,7 @@ export const ProceduralMotionTab: React.FC<ProceduralMotionTabProps> = ({
                       </div>
 
                       <div className="my-2 flex items-center justify-center">
-                        <svg viewBox="0 0 640 360" className="w-full h-[320px] select-none">
+                        <svg viewBox="0 0 640 360" className="w-full h-auto aspect-[640/360] max-h-[360px] select-none">
                           {/* Ground plane */}
                           <line x1="20" y1="310" x2="620" y2="310" stroke="#475569" strokeWidth="2" strokeDasharray="4 4" />
 
