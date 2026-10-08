@@ -1,4 +1,5 @@
 import { STICKFIGURE_PARENTS, STICKFIGURE_BONE_LENGTHS, STICKFIGURE_BONE_NAMES } from '../stknds/stickfigureStructure';
+import { enforceFootGroundPerimeter } from '../physics/groundPerimeterSystem';
 
 export interface JointWorldPose {
   index: number;
@@ -181,7 +182,8 @@ export function solveLegLimb(
   targetFootY: number,
   isRightFacing: boolean,
   scale = 0.5,
-  isPlantedOnGround = true
+  isPlantedOnGround = true,
+  groundY?: number
 ): {
   thighAngleDeg: number;
   shinAngleDeg: number;
@@ -203,9 +205,20 @@ export function solveLegLimb(
     ? (isRightFacing ? 0 : -180)
     : (isRightFacing ? -25 : -155);
 
-  // Solve ankle target position
+  // Solve ankle target position with true ground perimeter enforcement
   const ankleTargetX = targetFootX;
-  const ankleTargetY = targetFootY;
+  let ankleTargetY = targetFootY;
+
+  if (groundY !== undefined) {
+    const footResult = enforceFootGroundPerimeter(
+      targetFootY,
+      footAngleDeg,
+      footLen,
+      scale,
+      groundY
+    );
+    ankleTargetY = footResult.clampedAnkleY;
+  }
 
   const ik = solveTwoBoneIK(
     pelvisX,
@@ -220,8 +233,12 @@ export function solveLegLimb(
   );
 
   const footRad = (footAngleDeg * Math.PI) / 180;
-  const footTipX = ik.endEffectorX + Math.cos(footRad) * footLen * scale;
-  const footTipY = ik.endEffectorY - Math.sin(footRad) * footLen * scale;
+  const rawFootTipX = ik.endEffectorX + Math.cos(footRad) * footLen * scale;
+  let rawFootTipY = ik.endEffectorY - Math.sin(footRad) * footLen * scale;
+
+  if (groundY !== undefined) {
+    rawFootTipY = Math.min(groundY, rawFootTipY);
+  }
 
   return {
     thighAngleDeg: ik.upperAngleDeg,
@@ -231,8 +248,8 @@ export function solveLegLimb(
     kneeY: ik.midJointY,
     ankleX: ik.endEffectorX,
     ankleY: ik.endEffectorY,
-    footTipX,
-    footTipY,
+    footTipX: rawFootTipX,
+    footTipY: rawFootTipY,
     ikResult: ik,
   };
 }
@@ -248,7 +265,8 @@ export function solveArmLimb(
   targetHandY: number,
   isRightFacing: boolean,
   scale = 0.5,
-  handWorldAngle?: number
+  handWorldAngle?: number,
+  groundY?: number
 ): {
   bicepAngleDeg: number;
   forearmAngleDeg: number;
@@ -265,11 +283,20 @@ export function solveArmLimb(
   const forearmLen = STICKFIGURE_BONE_LENGTHS[10]; // 177.8
   const handLen = STICKFIGURE_BONE_LENGTHS[11]; // 16.2
 
+  let safeTargetHandY = targetHandY;
+  if (groundY !== undefined) {
+    const effHandAngle = handWorldAngle !== undefined ? handWorldAngle : (isRightFacing ? -45 : -135);
+    const handRad = (effHandAngle * Math.PI) / 180;
+    const handDropY = -Math.sin(handRad) * handLen * scale;
+    const maxHandY = groundY - Math.max(0, handDropY);
+    safeTargetHandY = Math.min(maxHandY, targetHandY);
+  }
+
   const ik = solveTwoBoneIK(
     shoulderX,
     shoulderY,
     targetHandX,
-    targetHandY,
+    safeTargetHandY,
     bicepLen,
     forearmLen,
     isRightFacing,
@@ -280,7 +307,11 @@ export function solveArmLimb(
   const handAngle = handWorldAngle !== undefined ? handWorldAngle : ik.lowerAngleDeg;
   const handRad = (handAngle * Math.PI) / 180;
   const handTipX = ik.endEffectorX + Math.cos(handRad) * handLen * scale;
-  const handTipY = ik.endEffectorY - Math.sin(handRad) * handLen * scale;
+  let handTipY = ik.endEffectorY - Math.sin(handRad) * handLen * scale;
+
+  if (groundY !== undefined) {
+    handTipY = Math.min(groundY, handTipY);
+  }
 
   return {
     bicepAngleDeg: ik.upperAngleDeg,

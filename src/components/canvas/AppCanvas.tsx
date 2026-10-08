@@ -9,6 +9,7 @@ import { TeleportAmbushGeneratorConfig, TeleportAmbushKeyframeSpec, EpicSneezeGe
 import { STICKFIGURE_PARENTS, STICKFIGURE_BONE_LENGTHS } from '../../lib/stknds/stickfigureStructure';
 import { calculateCenterOfMass17 } from '../../lib/skills/biomechanicalPhysics';
 import { ParkourGeneratorConfig, ParkourKeyframeSpec } from '../../lib/parkourAcrobatFrames';
+import { CombatGeneratorConfig, CombatKeyframeSpec } from '../../lib/combatFrames';
 
 interface AppCanvasProps {
   binaryStageOverride: boolean;
@@ -22,6 +23,9 @@ interface AppCanvasProps {
   showKinematicsCoM: boolean;
   vcamFollow: boolean;
   globalFps: 12 | 24;
+  combatConfig?: CombatGeneratorConfig;
+  combatFrames?: CombatKeyframeSpec[];
+  safeCombatFrame?: CombatKeyframeSpec;
   parkourConfig?: ParkourGeneratorConfig;
   parkourFrames?: ParkourKeyframeSpec[];
   safeParkourFrame?: ParkourKeyframeSpec;
@@ -62,6 +66,9 @@ export const AppCanvas: React.FC<AppCanvasProps> = ({
   showKinematicsCoM,
   vcamFollow,
   globalFps,
+  combatConfig,
+  combatFrames = [],
+  safeCombatFrame,
   parkourConfig,
   parkourFrames = [],
   safeParkourFrame,
@@ -221,6 +228,362 @@ export const AppCanvas: React.FC<AppCanvasProps> = ({
         22,
         34
       );
+      ctx.restore();
+    } else if (activeAnimationMode === 'combat' && combatFrames.length > 0) {
+      const safeIdx = currentFrame % combatFrames.length;
+      const activeSpec = combatFrames[safeIdx];
+
+      ctx.save();
+      // Decoupled virtual camera framing tracking fighter across X = 540..660
+      const camCenterX = vcamFollow ? 640 + activeSpec.camX : 660;
+      const camCenterY = vcamFollow ? 540 + activeSpec.camY : 540;
+      ctx.translate(w * 0.5, h * 0.5);
+      if (vcamFollow) {
+        ctx.scale(activeSpec.camZoom, activeSpec.camZoom);
+      }
+      ctx.translate(-camCenterX * scaleX, -camCenterY * scaleY);
+
+      const groundSceneY = 755;
+      const groundCanvasY = groundSceneY * scaleY;
+
+      // Dynamic combat lighting backdrop
+      const bgGrad = ctx.createLinearGradient(0, 0, 0, groundCanvasY);
+      if (activeSpec.isHitFrame) {
+        bgGrad.addColorStop(0, '#FEF2F2'); // Flash of strike impact warmth
+        bgGrad.addColorStop(1, '#F8FAFC');
+      } else if (activeSpec.act.includes('Flying Knee')) {
+        bgGrad.addColorStop(0, '#EDE9FE'); // High airborne lift violet
+        bgGrad.addColorStop(1, '#F8FAFC');
+      } else if (activeSpec.act.includes('Back Kick')) {
+        bgGrad.addColorStop(0, '#FFF7ED'); // Rotational amber energy
+        bgGrad.addColorStop(1, '#F8FAFC');
+      } else {
+        bgGrad.addColorStop(0, '#F8FAFC');
+        bgGrad.addColorStop(1, '#F1F5F9');
+      }
+      ctx.fillStyle = bgGrad;
+      ctx.fillRect(-2400, -1600, w + 4800, groundCanvasY + 1600);
+
+      // Tatami / Combat Dojo Floor (High contrast, non-slip texture)
+      const matFloorGrad = ctx.createLinearGradient(0, groundCanvasY, 0, groundCanvasY + 600 * scaleY);
+      matFloorGrad.addColorStop(0, '#E2E8F0');
+      matFloorGrad.addColorStop(0.1, '#F1F5F9');
+      matFloorGrad.addColorStop(1, '#CBD5E1');
+      ctx.fillStyle = matFloorGrad;
+      ctx.fillRect(-2400, groundCanvasY, w + 4800, 1600);
+
+      // Fine coordinate & distance grid
+      ctx.strokeStyle = '#E2E8F0';
+      ctx.lineWidth = 1;
+      for (let gx = -400; gx < 3200; gx += 160) {
+        ctx.beginPath();
+        ctx.moveTo(gx * scaleX, -400);
+        ctx.lineTo(gx * scaleX, h + 800);
+        ctx.stroke();
+      }
+      for (let gy = -200; gy < 1600; gy += 120) {
+        ctx.beginPath();
+        ctx.moveTo(-400, gy * scaleY);
+        ctx.lineTo(w + 1600, gy * scaleY);
+        ctx.stroke();
+      }
+
+      // Master Ground Plane Line (Y = 755.0px)
+      ctx.strokeStyle = '#334155';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.moveTo(-400 * scaleX, groundCanvasY);
+      ctx.lineTo(3200 * scaleX, groundCanvasY);
+      ctx.stroke();
+
+      // Floor hatch ticks
+      ctx.strokeStyle = '#94A3B8';
+      ctx.lineWidth = 1;
+      for (let tx = -200; tx <= 3000; tx += 40) {
+        ctx.beginPath();
+        ctx.moveTo(tx * scaleX, groundCanvasY);
+        ctx.lineTo((tx - 12) * scaleX, groundCanvasY + 10);
+        ctx.stroke();
+      }
+
+      // Dojo Arena Markings
+      ctx.font = '600 10px "IBM Plex Mono", monospace';
+      ctx.fillStyle = '#64748B';
+      ctx.fillText('STANCE & PIVOT BASE (X: 520 ➔ 600)', 480 * scaleX, groundCanvasY + 24);
+      ctx.fillText('RAPID STRIKING RANGE (X: 600 ➔ 730)', 620 * scaleX, groundCanvasY + 40);
+      ctx.fillText('TARGET IMPACT CENTER (X: 735, Y: 515)', 725 * scaleX, groundCanvasY + 24);
+
+      // Trajectory Arcs
+      if (showTrajectoryArc && combatFrames.length >= 90) {
+        ctx.save();
+        // 1. Flying Knee trajectory arc (F78..F89)
+        ctx.strokeStyle = 'rgba(239, 68, 68, 0.85)';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([4, 4]);
+        ctx.beginPath();
+        for (let idx = 78; idx <= 89; idx++) {
+          const pt = combatFrames[idx];
+          if (idx === 78) ctx.moveTo(pt.manX * scaleX, pt.manY * scaleY);
+          else ctx.lineTo(pt.manX * scaleX, pt.manY * scaleY);
+        }
+        ctx.stroke();
+
+        // 2. 360° Spinning Back Kick Heel Strike Vector (F58..F65)
+        ctx.strokeStyle = 'rgba(168, 85, 247, 0.85)';
+        ctx.setLineDash([]);
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        for (let idx = 58; idx <= 65; idx++) {
+          const pt = combatFrames[idx];
+          if (idx === 58) ctx.moveTo(pt.manX * scaleX, pt.manY * scaleY);
+          else ctx.lineTo(pt.manX * scaleX, pt.manY * scaleY);
+        }
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      // Tactical Martial Arts Training Dummy (Heavy Sparring Dummy / Focus Target)
+      const dummyBaseX = 740 * scaleX;
+      const dummyHitTilt = activeSpec.isHitFrame ? (activeSpec.hitIntensity * 16) : 0;
+      
+      ctx.save();
+      // Dummy ground shadow
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.25)';
+      ctx.beginPath();
+      ctx.ellipse(dummyBaseX, groundCanvasY, 32 * scaleX, 6 * scaleY, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Dummy Base & Spring
+      ctx.fillStyle = '#334155';
+      ctx.fillRect(dummyBaseX - 28 * scaleX, groundCanvasY - 14 * scaleY, 56 * scaleX, 14 * scaleY);
+      ctx.fillStyle = '#64748B';
+      ctx.fillRect(dummyBaseX - 6 * scaleX, groundCanvasY - 50 * scaleY, 12 * scaleX, 36 * scaleY);
+
+      // Tilting Stem & Torso Target
+      ctx.translate(dummyBaseX, groundCanvasY - 50 * scaleY);
+      ctx.rotate((dummyHitTilt * Math.PI) / 180);
+
+      // Heavy Padded Core
+      ctx.fillStyle = activeSpec.isHitFrame ? '#EF4444' : '#475569';
+      ctx.beginPath();
+      ctx.roundRect(-18 * scaleX, -220 * scaleY, 36 * scaleX, 175 * scaleY, [12, 12, 8, 8]);
+      ctx.fill();
+
+      // Target Rings on Dummy Body
+      ctx.strokeStyle = activeSpec.isHitFrame ? '#FEE2E2' : '#94A3B8';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(0, -140 * scaleY, 14 * scaleX, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(0, -140 * scaleY, 5 * scaleX, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Dummy Head
+      ctx.fillStyle = activeSpec.isHitFrame ? '#DC2626' : '#334155';
+      ctx.beginPath();
+      ctx.arc(0, -250 * scaleY, 20 * scaleX, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+
+      // Fighter Contact Shadow
+      if (activeSpec.isGrounded || activeSpec.manY >= 580) {
+        ctx.save();
+        const shadowDist = Math.max(0, groundSceneY - activeSpec.manY);
+        const shadowOpacity = Math.max(0.15, 0.65 - shadowDist * 0.003);
+        const shadowWidth = Math.max(22, (65 - shadowDist * 0.15) * scaleX);
+        ctx.fillStyle = `rgba(15, 23, 42, ${shadowOpacity})`;
+        ctx.beginPath();
+        ctx.ellipse(activeSpec.manX * scaleX, groundCanvasY, shadowWidth, 5.5 * scaleY, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+
+      // Onion Skinning Preview
+      if (showOnionSkin && safeIdx > 0) {
+        const ghostOffsets = [-2, -1];
+        ghostOffsets.forEach((off) => {
+          const gIdx = safeIdx + off;
+          if (gIdx >= 0 && gIdx < combatFrames.length) {
+            const gSpec = combatFrames[gIdx];
+            const gJoints = computeForwardKinematics(gSpec.manX, gSpec.manY, gSpec.manAngles, 0.5);
+            ctx.save();
+            ctx.globalAlpha = off === -1 ? 0.22 : 0.10;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            for (let i = 1; i < 17; i++) {
+              if (i === 13) continue;
+              const j = gJoints[i];
+              ctx.strokeStyle = '#94A3B8';
+              ctx.lineWidth = Math.max(2, j.thickness * 0.5 * scaleX);
+              ctx.beginPath();
+              ctx.moveTo(j.startX * scaleX, j.startY * scaleY);
+              ctx.lineTo(j.endX * scaleX, j.endY * scaleY);
+              ctx.stroke();
+            }
+            const gHeadJ = gJoints[13];
+            const ghCx = ((gHeadJ.startX + gHeadJ.endX) * 0.5) * scaleX;
+            const ghCy = ((gHeadJ.startY + gHeadJ.endY) * 0.5) * scaleY;
+            const ghR = (gHeadJ.length * 0.5 * 0.5) * scaleX;
+            ctx.fillStyle = '#94A3B8';
+            ctx.beginPath();
+            ctx.arc(ghCx, ghCy, Math.max(4, ghR), 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+          }
+        });
+      }
+
+      // Draw Main Articulated Fighter Character (17 bones)
+      const joints = computeForwardKinematics(
+        activeSpec.manX,
+        activeSpec.manY,
+        activeSpec.manAngles,
+        0.5
+      );
+
+      ctx.save();
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+
+      const fighterColor = combatConfig?.fighterColorHex || '#0F172A';
+      const strikeAccentColor = combatConfig?.accentColorHex || '#EF4444';
+
+      // Limbs rendering with joint depth & strike glove highlights
+      for (let i = 1; i < 17; i++) {
+        if (i === 13) continue;
+        const j = joints[i];
+        const isFist = (i === 11 || i === 16);
+        ctx.strokeStyle = isFist ? strikeAccentColor : fighterColor;
+        ctx.lineWidth = Math.max(2.5, (isFist ? j.thickness * 0.65 : j.thickness * 0.5) * scaleX);
+        ctx.beginPath();
+        ctx.moveTo(j.startX * scaleX, j.startY * scaleY);
+        ctx.lineTo(j.endX * scaleX, j.endY * scaleY);
+        ctx.stroke();
+      }
+
+      // Head Circle
+      const headJ = joints[13];
+      const headCx = ((headJ.startX + headJ.endX) * 0.5) * scaleX;
+      const headCy = ((headJ.startY + headJ.endY) * 0.5) * scaleY;
+      const headR = (headJ.length * 0.5 * 0.5) * scaleX;
+      ctx.fillStyle = fighterColor;
+      ctx.beginPath();
+      ctx.arc(headCx, headCy, Math.max(4, headR), 0, Math.PI * 2);
+      ctx.fill();
+
+      // Head Focus / Gaze Eye Dot (communicating martial focus)
+      ctx.fillStyle = '#FFFFFF';
+      const eyeOffsetX = (Math.cos(activeSpec.manAngles[12] * Math.PI / 180) * headR * 0.45);
+      const eyeOffsetY = (-Math.sin(activeSpec.manAngles[12] * Math.PI / 180) * headR * 0.45);
+      ctx.beginPath();
+      ctx.arc(headCx + eyeOffsetX, headCy + eyeOffsetY, Math.max(2, headR * 0.22), 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+
+      // Dynamic Impact Burst & Sparks on Hit Frame
+      if (activeSpec.isHitFrame) {
+        ctx.save();
+        const hitX = (activeSpec.targetX - 10) * scaleX;
+        const hitY = activeSpec.targetY * scaleY;
+
+        // Radiant starburst rays
+        ctx.strokeStyle = '#EF4444';
+        ctx.lineWidth = 3;
+        const rayCount = 8;
+        const rayLen = 28 * activeSpec.hitIntensity * scaleX;
+        for (let r = 0; r < rayCount; r++) {
+          const angle = (r / rayCount) * Math.PI * 2;
+          ctx.beginPath();
+          ctx.moveTo(hitX + Math.cos(angle) * 8 * scaleX, hitY + Math.sin(angle) * 8 * scaleY);
+          ctx.lineTo(hitX + Math.cos(angle) * rayLen, hitY + Math.sin(angle) * rayLen);
+          ctx.stroke();
+        }
+
+        // Concentric shockwave ring
+        ctx.strokeStyle = 'rgba(239, 68, 68, 0.7)';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(hitX, hitY, 32 * activeSpec.hitIntensity * scaleX, 0, Math.PI * 2);
+        ctx.stroke();
+
+        // Inner flash core
+        ctx.fillStyle = '#FBBF24';
+        ctx.beginPath();
+        ctx.arc(hitX, hitY, 9 * scaleX, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Impact Label text
+        ctx.font = '700 13px "IBM Plex Mono", monospace';
+        ctx.fillStyle = '#DC2626';
+        ctx.fillText(`⚡ IMPACT: ${activeSpec.technique.toUpperCase()}`, hitX - 40 * scaleX, hitY - 36 * scaleY);
+        ctx.restore();
+      }
+
+      // Center of Mass (CoM) & Dynamic Equilibrium HUD
+      if (showKinematicsCoM) {
+        ctx.save();
+        const comCanvasX = activeSpec.comX * scaleX;
+        const comCanvasY = activeSpec.comY * scaleY;
+
+        // Dynamic Base of Support bracket
+        ctx.strokeStyle = activeSpec.isBalanced ? '#10B981' : '#F59E0B';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.moveTo(activeSpec.supportMinX * scaleX, groundCanvasY + 8);
+        ctx.lineTo(activeSpec.supportMaxX * scaleX, groundCanvasY + 8);
+        ctx.stroke();
+
+        // Center of Mass indicator
+        ctx.fillStyle = activeSpec.isBalanced ? '#10B981' : '#F59E0B';
+        ctx.beginPath();
+        ctx.arc(comCanvasX, comCanvasY, 6 * scaleX, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#FFFFFF';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        // Ground projection line
+        ctx.setLineDash([3, 3]);
+        ctx.strokeStyle = activeSpec.isBalanced ? 'rgba(16, 185, 129, 0.6)' : 'rgba(245, 158, 11, 0.6)';
+        ctx.beginPath();
+        ctx.moveTo(comCanvasX, comCanvasY);
+        ctx.lineTo(comCanvasX, groundCanvasY);
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      ctx.restore();
+
+      // Top Stage HUD: Live Technique & Biomechanical Telemetry
+      ctx.save();
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.88)';
+      ctx.fillRect(12, 12, 420, 50);
+      ctx.strokeStyle = activeSpec.isHitFrame ? '#EF4444' : '#334155';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(12, 12, 420, 50);
+
+      ctx.fillStyle = activeSpec.isHitFrame ? '#F87171' : '#38BDF8';
+      ctx.font = '700 12px "IBM Plex Mono", monospace';
+      ctx.fillText(
+        `🥋 ${activeSpec.technique.toUpperCase()}`,
+        22,
+        32
+      );
+
+      ctx.fillStyle = '#94A3B8';
+      ctx.font = '500 10.5px "Plus Jakarta Sans", sans-serif';
+      ctx.fillText(
+        `${activeSpec.phase} · F${safeIdx + 1}/${combatFrames.length} (${(safeIdx / (globalFps || 24)).toFixed(2)}s)`,
+        22,
+        48
+      );
+
+      if (activeSpec.strikeSpeedPxPerFrame > 0) {
+        ctx.fillStyle = '#F59E0B';
+        ctx.font = '700 11px "IBM Plex Mono", monospace';
+        ctx.fillText(`⚡ ${activeSpec.strikeSpeedPxPerFrame.toFixed(1)} px/f`, 330, 32);
+      }
       ctx.restore();
     } else if (activeAnimationMode === 'parkour' && parkourFrames.length > 0) {
       const safeIdx = currentFrame % parkourFrames.length;

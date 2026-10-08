@@ -3,6 +3,7 @@ import { Target, Compass, Camera, ShieldCheck, Layers, Crosshair, AlertTriangle,
 import { MultiCharacterSpatialAudit, solveStrikeReach, solveMultiCharacterFraming, validateMultiCharacterSpatialConsistency } from '../../lib/skills/spatialInteraction';
 import { solveForwardKinematics17 } from '../../lib/skills/kinematicsSolvers';
 import { CANONICAL_36_TELEPORT_FRAMES } from '../../lib/stknds/teleportAnimation';
+import { SPATIAL_ARENA_GROUND_Y } from '../../lib/physics/groundPerimeterSystem';
 
 interface SpatialInteractionTabProps {
   spatialDebugMode: boolean;
@@ -59,7 +60,7 @@ export const SpatialInteractionTab: React.FC<SpatialInteractionTabProps> = ({
   setSpatialPlatformHeight,
   liveSpatialAudit,
 }) => {
-            const arenaGroundY = 295;
+            const arenaGroundY = SPATIAL_ARENA_GROUND_Y;
             const platformY = arenaGroundY - spatialPlatformHeight * 0.45;
             const arenaScale = 0.42;
 

@@ -1,5 +1,6 @@
 import { ParkourKeyframeSpec, ParkourGeneratorConfig } from './parkourTypes';
 import { calculateCenterOfMass17 } from '../skills/biomechanicalPhysics';
+import { solveForwardKinematics17 } from '../skills/kinematicsSolvers';
 
 /**
  * Normalizes an angle into [0, 360)
@@ -953,8 +954,20 @@ export function buildCanonicalParkourFrames(
       lWrist,
     });
 
-    // Dynamic Balance & Center of Mass computation
-    const comReport = calculateCenterOfMass17(manX, manY, manAngles, 0.5, config.groundY);
+    // Environmental Ground Perimeter Enforcement:
+    // Strictly prevent feet and limbs from penetrating below groundY (default 755.0 px)
+    const effectiveGroundY = config.groundY ?? 755.0;
+    const fkPreview = solveForwardKinematics17(manX, manY, manAngles, 0.5);
+    let deepestJointY = -Infinity;
+    for (const j of fkPreview) {
+      deepestJointY = Math.max(deepestJointY, j.startY, j.endY);
+    }
+    if (deepestJointY > effectiveGroundY) {
+      manY -= (deepestJointY - effectiveGroundY);
+    }
+
+    // Dynamic Balance & Center of Mass computation with finalized ground-constrained root
+    const comReport = calculateCenterOfMass17(manX, manY, manAngles, 0.5, effectiveGroundY);
 
     // Smooth virtual camera tracking
     const camX = (manX - 480) * 0.75;

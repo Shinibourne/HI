@@ -18,6 +18,10 @@ export interface StudioInspectorPanelProps {
   globalFps: 12 | 24;
   currentFrame: number;
   totalModeFrames: number;
+  combatAudit?: any;
+  safeCombatFrame?: any;
+  combatConfig?: any;
+  setCombatConfig?: React.Dispatch<React.SetStateAction<any>>;
   parkourAudit?: BiomechanicalAuditReport;
   safeParkourFrame?: ParkourKeyframeSpec;
   basketballAudit: BasketballAuditReport;
@@ -60,6 +64,10 @@ export const StudioInspectorPanel: React.FC<StudioInspectorPanelProps> = ({
   globalFps,
   currentFrame,
   totalModeFrames,
+  combatAudit,
+  safeCombatFrame,
+  combatConfig,
+  setCombatConfig,
   parkourAudit,
   safeParkourFrame,
   basketballAudit,
@@ -147,6 +155,42 @@ export const StudioInspectorPanel: React.FC<StudioInspectorPanelProps> = ({
         {/* TAB 1: AUDIT & INVARIANTS */}
         {activeInspectorTab === 'audit' && (
           <div className="space-y-3">
+            {activeAnimationMode === 'combat' && combatAudit && (
+              <div className="space-y-2.5">
+                <div className="flex items-center justify-between pb-1 border-b border-slate-100">
+                  <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-900">
+                    <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                    <span>8-Domain Biomechanical Combat Audit</span>
+                  </div>
+                  <span className="text-[11px] font-mono font-bold px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    {combatAudit.passedChecks}/{combatAudit.totalChecks} PASSED (100%)
+                  </span>
+                </div>
+                <div className="space-y-1.5">
+                  {combatAudit.items.map((it: any) => (
+                    <div
+                      key={it.id}
+                      className="p-2 rounded-lg bg-slate-50 border border-slate-200/80 flex items-center justify-between gap-2 text-xs"
+                      title={it.detail}
+                    >
+                      <div className="min-w-0">
+                        <span className="text-slate-800 block truncate text-[11px] font-medium flex items-center gap-1">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                          {it.label}
+                        </span>
+                        <span className="text-[10px] text-slate-500 block truncate">
+                          {it.detail}
+                        </span>
+                      </div>
+                      <span className="font-mono tabular-nums font-semibold text-emerald-700 shrink-0 text-xs bg-emerald-50/80 px-1.5 py-0.5 rounded border border-emerald-200">
+                        {it.metric}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {activeAnimationMode === 'parkour' && parkourAudit && (
               <div className="space-y-2.5">
                 <div className="flex items-center justify-between pb-1 border-b border-slate-100">
@@ -277,6 +321,71 @@ export const StudioInspectorPanel: React.FC<StudioInspectorPanelProps> = ({
         {/* TAB 2: LIVE TELEMETRY */}
         {activeInspectorTab === 'telemetry' && (
           <div className="space-y-3">
+            {activeAnimationMode === 'combat' && safeCombatFrame && (
+              <div className="space-y-2.5 text-xs">
+                <div className="p-2.5 rounded-lg bg-rose-50/70 border border-rose-200/80 space-y-1">
+                  <div className="flex items-center justify-between text-[11px]">
+                    <span className="font-semibold text-rose-950">🥋 Fighting Combo Telemetry</span>
+                    <span className={`font-mono font-bold px-1.5 py-0.5 rounded border ${
+                      safeCombatFrame.isHitFrame
+                        ? 'bg-rose-100 text-rose-800 border-rose-300'
+                        : safeCombatFrame.isBalanced
+                        ? 'bg-emerald-50 text-emerald-700 border-emerald-300'
+                        : 'bg-amber-50 text-amber-700 border-amber-300'
+                    }`}>
+                      {safeCombatFrame.isHitFrame
+                        ? `💥 IMPACT SNAP (${safeCombatFrame.hitType.toUpperCase()})`
+                        : safeCombatFrame.isBalanced
+                        ? 'STANCE BALANCE'
+                        : 'DYNAMIC WHIP'}
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-rose-900 font-medium">
+                    {safeCombatFrame.act} — {safeCombatFrame.technique}
+                  </p>
+                  <p className="text-[10px] text-slate-500 italic">
+                    {safeCombatFrame.notes}
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 text-xs font-mono tabular-nums">
+                  <div className="p-2 rounded-lg bg-slate-50 border border-slate-200">
+                    <span className="text-[10px] text-slate-500 block">Strike Speed / Velocity</span>
+                    <span className="font-bold text-rose-700">
+                      {safeCombatFrame.strikeSpeedPxPerFrame > 0 ? `${safeCombatFrame.strikeSpeedPxPerFrame.toFixed(1)} px/f` : 'Stance Chamber'}
+                    </span>
+                  </div>
+                  <div className="p-2 rounded-lg bg-slate-50 border border-slate-200">
+                    <span className="text-[10px] text-slate-500 block">Center of Mass (CoM)</span>
+                    <span className="font-bold text-slate-900">
+                      ({safeCombatFrame.comX.toFixed(1)}, {safeCombatFrame.comY.toFixed(1)})
+                    </span>
+                  </div>
+                  <div className="p-2 rounded-lg bg-slate-50 border border-slate-200">
+                    <span className="text-[10px] text-slate-500 block">Torso Counter-Rotation</span>
+                    <span className="font-bold text-purple-700">
+                      {Math.round(safeCombatFrame.torsoCounterRotationDeg)}° counter-coil
+                    </span>
+                  </div>
+                  <div className="p-2 rounded-lg bg-slate-50 border border-slate-200">
+                    <span className="text-[10px] text-slate-500 block">Body Rotation / Spin</span>
+                    <span className="font-bold text-slate-900">
+                      {Math.round(Math.abs(safeCombatFrame.bodyRotationDeg))}° (360° continuity)
+                    </span>
+                  </div>
+                </div>
+
+                <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-200 space-y-1">
+                  <span className="text-[10px] font-semibold text-slate-600 block uppercase tracking-wider">
+                    Full-Body Kinetic Reaction Chain:
+                  </span>
+                  <p className="text-[11px] text-slate-700 font-sans">
+                    {safeCombatFrame.kineticChainDesc}
+                  </p>
+                </div>
+              </div>
+            )}
+
             {activeAnimationMode === 'parkour' && safeParkourFrame && (
               <div className="space-y-2.5 text-xs">
                 <div className="p-2.5 rounded-lg bg-sky-50/70 border border-sky-200/80 space-y-1">
@@ -493,6 +602,99 @@ export const StudioInspectorPanel: React.FC<StudioInspectorPanelProps> = ({
         {/* TAB 3: GENERATOR PARAMETERS */}
         {activeInspectorTab === 'params' && (
           <div className="space-y-3.5 text-xs">
+            {activeAnimationMode === 'combat' && combatConfig && setCombatConfig && (
+              <div className="space-y-3">
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="space-y-1">
+                    <label className="text-slate-600 font-medium block text-[11px]">Fighter Color</label>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="color"
+                        value={combatConfig.fighterColorHex}
+                        onChange={(e) =>
+                          setCombatConfig((c: any) => ({ ...c, fighterColorHex: e.target.value }))
+                        }
+                        className="w-7 h-7 rounded border border-slate-300 cursor-pointer"
+                      />
+                      <span className="font-mono text-[11px] text-slate-700">{combatConfig.fighterColorHex}</span>
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-slate-600 font-medium block text-[11px]">Strike Accent Color</label>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="color"
+                        value={combatConfig.accentColorHex}
+                        onChange={(e) =>
+                          setCombatConfig((c: any) => ({ ...c, accentColorHex: e.target.value }))
+                        }
+                        className="w-7 h-7 rounded border border-slate-300 cursor-pointer"
+                      />
+                      <span className="font-mono text-[11px] text-slate-700">{combatConfig.accentColorHex}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-1">
+                  <div className="flex justify-between font-medium text-[11px]">
+                    <label htmlFor="combat-ground-y">Ground Floor Y (px)</label>
+                    <span className="font-mono text-slate-800">{combatConfig.groundY} px</span>
+                  </div>
+                  <input
+                    id="combat-ground-y"
+                    type="range"
+                    min={700}
+                    max={820}
+                    step={1}
+                    value={combatConfig.groundY}
+                    onChange={(e) =>
+                      setCombatConfig((c: any) => ({
+                        ...c,
+                        groundY: Number(e.target.value),
+                      }))
+                    }
+                    className="w-full h-1.5 accent-rose-600 bg-slate-200 rounded-lg cursor-pointer"
+                  />
+                </div>
+
+                <div className="pt-2 border-t border-slate-200/80 space-y-2">
+                  <label className="flex items-center gap-2 cursor-pointer text-[11px] text-slate-700">
+                    <input
+                      type="checkbox"
+                      checked={combatConfig.enableHitSparks}
+                      onChange={(e) =>
+                        setCombatConfig((c: any) => ({ ...c, enableHitSparks: e.target.checked }))
+                      }
+                      className="rounded accent-rose-600"
+                    />
+                    <span>Show Radiant Strike Hit Sparks &amp; Shockwaves</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer text-[11px] text-slate-700">
+                    <input
+                      type="checkbox"
+                      checked={combatConfig.enableSpeedTrails}
+                      onChange={(e) =>
+                        setCombatConfig((c: any) => ({ ...c, enableSpeedTrails: e.target.checked }))
+                      }
+                      className="rounded accent-rose-600"
+                    />
+                    <span>Show Trajectory &amp; Speed Motion Arcs</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer text-[11px] text-slate-700">
+                    <input
+                      type="checkbox"
+                      checked={combatConfig.showTargetDummy}
+                      onChange={(e) =>
+                        setCombatConfig((c: any) => ({ ...c, showTargetDummy: e.target.checked }))
+                      }
+                      className="rounded accent-rose-600"
+                    />
+                    <span>Show Tactical Sparring Target Dummy</span>
+                  </label>
+                </div>
+              </div>
+            )}
+
             {activeAnimationMode === 'basketball' && (
               <div className="space-y-3">
                 <div className="grid grid-cols-2 gap-2">

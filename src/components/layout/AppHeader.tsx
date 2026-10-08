@@ -37,6 +37,15 @@ export const ANIMATION_MODES: {
   tagline: string;
 }[] = [
   {
+    id: 'combat',
+    label: 'Master Fighting Combos (Rapid Accuracy & Fluidity)',
+    shortLabel: '🥋 Fighting Combos',
+    presetPath: '/downloads/basketball_walk_pickup_dribble_24f.stknds',
+    fps: 24,
+    badge: '24 FPS · 120f Master',
+    tagline: '1-2 Jab-Cross, Slip & Liver Hook, Uppercut, 360° Spinning Back Kick, Flying Knee & Blitz Flurry',
+  },
+  {
     id: 'parkour',
     label: 'The Parkour Acrobat (Run ➔ Jump ➔ Roll ➔ Backflip)',
     shortLabel: '🏃‍♂️ Parkour Acrobat',

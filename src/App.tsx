@@ -57,10 +57,19 @@ import {
 } from './lib/parkourAcrobatFrames';
 
 import {
+  type CombatGeneratorConfig,
+  type CombatKeyframeSpec,
+  buildCanonicalCombatFrames,
+  validateCombatBiomechanics,
+} from './lib/combatFrames';
+
+import {
   evaluateTeleportAmbushQuality,
   evaluateSpeedVsStrengthQuality,
   validateMultiCharacterSpatialConsistency,
 } from './lib/humanMotionSkills';
+
+import { IK_STUDIO_GROUND_Y, MASTER_CANVAS_GROUND_Y } from './lib/physics/groundPerimeterSystem';
 
 import { AppHeader } from './components/layout/AppHeader';
 import { AnimationStudioStage } from './components/workspace/AnimationStudioStage';
@@ -69,10 +78,21 @@ import { EngineeringSuite } from './components/workspace/EngineeringSuite';
 
 export function App() {
   const [activeAnimationMode, setActiveAnimationMode] = useState<
-    'parkour' | 'basketball' | 'stroll-kick' | 'phantom' | 'teleport' | 'sneeze' | 'superhero' | 'bounce' | 'speed-strength'
-  >('parkour');
+    'combat' | 'parkour' | 'basketball' | 'stroll-kick' | 'phantom' | 'teleport' | 'sneeze' | 'superhero' | 'bounce' | 'speed-strength'
+  >('combat');
 
   const [globalFps, setGlobalFps] = useState<12 | 24>(24);
+
+  const [combatConfig, setCombatConfig] = useState<CombatGeneratorConfig>({
+    projectName: 'master_fighting_combos',
+    targetFps: 24,
+    fighterColorHex: '#0F172A',
+    accentColorHex: '#EF4444',
+    groundY: 755.0,
+    enableHitSparks: true,
+    enableSpeedTrails: true,
+    showTargetDummy: true,
+  });
 
   const [parkourConfig, setParkourConfig] = useState<ParkourGeneratorConfig>({
     projectName: 'parkour_acrobat',
@@ -174,6 +194,7 @@ export function App() {
 
   const handleSelectFps = (fps: 12 | 24) => {
     setGlobalFps(fps);
+    setCombatConfig((c) => ({ ...c, targetFps: fps }));
     setParkourConfig((c) => ({ ...c, targetFps: fps }));
     setBasketballConfig((c) => ({ ...c, targetFps: fps }));
     setStrollKickConfig((c) => ({ ...c, targetFps: fps }));
@@ -234,9 +255,9 @@ export function App() {
   const [ikLimbType, setIkLimbType] = useState<'LEG' | 'ARM'>('LEG');
   const [ikFacingRight, setIkFacingRight] = useState<boolean>(true);
   const [ikTargetFootX, setIkTargetFootX] = useState<number>(310);
-  const [ikTargetFootY, setIkTargetFootY] = useState<number>(755);
+  const [ikTargetFootY, setIkTargetFootY] = useState<number>(IK_STUDIO_GROUND_Y);
   const [ikTargetHandX, setIkTargetHandX] = useState<number>(370);
-  const [ikTargetHandY, setIkTargetHandY] = useState<number>(440);
+  const [ikTargetHandY, setIkTargetHandY] = useState<number>(200);
   const [ikFootPlanted, setIkFootPlanted] = useState<boolean>(true);
 
   const [gaitProgress, setGaitProgress] = useState<number>(0.25);
@@ -273,7 +294,9 @@ export function App() {
 
   const syncAnimationModeFromPath = useCallback((pathOrName: string) => {
     const lower = pathOrName.toLowerCase();
-    if (lower.includes('parkour') || lower.includes('acrobat') || lower.includes('flip')) {
+    if (lower.includes('combat') || lower.includes('fight') || lower.includes('martial')) {
+      setActiveAnimationMode('combat');
+    } else if (lower.includes('parkour') || lower.includes('acrobat') || lower.includes('flip')) {
       setActiveAnimationMode('parkour');
     } else if (lower.includes('basketball')) {
       setActiveAnimationMode('basketball');
@@ -313,6 +336,16 @@ export function App() {
   useEffect(() => {
     inspectPreset(selectedPresetPath, selectedPresetPath.split('/').pop() || 'preset.stknds');
   }, [selectedPresetPath, inspectPreset]);
+
+  const combatFrames = useMemo(
+    () => buildCanonicalCombatFrames(combatConfig),
+    [combatConfig]
+  );
+
+  const combatAudit = useMemo(
+    () => validateCombatBiomechanics(combatFrames, combatConfig.groundY),
+    [combatFrames, combatConfig.groundY]
+  );
 
   const parkourFrames = useMemo(
     () => buildCanonicalParkourFrames(parkourConfig),
@@ -389,6 +422,8 @@ export function App() {
   const totalModeFrames =
     binaryStageOverride && activeInspection && activeInspection.frames.length > 0
       ? activeInspection.frames.length
+      : activeAnimationMode === 'combat'
+      ? combatFrames.length
       : activeAnimationMode === 'parkour'
       ? parkourFrames.length
       : activeAnimationMode === 'basketball'
@@ -492,6 +527,8 @@ export function App() {
     }
   };
 
+  const safeCombatFrame =
+    combatFrames[currentFrame % combatFrames.length] || combatFrames[0];
   const safeParkourFrame =
     parkourFrames[currentFrame % parkourFrames.length] || parkourFrames[0];
   const safeBasketballFrame =
@@ -535,7 +572,14 @@ export function App() {
   );
 
   const safeHeroJoints =
-    activeAnimationMode === 'parkour'
+    activeAnimationMode === 'combat'
+      ? computeForwardKinematics(
+          safeCombatFrame.manX,
+          safeCombatFrame.manY,
+          safeCombatFrame.manAngles,
+          0.5
+        )
+      : activeAnimationMode === 'parkour'
       ? computeForwardKinematics(
           safeParkourFrame.manX,
           safeParkourFrame.manY,
@@ -676,6 +720,9 @@ export function App() {
               binaryStageOverride={binaryStageOverride}
               setBinaryStageOverride={setBinaryStageOverride}
               activeInspection={activeInspection}
+              combatConfig={combatConfig}
+              combatFrames={combatFrames}
+              safeCombatFrame={safeCombatFrame}
               parkourConfig={parkourConfig}
               parkourFrames={parkourFrames}
               safeParkourFrame={safeParkourFrame}
@@ -711,6 +758,10 @@ export function App() {
               globalFps={globalFps}
               currentFrame={currentFrame}
               totalModeFrames={totalModeFrames}
+              combatAudit={combatAudit}
+              safeCombatFrame={safeCombatFrame}
+              combatConfig={combatConfig}
+              setCombatConfig={setCombatConfig}
               parkourAudit={parkourAudit}
               safeParkourFrame={safeParkourFrame}
               basketballAudit={basketballAudit}
@@ -867,6 +918,9 @@ export function App() {
               binaryStageOverride={binaryStageOverride}
               setBinaryStageOverride={setBinaryStageOverride}
               activeInspection={activeInspection}
+              combatConfig={combatConfig}
+              combatFrames={combatFrames}
+              safeCombatFrame={safeCombatFrame}
               parkourConfig={parkourConfig}
               parkourFrames={parkourFrames}
               safeParkourFrame={safeParkourFrame}
@@ -904,6 +958,10 @@ export function App() {
                 globalFps={globalFps}
                 currentFrame={currentFrame}
                 totalModeFrames={totalModeFrames}
+                combatAudit={combatAudit}
+                safeCombatFrame={safeCombatFrame}
+                combatConfig={combatConfig}
+                setCombatConfig={setCombatConfig}
                 parkourAudit={parkourAudit}
                 safeParkourFrame={safeParkourFrame}
                 basketballAudit={basketballAudit}

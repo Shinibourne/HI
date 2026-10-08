@@ -2,6 +2,7 @@ import React from 'react';
 import { Activity, Footprints, ShieldCheck, CheckCircle2 } from 'lucide-react';
 import { generateProceduralGaitPose } from '../../lib/skills/proceduralGait';
 import { solveForwardKinematics17, JointWorldPose } from '../../lib/skills/kinematicsSolvers';
+import { GAIT_STUDIO_GROUND_Y } from '../../lib/physics/groundPerimeterSystem';
 
 interface ProceduralMotionTabProps {
   gaitProgress: number;
@@ -26,7 +27,7 @@ export const ProceduralMotionTab: React.FC<ProceduralMotionTabProps> = ({
 }) => {
   const gaitPose = generateProceduralGaitPose({
     rootX: 320,
-    groundY: 310,
+    groundY: GAIT_STUDIO_GROUND_Y,
     strideLength: gaitStrideLength,
     stepHeight: gaitStepHeight,
     gaitProgress,

@@ -1076,6 +1076,16 @@ export function buildCanonicalSitWalkKickFrames(
       camZoom = 0.98 - tSettle * 0.08;
     }
 
+    // Environmental Ground Perimeter Enforcement:
+    // Strictly prevent feet from penetrating below groundY (755.0 px)
+    const fkPreview = solveForwardKinematics17(manX, manY, manAngles, scale);
+    const rFootDeep = Math.max(fkPreview[3].startY, fkPreview[3].endY);
+    const lFootDeep = Math.max(fkPreview[6].startY, fkPreview[6].endY);
+    const deepestFootY = Math.max(rFootDeep, lFootDeep);
+    if (deepestFootY > groundY) {
+      manY -= (deepestFootY - groundY);
+    }
+
     const com = calculateCenterOfMass17(manX, manY, manAngles, scale);
     const bos = calculateBaseOfSupport17(manX, manY, manAngles, groundY, scale, com.comX);
 
