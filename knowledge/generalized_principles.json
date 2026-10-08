@@ -1,0 +1,35 @@
+[
+  {
+    "id": "principle_tech_ground_balance_shift",
+    "title": "Dynamic Foot Contact & COM Shift",
+    "category": "balance",
+    "description": "Alternating foot contact with Center of Mass progression dynamically mined across 2 reference projects.",
+    "confidence": 0.6000000000000001,
+    "evidenceProjects": [
+      "proj_8f17898ad0a0",
+      "proj_842d304bdf64"
+    ]
+  },
+  {
+    "id": "principle_tech_impact_compression",
+    "title": "Impact Compression & Secondary Recoil",
+    "category": "impact",
+    "description": "High-energy contact creates immediate compression along kinetic chain (avg force: 28668) followed by delayed recoil.",
+    "confidence": 0.74,
+    "evidenceProjects": [
+      "proj_8f17898ad0a0",
+      "proj_842d304bdf64"
+    ]
+  },
+  {
+    "id": "principle_tech_anticipation_burst",
+    "title": "Anticipatory Windup & Burst Acceleration",
+    "category": "locomotion",
+    "description": "Body compresses in opposing direction before unleashing high-acceleration directional burst mined across 2 reference projects.",
+    "confidence": 0.65,
+    "evidenceProjects": [
+      "proj_8f17898ad0a0",
+      "proj_842d304bdf64"
+    ]
+  }
+]

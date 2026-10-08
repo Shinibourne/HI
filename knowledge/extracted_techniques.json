@@ -1,0 +1,145 @@
+[
+  {
+    "id": "tech_ground_balance_shift",
+    "name": "Dynamic Foot Contact & COM Shift",
+    "category": "balance",
+    "description": "Alternating foot contact with Center of Mass progression dynamically mined across 2 reference projects.",
+    "prerequisites": [
+      "foot-contact-detection",
+      "com-calculation"
+    ],
+    "applicableSituations": [
+      "walking",
+      "running",
+      "stroll",
+      "combat-stance-shift"
+    ],
+    "timingProfile": {
+      "id": "tp_ground_balance",
+      "name": "Dynamic Ground Balance",
+      "anticipationFrames": 2,
+      "accelerationFrames": 4,
+      "impactFrames": 1,
+      "recoilFrames": 2,
+      "recoveryFrames": 5,
+      "holdFrames": 0,
+      "totalDurationFrames": 14,
+      "spacingProfile": "ease-in-out"
+    },
+    "bodyMechanicsPattern": "Planted support foot anchors in world space while COM progresses and swing limb flexes.",
+    "parameters": {
+      "plantedFootMaxSpeed": 179,
+      "comMarginThreshold": 50,
+      "kneeFlexionAngleDeg": 25
+    },
+    "variations": [
+      "high-speed-run",
+      "casual-stroll",
+      "heavy-march"
+    ],
+    "confidence": 0.6000000000000001,
+    "supportingProjectIds": [
+      "proj_8f17898ad0a0",
+      "proj_842d304bdf64"
+    ],
+    "limitations": [
+      "Requires solid ground plane",
+      "Less applicable during continuous flight"
+    ],
+    "implementationNotes": "Enforce zero foot displacement relative to world during planted support phase."
+  },
+  {
+    "id": "tech_impact_compression",
+    "name": "Impact Compression & Secondary Recoil",
+    "category": "impact",
+    "description": "High-energy contact creates immediate compression along kinetic chain (avg force: 28668) followed by delayed recoil.",
+    "prerequisites": [
+      "impact-detection",
+      "kinetic-chain-propagation"
+    ],
+    "applicableSituations": [
+      "punch",
+      "kick",
+      "heavy-landing",
+      "weapon-hit"
+    ],
+    "timingProfile": {
+      "id": "tp_impact_compression",
+      "name": "Dynamic Snap & Settle",
+      "anticipationFrames": 3,
+      "accelerationFrames": 2,
+      "impactFrames": 1,
+      "recoilFrames": 3,
+      "recoveryFrames": 6,
+      "holdFrames": 1,
+      "totalDurationFrames": 16,
+      "spacingProfile": "snap-and-settle"
+    },
+    "bodyMechanicsPattern": "Contact node decelerates sharply -> torso and spine compress -> secondary arm/head follow-through.",
+    "parameters": {
+      "compressionDampingFactor": 0.82,
+      "cameraShakeThreshold": 14334,
+      "recoilLagFrames": 2
+    },
+    "variations": [
+      "sharp-strike",
+      "heavy-thud",
+      "elastic-bounce"
+    ],
+    "confidence": 0.74,
+    "supportingProjectIds": [
+      "proj_8f17898ad0a0",
+      "proj_842d304bdf64"
+    ],
+    "limitations": [
+      "May need style tuning for lightweight vs heavy characters"
+    ],
+    "implementationNotes": "Apply momentary joint angle freeze at impact frame, then dissipate force through torso."
+  },
+  {
+    "id": "tech_anticipation_burst",
+    "name": "Anticipatory Windup & Burst Acceleration",
+    "category": "locomotion",
+    "description": "Body compresses in opposing direction before unleashing high-acceleration directional burst mined across 2 reference projects.",
+    "prerequisites": [
+      "com-acceleration-tracking"
+    ],
+    "applicableSituations": [
+      "dash",
+      "jump-takeoff",
+      "power-punch",
+      "teleport-charge"
+    ],
+    "timingProfile": {
+      "id": "tp_anticipation_burst",
+      "name": "Exponential Burst",
+      "anticipationFrames": 4,
+      "accelerationFrames": 3,
+      "impactFrames": 1,
+      "recoilFrames": 2,
+      "recoveryFrames": 4,
+      "holdFrames": 0,
+      "totalDurationFrames": 14,
+      "spacingProfile": "exponential-impact"
+    },
+    "bodyMechanicsPattern": "Pelvis lowers and tilts backward -> limb stores kinetic potential -> rapid linear extension.",
+    "parameters": {
+      "anticipationScale": 0.15,
+      "accelerationFactor": 2.4
+    },
+    "variations": [
+      "crouch-jump",
+      "dash-start",
+      "power-windup"
+    ],
+    "confidence": 0.65,
+    "supportingProjectIds": [
+      "proj_8f17898ad0a0",
+      "proj_842d304bdf64"
+    ],
+    "limitations": [
+      "Avoid over-anticipation in instant-action mechanics"
+    ],
+    "implementationNotes": "Subtly shift COM opposite to target motion direction for 3-4 frames before burst."
+  }
+]

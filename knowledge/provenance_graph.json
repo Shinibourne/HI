@@ -1,0 +1,191 @@
+[
+  {
+    "type": "raw-observation",
+    "id": "obs_tech_ground_balance_shift_proj_8f17898ad0a0",
+    "label": "Observation from proj_8f17898ad0a0",
+    "sourceProjectIds": [
+      "proj_8f17898ad0a0"
+    ],
+    "evidenceDetails": "Direct motion forensics and semantic events extracted from project proj_8f17898ad0a0",
+    "confidenceScore": 0.9,
+    "childNodeIds": [
+      "pattern_tech_ground_balance_shift"
+    ],
+    "parentNodeIds": []
+  },
+  {
+    "type": "raw-observation",
+    "id": "obs_tech_ground_balance_shift_proj_842d304bdf64",
+    "label": "Observation from proj_842d304bdf64",
+    "sourceProjectIds": [
+      "proj_842d304bdf64"
+    ],
+    "evidenceDetails": "Direct motion forensics and semantic events extracted from project proj_842d304bdf64",
+    "confidenceScore": 0.9,
+    "childNodeIds": [
+      "pattern_tech_ground_balance_shift"
+    ],
+    "parentNodeIds": []
+  },
+  {
+    "type": "inferred-pattern",
+    "id": "pattern_tech_ground_balance_shift",
+    "label": "Pattern: Dynamic Foot Contact & COM Shift",
+    "sourceProjectIds": [
+      "proj_8f17898ad0a0",
+      "proj_842d304bdf64"
+    ],
+    "evidenceDetails": "Inferred recurring kinetic relationship across 2 projects",
+    "confidenceScore": 0.6000000000000001,
+    "childNodeIds": [
+      "principle_tech_ground_balance_shift"
+    ],
+    "parentNodeIds": [
+      "obs_tech_ground_balance_shift_proj_8f17898ad0a0",
+      "obs_tech_ground_balance_shift_proj_842d304bdf64"
+    ]
+  },
+  {
+    "type": "generalized-principle",
+    "id": "principle_tech_ground_balance_shift",
+    "label": "Principle: BALANCE - Dynamic Foot Contact & COM Shift",
+    "sourceProjectIds": [
+      "proj_8f17898ad0a0",
+      "proj_842d304bdf64"
+    ],
+    "evidenceDetails": "Generalized biomechanical principle applicable to procedural stickfigure generation",
+    "confidenceScore": 0.6000000000000001,
+    "childNodeIds": [
+      "skill_living_tech_ground_balance_shift"
+    ],
+    "parentNodeIds": [
+      "pattern_tech_ground_balance_shift"
+    ]
+  },
+  {
+    "type": "raw-observation",
+    "id": "obs_tech_impact_compression_proj_8f17898ad0a0",
+    "label": "Observation from proj_8f17898ad0a0",
+    "sourceProjectIds": [
+      "proj_8f17898ad0a0"
+    ],
+    "evidenceDetails": "Direct motion forensics and semantic events extracted from project proj_8f17898ad0a0",
+    "confidenceScore": 0.9,
+    "childNodeIds": [
+      "pattern_tech_impact_compression"
+    ],
+    "parentNodeIds": []
+  },
+  {
+    "type": "raw-observation",
+    "id": "obs_tech_impact_compression_proj_842d304bdf64",
+    "label": "Observation from proj_842d304bdf64",
+    "sourceProjectIds": [
+      "proj_842d304bdf64"
+    ],
+    "evidenceDetails": "Direct motion forensics and semantic events extracted from project proj_842d304bdf64",
+    "confidenceScore": 0.9,
+    "childNodeIds": [
+      "pattern_tech_impact_compression"
+    ],
+    "parentNodeIds": []
+  },
+  {
+    "type": "inferred-pattern",
+    "id": "pattern_tech_impact_compression",
+    "label": "Pattern: Impact Compression & Secondary Recoil",
+    "sourceProjectIds": [
+      "proj_8f17898ad0a0",
+      "proj_842d304bdf64"
+    ],
+    "evidenceDetails": "Inferred recurring kinetic relationship across 2 projects",
+    "confidenceScore": 0.74,
+    "childNodeIds": [
+      "principle_tech_impact_compression"
+    ],
+    "parentNodeIds": [
+      "obs_tech_impact_compression_proj_8f17898ad0a0",
+      "obs_tech_impact_compression_proj_842d304bdf64"
+    ]
+  },
+  {
+    "type": "generalized-principle",
+    "id": "principle_tech_impact_compression",
+    "label": "Principle: IMPACT - Impact Compression & Secondary Recoil",
+    "sourceProjectIds": [
+      "proj_8f17898ad0a0",
+      "proj_842d304bdf64"
+    ],
+    "evidenceDetails": "Generalized biomechanical principle applicable to procedural stickfigure generation",
+    "confidenceScore": 0.74,
+    "childNodeIds": [
+      "skill_living_tech_impact_compression"
+    ],
+    "parentNodeIds": [
+      "pattern_tech_impact_compression"
+    ]
+  },
+  {
+    "type": "raw-observation",
+    "id": "obs_tech_anticipation_burst_proj_8f17898ad0a0",
+    "label": "Observation from proj_8f17898ad0a0",
+    "sourceProjectIds": [
+      "proj_8f17898ad0a0"
+    ],
+    "evidenceDetails": "Direct motion forensics and semantic events extracted from project proj_8f17898ad0a0",
+    "confidenceScore": 0.9,
+    "childNodeIds": [
+      "pattern_tech_anticipation_burst"
+    ],
+    "parentNodeIds": []
+  },
+  {
+    "type": "raw-observation",
+    "id": "obs_tech_anticipation_burst_proj_842d304bdf64",
+    "label": "Observation from proj_842d304bdf64",
+    "sourceProjectIds": [
+      "proj_842d304bdf64"
+    ],
+    "evidenceDetails": "Direct motion forensics and semantic events extracted from project proj_842d304bdf64",
+    "confidenceScore": 0.9,
+    "childNodeIds": [
+      "pattern_tech_anticipation_burst"
+    ],
+    "parentNodeIds": []
+  },
+  {
+    "type": "inferred-pattern",
+    "id": "pattern_tech_anticipation_burst",
+    "label": "Pattern: Anticipatory Windup & Burst Acceleration",
+    "sourceProjectIds": [
+      "proj_8f17898ad0a0",
+      "proj_842d304bdf64"
+    ],
+    "evidenceDetails": "Inferred recurring kinetic relationship across 2 projects",
+    "confidenceScore": 0.65,
+    "childNodeIds": [
+      "principle_tech_anticipation_burst"
+    ],
+    "parentNodeIds": [
+      "obs_tech_anticipation_burst_proj_8f17898ad0a0",
+      "obs_tech_anticipation_burst_proj_842d304bdf64"
+    ]
+  },
+  {
+    "type": "generalized-principle",
+    "id": "principle_tech_anticipation_burst",
+    "label": "Principle: LOCOMOTION - Anticipatory Windup & Burst Acceleration",
+    "sourceProjectIds": [
+      "proj_8f17898ad0a0",
+      "proj_842d304bdf64"
+    ],
+    "evidenceDetails": "Generalized biomechanical principle applicable to procedural stickfigure generation",
+    "confidenceScore": 0.65,
+    "childNodeIds": [
+      "skill_living_tech_anticipation_burst"
+    ],
+    "parentNodeIds": [
+      "pattern_tech_anticipation_burst"
+    ]
+  }
+]
