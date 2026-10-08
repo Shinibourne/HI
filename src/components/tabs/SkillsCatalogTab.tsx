@@ -1,7 +1,7 @@
 import React from 'react';
 import { CheckCircle2, Download, Search, Activity, Target } from 'lucide-react';
 import { AnimationQualityReport } from '../../lib/skills/qualityAudits';
-import { SKILL_HIERARCHY, EXPANDED_46_MOTION_SKILLS, EXPANDED_53_MOTION_SKILLS, AUTOMATIC_15_STEP_PIPELINE } from '../../lib/skills/skillsCatalogData';
+import { SKILL_HIERARCHY, EXPANDED_68_MOTION_SKILLS, ALL_MOTION_SKILLS, AUTOMATIC_15_STEP_PIPELINE } from '../../lib/skills/skillsCatalogData';
 
 interface SkillsCatalogTabProps {
   liveBiomechanicsAudit: AnimationQualityReport;
@@ -119,10 +119,10 @@ export const SkillsCatalogTab: React.FC<SkillsCatalogTabProps> = ({
                 <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 border-b border-[#E2E8F0] pb-3">
                   <div>
                     <div className="text-xs font-mono text-[#0F172A] font-semibold">
-                      EXPANDED 53-SKILL REUSABLE MOTION LIBRARY
+                      EXPANDED 68-SKILL REUSABLE MOTION LIBRARY
                     </div>
                     <h3 className="text-base font-semibold text-[#0F172A]">
-                      All 53 Human Biomechanics, Kinematics, Timing, Secondary Physics &amp; Spatial Consistency Skills
+                      All 68 Human Biomechanics, Kinematics, Timing, Physics &amp; Scientific Mass Variations Skills
                     </h3>
                   </div>
 
@@ -156,6 +156,8 @@ export const SkillsCatalogTab: React.FC<SkillsCatalogTabProps> = ({
                           'Physics, Secondary & Inertia',
                           'Timing, Composition & Arcs',
                           'Spatial Consistency & Interaction',
+                          'General Physics & Load Intelligence',
+                          'Physics & Scientific Mass Variations',
                         ].map((cat) => (
                           <option key={cat} value={cat}>
                             Category: {cat}
@@ -176,6 +178,8 @@ export const SkillsCatalogTab: React.FC<SkillsCatalogTabProps> = ({
                         'Physics, Secondary & Inertia',
                         'Timing, Composition & Arcs',
                         'Spatial Consistency & Interaction',
+                        'General Physics & Load Intelligence',
+                        'Physics & Scientific Mass Variations',
                       ].map((cat) => (
                         <button
                           key={cat}
@@ -195,7 +199,7 @@ export const SkillsCatalogTab: React.FC<SkillsCatalogTabProps> = ({
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 max-h-[560px] overflow-y-auto pr-1">
-                  {EXPANDED_53_MOTION_SKILLS.filter((s: any) => {
+                  {(ALL_MOTION_SKILLS || EXPANDED_68_MOTION_SKILLS).filter((s: any) => {
                     const matchesCat = selectedSkillCategory === 'ALL' || s.category === selectedSkillCategory;
                     const matchesSearch =
                       skillSearchQuery === '' ||

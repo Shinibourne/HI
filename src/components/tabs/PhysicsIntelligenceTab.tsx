@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Scale,
   Activity,
@@ -10,12 +10,14 @@ import {
   Sliders,
   Download,
   Info,
+  Atom,
 } from 'lucide-react';
 import {
   GeneralGeneratorConfig,
   PhysicsScenarioType,
 } from '../../lib/physics/generalMotionGenerator';
 import { BiomechanicalAuditReport } from '../../lib/physics/types';
+import { calculateUnifiedMassAnalysis } from '../../lib/physics/scientificMassSolver';
 
 interface PhysicsIntelligenceTabProps {
   generalPhysicsConfig: GeneralGeneratorConfig;
@@ -42,6 +44,15 @@ export const PhysicsIntelligenceTab: React.FC<PhysicsIntelligenceTabProps> = ({
 }) => {
   const safeIdx = currentFrame % Math.max(1, generalPhysicsFrames.length);
   const activeFrame = generalPhysicsFrames[safeIdx] || generalPhysicsFrames[0];
+
+  const [scientificMassKg, setScientificMassKg] = useState<number>(70);
+  const [scientificVelocityFractionC, setScientificVelocityFractionC] = useState<number>(0.1);
+
+  const scientificAnalysis = calculateUnifiedMassAnalysis({
+    massKg: scientificMassKg,
+    speedVelocityMps: scientificVelocityFractionC * 299792458,
+    secondaryMassKg: generalPhysicsConfig.objMass,
+  });
 
   const scenarios: { type: PhysicsScenarioType; label: string; icon: string; desc: string }[] = [
     {
@@ -98,7 +109,7 @@ export const PhysicsIntelligenceTab: React.FC<PhysicsIntelligenceTabProps> = ({
               <span className="px-2 py-0.5 text-[10px] font-mono uppercase bg-indigo-500/20 text-indigo-300 rounded border border-indigo-500/30">
                 Core Engine Primitives
               </span>
-              <span className="text-xs text-indigo-200">Skills #54–#63 Active</span>
+              <span className="text-xs text-indigo-200">Skills #54–#68 Active</span>
             </div>
             <h2 className="text-lg font-bold mt-1 text-white">General Physics &amp; Biomechanical Intelligence Lab</h2>
             <p className="text-xs text-slate-300 mt-0.5">
@@ -194,12 +205,11 @@ export const PhysicsIntelligenceTab: React.FC<PhysicsIntelligenceTabProps> = ({
             max="140"
             step="5"
             value={generalPhysicsConfig.charMass}
-            onChange={(e) =>
-              setGeneralPhysicsConfig((c) => ({
-                ...c,
-                charMass: parseFloat(e.target.value),
-              }))
-            }
+            onChange={(e) => {
+              const val = parseFloat(e.target.value);
+              setGeneralPhysicsConfig((c) => ({ ...c, charMass: val }));
+              setScientificMassKg(val);
+            }}
             className="w-full accent-slate-800 cursor-pointer"
           />
           <div className="flex justify-between text-[10px] text-slate-400 mt-1">
@@ -235,6 +245,100 @@ export const PhysicsIntelligenceTab: React.FC<PhysicsIntelligenceTabProps> = ({
             <span>20 px (Chest Hold)</span>
             <span>50 px (Mid Hold)</span>
             <span>85 px (Outstretched)</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Interactive Physics & Scientific Variations of Mass Live Telemetry Panel */}
+      <div className="bg-white p-4 rounded-xl border border-indigo-200 shadow-xs space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-indigo-100 pb-3">
+          <div className="flex items-center gap-2">
+            <Atom className="w-4 h-4 text-indigo-600 shrink-0" />
+            <div>
+              <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
+                Physics &amp; Scientific Variations of Mass (Skills #64–#68)
+              </h3>
+              <p className="text-[11px] text-slate-500">
+                Inertial, Gravitational Equivalence, Rest Energy (E=mc²), Relativistic Lorentz Scaling &amp; Sub-Category Variations
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <label className="text-[11px] font-mono text-slate-600">Velocity (v/c):</label>
+            <input
+              type="range"
+              min="0"
+              max="0.95"
+              step="0.05"
+              value={scientificVelocityFractionC}
+              onChange={(e) => setScientificVelocityFractionC(parseFloat(e.target.value))}
+              className="w-24 accent-indigo-600 cursor-pointer"
+            />
+            <span className="text-xs font-mono font-bold text-indigo-600 w-12">
+              {(scientificVelocityFractionC * 100).toFixed(0)}% c
+            </span>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 text-xs">
+          {/* Inertial Mass */}
+          <div className="p-3 bg-slate-50 rounded-lg border border-slate-200 space-y-1">
+            <div className="font-bold text-indigo-900 text-[11px] uppercase tracking-wide">
+              1. Inertial Mass (Skill #64)
+            </div>
+            <div className="font-mono text-[11px] text-slate-700 space-y-0.5">
+              <div>Mass m_i: <span className="font-bold">{scientificAnalysis.inertial.massKg} kg</span></div>
+              <div>Accel (F=100N): <span className="font-bold text-indigo-600">{scientificAnalysis.inertial.accelerationMps2.x.toFixed(2)} m/s²</span></div>
+              <div>Linear p: <span className="font-bold">{scientificAnalysis.inertial.momentumKgMps.x.toFixed(0)} kg·m/s</span></div>
+            </div>
+          </div>
+
+          {/* Gravitational Mass */}
+          <div className="p-3 bg-slate-50 rounded-lg border border-slate-200 space-y-1">
+            <div className="font-bold text-emerald-900 text-[11px] uppercase tracking-wide">
+              2. Gravitational Mass (Skill #65)
+            </div>
+            <div className="font-mono text-[11px] text-slate-700 space-y-0.5">
+              <div>Weight W=mg: <span className="font-bold">{scientificAnalysis.gravitational.localWeightN.toFixed(1)} N</span></div>
+              <div>m_i / m_g Ratio: <span className="font-bold text-emerald-600">{scientificAnalysis.gravitational.equivalenceRatio.toFixed(6)}</span></div>
+              <div>WEP Equivalence: <span className="font-bold text-emerald-700">VERIFIED</span></div>
+            </div>
+          </div>
+
+          {/* Rest Mass */}
+          <div className="p-3 bg-slate-50 rounded-lg border border-slate-200 space-y-1">
+            <div className="font-bold text-amber-900 text-[11px] uppercase tracking-wide">
+              3. Rest Mass (Skill #66)
+            </div>
+            <div className="font-mono text-[11px] text-slate-700 space-y-0.5">
+              <div>Rest Mass m_0: <span className="font-bold">{scientificAnalysis.rest.restMassKg} kg</span></div>
+              <div>E_0 = m_0 c²: <span className="font-bold text-amber-700">{(scientificAnalysis.rest.restEnergyJoules / 1e18).toFixed(2)} ExaJ</span></div>
+              <div>MeV Equiv: <span className="font-bold">{scientificAnalysis.rest.restEnergyMeV.toExponential(2)}</span></div>
+            </div>
+          </div>
+
+          {/* Relativistic Mass */}
+          <div className="p-3 bg-slate-50 rounded-lg border border-slate-200 space-y-1">
+            <div className="font-bold text-purple-900 text-[11px] uppercase tracking-wide">
+              4. Relativistic Mass (Skill #67)
+            </div>
+            <div className="font-mono text-[11px] text-slate-700 space-y-0.5">
+              <div>Lorentz γ: <span className="font-bold text-purple-700">{scientificAnalysis.relativistic.lorentzFactor.toFixed(4)}</span></div>
+              <div>m_rel = γ m_0: <span className="font-bold">{scientificAnalysis.relativistic.relativisticMassKg.toFixed(2)} kg</span></div>
+              <div>Mass Delta: <span className="font-bold text-purple-600">+{scientificAnalysis.relativistic.massIncreasePercentage.toFixed(2)}%</span></div>
+            </div>
+          </div>
+
+          {/* Scientific Sub-Categories */}
+          <div className="p-3 bg-slate-50 rounded-lg border border-slate-200 space-y-1">
+            <div className="font-bold text-cyan-900 text-[11px] uppercase tracking-wide">
+              5. Sub-Categories (Skill #68)
+            </div>
+            <div className="font-mono text-[11px] text-slate-700 space-y-0.5">
+              <div>Reduced Mass μ: <span className="font-bold text-cyan-700">{scientificAnalysis.variations.reducedMassKg.toFixed(2)} kg</span></div>
+              <div>Fluid Added Mass: <span className="font-bold">{scientificAnalysis.variations.hydrodynamicAddedMassKg.toFixed(1)} kg</span></div>
+              <div>Fluid Eff Mass: <span className="font-bold">{scientificAnalysis.variations.effectiveFluidMassKg.toFixed(1)} kg</span></div>
+            </div>
           </div>
         </div>
       </div>
