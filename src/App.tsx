@@ -20,6 +20,7 @@ import {
   type SpeedVsStrengthGeneratorConfig,
   type PhantomShadowboxGeneratorConfig,
   inspectStkndsBuffer,
+  buildBounceKeyframes,
   buildAdjustedSuperheroFrames,
   synthesizeSuperheroStknds,
   synthesizeBounceStknds,
@@ -174,7 +175,10 @@ export function App() {
   const [inspectLoading, setInspectLoading] = useState<boolean>(true);
   const [inspectError, setInspectError] = useState<string | null>(null);
   const [binaryStageOverride, setBinaryStageOverride] = useState<boolean>(false);
-  const inspectorCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const mobileCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const desktopCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const mobileInspectorCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const desktopInspectorCanvasRef = useRef<HTMLCanvasElement | null>(null);
 
   const [currentFrame, setCurrentFrame] = useState<number>(0);
   const [isPlaying, setIsPlaying] = useState<boolean>(true);
@@ -219,8 +223,6 @@ export function App() {
   const [gaitProgress, setGaitProgress] = useState<number>(0.25);
   const [gaitStrideLength, setGaitStrideLength] = useState<number>(140);
   const [gaitStepHeight, setGaitStepHeight] = useState<number>(36);
-
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -350,11 +352,13 @@ export function App() {
   );
 
   const computedBounceFrames = useMemo(() => {
-    return Array.from({ length: 22 }, (_, idx) => ({ frame: idx }));
-  }, []);
+    return buildBounceKeyframes(bounceConfig);
+  }, [bounceConfig]);
 
   const totalModeFrames =
-    activeAnimationMode === 'basketball'
+    binaryStageOverride && activeInspection && activeInspection.frames.length > 0
+      ? activeInspection.frames.length
+      : activeAnimationMode === 'basketball'
       ? basketballFrames.length
       : activeAnimationMode === 'stroll-kick'
       ? strollKickFrames.length
@@ -368,7 +372,7 @@ export function App() {
       ? sneezeFrames.length
       : activeAnimationMode === 'superhero'
       ? superheroFrames.length
-      : 22;
+      : computedBounceFrames.length;
 
   const effectivePlaybackFps = globalFps;
 
@@ -447,6 +451,9 @@ export function App() {
       setActiveInspection(report);
       setSelectedPresetPath(file.name);
       syncAnimationModeFromPath(file.name);
+      setBinaryStageOverride(true);
+      setCurrentFrame(0);
+      setIsPlaying(true);
     } catch (err: any) {
       setInspectError(err.message || 'Failed to parse file.');
     }
@@ -608,7 +615,7 @@ export function App() {
         <div className="lg:hidden">
           {mobileActiveView === 'stage' && (
             <AnimationStudioStage
-              canvasRef={canvasRef}
+              canvasRef={mobileCanvasRef}
               activeAnimationMode={activeAnimationMode}
               currentFrame={currentFrame}
               setCurrentFrame={setCurrentFrame}
@@ -780,7 +787,7 @@ export function App() {
               handleFileUpload={handleFileUpload}
               setCurrentFrame={setCurrentFrame}
               setIsPlaying={setIsPlaying}
-              inspectorCanvasRef={inspectorCanvasRef}
+              inspectorCanvasRef={mobileInspectorCanvasRef}
             />
           )}
         </div>
@@ -794,7 +801,7 @@ export function App() {
             }`}
           >
             <AnimationStudioStage
-              canvasRef={canvasRef}
+              canvasRef={desktopCanvasRef}
               activeAnimationMode={activeAnimationMode}
               currentFrame={currentFrame}
               setCurrentFrame={setCurrentFrame}
@@ -971,7 +978,7 @@ export function App() {
             handleFileUpload={handleFileUpload}
             setCurrentFrame={setCurrentFrame}
             setIsPlaying={setIsPlaying}
-            inspectorCanvasRef={inspectorCanvasRef}
+            inspectorCanvasRef={desktopInspectorCanvasRef}
           />
         </div>
       </main>

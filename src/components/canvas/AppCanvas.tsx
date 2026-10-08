@@ -1,6 +1,6 @@
 import { computeForwardKinematics, JointPoint } from '../../lib/kinematics/forwardKinematics';
 import { StkndsInspectionResult } from '../../lib/stknds/stkndsCore';
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { BasketballGeneratorConfig, BasketballKeyframeSpec } from '../../lib/basketballChoreographyFrames';
 import { SitWalkKickGeneratorConfig, SitWalkKickKeyframeSpec } from '../../lib/sitWalkKickBallFrames';
 import { PhantomShadowboxGeneratorConfig, PhantomShadowboxKeyframeSpec } from '../../lib/phantomShadowboxFrames';
@@ -13,7 +13,7 @@ interface AppCanvasProps {
   binaryStageOverride: boolean;
   activeInspection: StkndsInspectionResult | null;
 
-  canvasRef: React.RefObject<HTMLCanvasElement | null>;
+  canvasRef?: React.RefObject<HTMLCanvasElement | null>;
   activeAnimationMode: string;
   currentFrame: number;
   showOnionSkin: boolean;
@@ -50,7 +50,7 @@ export const AppCanvas: React.FC<AppCanvasProps> = ({
   binaryStageOverride,
   activeInspection,
 
-  canvasRef,
+  canvasRef: propCanvasRef,
   activeAnimationMode,
   currentFrame,
   showOnionSkin,
@@ -82,8 +82,17 @@ export const AppCanvas: React.FC<AppCanvasProps> = ({
   safeHeroFrame,
   safeBounceFrame,
 }) => {
+  const internalCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const [resizeTrigger, setResizeTrigger] = useState(0);
+
   useEffect(() => {
-    const canvas = canvasRef.current;
+    const handleResize = () => setResizeTrigger((v) => v + 1);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  useEffect(() => {
+    const canvas = internalCanvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
@@ -2361,22 +2370,48 @@ export const AppCanvas: React.FC<AppCanvasProps> = ({
       ctx.stroke();
       ctx.restore();
 
-      const safeFrameIndex = currentFrame % 22;
-      if (showOnionSkin) {
+      const numFrames = computedBounceFrames && computedBounceFrames.length > 0 ? computedBounceFrames.length : 22;
+      const safeFrameIndex = currentFrame % numFrames;
+      const activeF = computedBounceFrames?.[safeFrameIndex];
+
+      const ax = (activeF?.sceneX ?? bounceConfig.centerX) * scaleX;
+      const ay = (activeF?.sceneY ?? bounceConfig.groundY) * scaleY;
+      const aw = (activeF?.widthDiam ?? bounceConfig.ballDiameter) * 0.5 * scaleX;
+      const ah = (activeF?.heightDiam ?? bounceConfig.ballDiameter) * 0.5 * scaleY;
+      const aThick = activeF?.serializedThickness ?? bounceConfig.ballThickness;
+
+      // Contact shadow under bouncing ball
+      const shadowY = groundCanvasY;
+      const distFromGround = Math.max(0, groundCanvasY - ay);
+      const shadowScale = Math.max(0.2, 1.0 - distFromGround / (450 * scaleY));
+      const shadowAlpha = Math.max(0.04, 0.40 * shadowScale);
+      ctx.save();
+      ctx.fillStyle = `rgba(15, 23, 42, ${shadowAlpha})`;
+      ctx.beginPath();
+      ctx.ellipse(ax, shadowY, Math.max(2, aw * 1.15 * shadowScale), Math.max(1, 6 * scaleY * shadowScale), 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+
+      if (showOnionSkin && computedBounceFrames && computedBounceFrames.length > 0) {
         [-2, -1, 1].forEach((offset) => {
-          const gIdx = (safeFrameIndex + offset + 22) % 22;
+          const gIdx = (safeFrameIndex + offset + numFrames) % numFrames;
           const gf = computedBounceFrames[gIdx];
+          if (!gf) return;
+          const gx = (gf.sceneX ?? bounceConfig.centerX) * scaleX;
+          const gy = (gf.sceneY ?? bounceConfig.groundY) * scaleY;
+          const gw = (gf.widthDiam ?? bounceConfig.ballDiameter) * 0.5 * scaleX;
+          const gh = (gf.heightDiam ?? bounceConfig.ballDiameter) * 0.5 * scaleY;
           ctx.save();
-          ctx.globalAlpha = offset < 0 ? 0.18 : 0.1;
+          ctx.globalAlpha = offset < 0 ? 0.20 : 0.12;
           ctx.fillStyle = bounceConfig.ballColorHex;
           ctx.strokeStyle = bounceConfig.ballColorHex;
           ctx.lineWidth = 2;
           ctx.beginPath();
           ctx.ellipse(
-            gf.sceneX * scaleX,
-            gf.sceneY * scaleY,
-            gf.widthDiam * 0.5 * scaleX,
-            gf.heightDiam * 0.5 * scaleY,
+            gx,
+            gy,
+            Math.max(1, gw),
+            Math.max(1, gh),
             0,
             0,
             Math.PI * 2
@@ -2387,23 +2422,34 @@ export const AppCanvas: React.FC<AppCanvasProps> = ({
         });
       }
 
-      const activeF = computedBounceFrames[safeFrameIndex];
       ctx.save();
       ctx.fillStyle = bounceConfig.ballColorHex;
       ctx.strokeStyle = bounceConfig.ballColorHex;
-      ctx.lineWidth = Math.max(3, activeF.serializedThickness * 0.25 * scaleX);
+      ctx.lineWidth = Math.max(3, aThick * 0.25 * scaleX);
       ctx.beginPath();
       ctx.ellipse(
-        activeF.sceneX * scaleX,
-        activeF.sceneY * scaleY,
-        activeF.widthDiam * 0.5 * scaleX,
-        activeF.heightDiam * 0.5 * scaleY,
+        ax,
+        ay,
+        Math.max(1, aw),
+        Math.max(1, ah),
         0,
         0,
         Math.PI * 2
       );
       if (bounceConfig.nodeType === 4) ctx.fill();
       else ctx.stroke();
+      ctx.restore();
+
+      // Ball status HUD tag
+      ctx.save();
+      ctx.fillStyle = '#0284C7';
+      ctx.font = '600 11px "IBM Plex Mono", monospace';
+      const phaseLabel = activeF?.phase ?? `Frame ${safeFrameIndex}`;
+      ctx.fillText(
+        `BOUNCE [${phaseLabel}]`,
+        Math.max(20, ax - 80 * scaleX),
+        Math.min(ay - ah - 16 * scaleY, groundCanvasY - 30 * scaleY)
+      );
       ctx.restore();
     }
   }, [
@@ -2431,12 +2477,22 @@ export const AppCanvas: React.FC<AppCanvasProps> = ({
     sneezeConfig,
     heroConfig,
     bounceConfig,
+    resizeTrigger,
   ]);
 
 
   return (
     <canvas
-      ref={canvasRef}
+      ref={(node) => {
+        internalCanvasRef.current = node;
+        if (propCanvasRef) {
+          if (typeof propCanvasRef === 'function') {
+            (propCanvasRef as any)(node);
+          } else {
+            (propCanvasRef as any).current = node;
+          }
+        }
+      }}
       width={1920}
       height={1080}
       className="w-full h-full object-contain bg-[#F1F5F9] block font-mono select-none"

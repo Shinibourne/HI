@@ -31,6 +31,49 @@ export const CANONICAL_22_FRAME_PHASES: {
   { frame: 21, normY: 0, phase: 'Phase 8: Final Contact Settle', squashFactor: 1.00 },
 ];
 
+export interface BounceFrameSpec {
+  frame: number;
+  phase: string;
+  sceneX: number;
+  sceneY: number;
+  widthDiam: number;
+  heightDiam: number;
+  serializedThickness: number;
+  squashFactor: number;
+}
+
+export function buildBounceKeyframes(config: BounceGeneratorConfig): BounceFrameSpec[] {
+  return CANONICAL_22_FRAME_PHASES.map((phaseInfo, f) => {
+    const isSecondBounce = f >= 14 && f <= 20;
+    const normPeak = isSecondBounce ? 88 : 130;
+    const targetApex = isSecondBounce ? config.secondaryApexHeight : config.primaryApexHeight;
+
+    const verticalOffset = (phaseInfo.normY / normPeak) * targetApex;
+    const sceneY = config.groundY + verticalOffset;
+    const sceneX = config.centerX;
+
+    const rawSq = phaseInfo.squashFactor;
+    const blendedSq = config.enableSquashStretch
+      ? 1.0 + (rawSq - 1.0) * config.squashIntensity
+      : 1.0;
+
+    const heightDiam = config.ballDiameter * blendedSq;
+    const widthDiam = config.ballDiameter / blendedSq;
+    const serializedThickness = Math.max(2, Math.round(config.ballThickness / blendedSq));
+
+    return {
+      frame: f,
+      phase: phaseInfo.phase,
+      sceneX,
+      sceneY,
+      widthDiam,
+      heightDiam,
+      serializedThickness,
+      squashFactor: blendedSq,
+    };
+  });
+}
+
 export async function synthesizeBounceStknds(
   baseDecompressed: Uint8Array,
   config: BounceGeneratorConfig

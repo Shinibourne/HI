@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { CheckCircle2, AlertTriangle, ShieldCheck, FileCode2, Upload, AlertCircle, Play, Layers } from 'lucide-react';
 import { BasketballAuditReport } from '../../lib/basketballChoreographyFrames';
 import { BiomechanicalAuditReport } from '../../lib/sitWalkKickBallFrames';
@@ -59,11 +59,13 @@ export const MethodologyTab: React.FC<MethodologyTabProps> = ({
   handleFileUpload,
   setCurrentFrame,
   setIsPlaying,
-  inspectorCanvasRef,
+  inspectorCanvasRef: propInspectorCanvasRef,
 }) => {
+  const internalInspectorCanvasRef = useRef<HTMLCanvasElement | null>(null);
+
   useEffect(() => {
-    if (!inspectorCanvasRef?.current || !activeInspection || activeInspection.frames.length === 0) return;
-    const canvas = inspectorCanvasRef.current;
+    const canvas = internalInspectorCanvasRef.current;
+    if (!canvas || !activeInspection || activeInspection.frames.length === 0) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
@@ -169,7 +171,7 @@ export const MethodologyTab: React.FC<MethodologyTabProps> = ({
       }
     }
     ctx.restore();
-  }, [inspectorCanvasRef, activeInspection, currentFrame]);
+  }, [propInspectorCanvasRef, activeInspection, currentFrame]);
 
   return (
     <div className="space-y-6">
@@ -730,7 +732,16 @@ export const MethodologyTab: React.FC<MethodologyTabProps> = ({
                   </div>
                   <div className="rounded-lg overflow-hidden border border-[#CBD5E1] bg-white">
                     <canvas
-                      ref={inspectorCanvasRef}
+                      ref={(node) => {
+                        internalInspectorCanvasRef.current = node;
+                        if (propInspectorCanvasRef) {
+                          if (typeof propInspectorCanvasRef === 'function') {
+                            (propInspectorCanvasRef as any)(node);
+                          } else {
+                            (propInspectorCanvasRef as any).current = node;
+                          }
+                        }
+                      }}
                       width={640}
                       height={260}
                       className="w-full h-auto block"

@@ -20,7 +20,7 @@ import { STROLL_KICK_PANELS } from '../../lib/sitWalkKickBallFrames';
 import { STORYBOARD_PANELS } from '../../lib/phantomShadowboxFrames';
 
 export interface AnimationStudioStageProps {
-  canvasRef: React.RefObject<HTMLCanvasElement | null>;
+  canvasRef?: React.RefObject<HTMLCanvasElement | null>;
   activeAnimationMode: string;
   currentFrame: number;
   setCurrentFrame: React.Dispatch<React.SetStateAction<number>>;
@@ -190,6 +190,10 @@ export const AnimationStudioStage: React.FC<AnimationStudioStageProps> = ({
     }
     if (activeAnimationMode === 'superhero' && safeHeroFrame) {
       return `${safeHeroFrame.act || 'Flight'} · Frame ${currentFrame}`;
+    }
+    if (activeAnimationMode === 'bounce') {
+      const bf = computedBounceFrames?.[currentFrame % (computedBounceFrames?.length || 22)];
+      return bf?.phase ? `${bf.phase} · Frame ${currentFrame}` : `Bounce · Frame ${currentFrame}`;
     }
     return `Frame ${currentFrame}`;
   })();
