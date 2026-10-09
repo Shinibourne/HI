@@ -19,6 +19,14 @@ import {
 import { BiomechanicalAuditReport } from '../../lib/physics/types';
 import { calculateUnifiedMassAnalysis } from '../../lib/physics/scientificMassSolver';
 import { calculateUnifiedEnergyAnalysis } from '../../lib/physics/energyDynamicsSolver';
+import {
+  calculateUnifiedDensityFluidAnalysis,
+  FLUID_DENSITY_FRESHWATER,
+  FLUID_DENSITY_SEAWATER,
+  FLUID_DENSITY_AIR,
+  FLUID_DENSITY_OIL,
+  FLUID_DENSITY_MERCURY,
+} from '../../lib/physics/densityFluidEnvironmentSolver';
 
 interface PhysicsIntelligenceTabProps {
   generalPhysicsConfig: GeneralGeneratorConfig;
@@ -66,6 +74,32 @@ export const PhysicsIntelligenceTab: React.FC<PhysicsIntelligenceTabProps> = ({
     velocityMps: energyVelocityMps,
     angularVelocityRadS: energyAngularVelRadS,
     springStretchMeters: energySpringStretchMeters,
+  });
+
+  // Environmental Variables & Density State
+  const [fluidPreset, setFluidPreset] = useState<'FRESHWATER' | 'SEAWATER' | 'AIR' | 'OIL' | 'MERCURY'>('FRESHWATER');
+  const [fluidDepthMeters, setFluidDepthMeters] = useState<number>(3.5);
+  const [fluidFlowVelocityMps, setFluidFlowVelocityMps] = useState<number>(1.8);
+  const [customObjectVolumeLiters, setCustomObjectVolumeLiters] = useState<number>(65.0);
+
+  const fluidDensityMap = {
+    FRESHWATER: FLUID_DENSITY_FRESHWATER,
+    SEAWATER: FLUID_DENSITY_SEAWATER,
+    AIR: FLUID_DENSITY_AIR,
+    OIL: FLUID_DENSITY_OIL,
+    MERCURY: FLUID_DENSITY_MERCURY,
+  };
+
+  const currentFluidDensity = fluidDensityMap[fluidPreset];
+
+  const densityFluidAnalysis = calculateUnifiedDensityFluidAnalysis({
+    objectMassKg: generalPhysicsConfig.objMass,
+    objectVolumeM3: customObjectVolumeLiters / 1000.0,
+    fluidDensityKgM3: currentFluidDensity,
+    depthMeters: fluidDepthMeters,
+    gravityMps2: 9.80665,
+    fluidName: fluidPreset,
+    flowVelocityMps: fluidFlowVelocityMps,
   });
 
   const scenarios: { type: PhysicsScenarioType; label: string; icon: string; desc: string }[] = [
@@ -123,7 +157,7 @@ export const PhysicsIntelligenceTab: React.FC<PhysicsIntelligenceTabProps> = ({
               <span className="px-2 py-0.5 text-[10px] font-mono uppercase bg-indigo-500/20 text-indigo-300 rounded border border-indigo-500/30">
                 Core Engine Primitives
               </span>
-              <span className="text-xs text-indigo-200">Skills #54–#68 Active</span>
+              <span className="text-xs text-indigo-200">Skills #54–#83 Active</span>
             </div>
             <h2 className="text-lg font-bold mt-1 text-white">General Physics &amp; Biomechanical Intelligence Lab</h2>
             <p className="text-xs text-slate-300 mt-0.5">
@@ -361,6 +395,121 @@ export const PhysicsIntelligenceTab: React.FC<PhysicsIntelligenceTabProps> = ({
               <div>Total System E: <span className="font-bold text-purple-800">{energyAnalysis.conservation.totalSystemEnergyJoules.toFixed(1)} J</span></div>
               <div>Thermal Losses (Q): <span className="font-bold">{energyAnalysis.conservation.thermalLossJoules.toFixed(1)} J</span></div>
               <div>Thermodynamic Law: <span className="font-bold text-purple-700">E_total = Const</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Density, Fluid Forces, Environmental Variables & Environmental Probability Panel (Skills #77–#83) */}
+      <div className="bg-white p-4 rounded-xl border border-cyan-200 shadow-xs space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-cyan-100 pb-3">
+          <div className="flex items-center gap-2">
+            <Layers className="w-4 h-4 text-cyan-600 shrink-0" />
+            <div>
+              <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
+                Density, Fluid Forces &amp; Environmental Probability (Skills #77–#83)
+              </h3>
+              <p className="text-[11px] text-slate-500">
+                Matter Density (ρ=m/V), Archimedes' Buoyancy (F_b=ρgV), Hydrostatic Pressure (P=P_0+ρgh), Force Density (f=F/V), Environmental Medium Variables &amp; Stochastic Turbulence/Wave Probability
+              </p>
+            </div>
+          </div>
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="flex items-center gap-1.5">
+              <label className="text-[11px] font-mono text-slate-600">Fluid Medium:</label>
+              <select
+                value={fluidPreset}
+                onChange={(e) => setFluidPreset(e.target.value as any)}
+                className="text-xs font-mono bg-slate-50 border border-slate-300 rounded px-1.5 py-0.5 text-cyan-900 font-bold cursor-pointer"
+              >
+                <option value="FRESHWATER">Freshwater (1000 kg/m³)</option>
+                <option value="SEAWATER">Seawater (1025 kg/m³)</option>
+                <option value="AIR">Air (1.225 kg/m³)</option>
+                <option value="OIL">Oil (850 kg/m³)</option>
+                <option value="MERCURY">Mercury (13546 kg/m³)</option>
+              </select>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <label className="text-[11px] font-mono text-slate-600">Depth (h):</label>
+              <input
+                type="range"
+                min="0.5"
+                max="20"
+                step="0.5"
+                value={fluidDepthMeters}
+                onChange={(e) => setFluidDepthMeters(parseFloat(e.target.value))}
+                className="w-20 accent-cyan-600 cursor-pointer"
+              />
+              <span className="text-xs font-mono font-bold text-cyan-700 w-10">
+                {fluidDepthMeters}m
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 text-xs">
+          {/* 1. Matter Density */}
+          <div className="p-3 bg-cyan-50/50 rounded-lg border border-cyan-200/60 space-y-1">
+            <div className="font-bold text-cyan-900 text-[11px] uppercase tracking-wide flex items-center justify-between">
+              <span>1. Matter Density (ρ)</span>
+              <span className="font-mono text-cyan-700">{densityFluidAnalysis.density.densityKgM3.toFixed(0)} kg/m³</span>
+            </div>
+            <div className="font-mono text-[11px] text-slate-700 space-y-0.5 pt-1">
+              <div>Formula: <span className="font-bold text-cyan-800">ρ = m / V</span> (Scalar)</div>
+              <div>Object Mass: <span className="font-bold">{densityFluidAnalysis.density.massKg} kg</span></div>
+              <div>Object Vol: <span className="font-bold">{(densityFluidAnalysis.density.volumeM3 * 1000).toFixed(0)} L</span></div>
+            </div>
+          </div>
+
+          {/* 2. Buoyancy & Equilibrium */}
+          <div className="p-3 bg-blue-50/50 rounded-lg border border-blue-200/60 space-y-1">
+            <div className="font-bold text-blue-900 text-[11px] uppercase tracking-wide flex items-center justify-between">
+              <span>2. Buoyancy (F_b)</span>
+              <span className="font-mono text-blue-700 font-bold">{densityFluidAnalysis.equilibrium.state}</span>
+            </div>
+            <div className="font-mono text-[11px] text-slate-700 space-y-0.5 pt-1">
+              <div>Upthrust F_b: <span className="font-bold text-blue-800">{densityFluidAnalysis.buoyancy.buoyantForceN.toFixed(1)} N</span></div>
+              <div>Weight W: <span className="font-bold">{densityFluidAnalysis.equilibrium.weightForceN.toFixed(1)} N</span></div>
+              <div>Submerged: <span className="font-bold text-blue-700">{(densityFluidAnalysis.equilibrium.submergedVolumeFraction * 100).toFixed(0)}%</span></div>
+            </div>
+          </div>
+
+          {/* 3. Hydrostatic Pressure */}
+          <div className="p-3 bg-sky-50/50 rounded-lg border border-sky-200/60 space-y-1">
+            <div className="font-bold text-sky-900 text-[11px] uppercase tracking-wide flex items-center justify-between">
+              <span>3. Hydrostatic P(h)</span>
+              <span className="font-mono text-sky-700">{densityFluidAnalysis.hydrostatic.pressureAtmospheres.toFixed(2)} atm</span>
+            </div>
+            <div className="font-mono text-[11px] text-slate-700 space-y-0.5 pt-1">
+              <div>Gauge P: <span className="font-bold text-sky-800">{(densityFluidAnalysis.hydrostatic.hydrostaticGaugePressurePa / 1000).toFixed(1)} kPa</span></div>
+              <div>Total Abs P: <span className="font-bold">{(densityFluidAnalysis.hydrostatic.totalAbsolutePressurePa / 1000).toFixed(1)} kPa</span></div>
+              <div>Depth h: <span className="font-bold text-sky-700">{fluidDepthMeters} m</span></div>
+            </div>
+          </div>
+
+          {/* 4. Force Density */}
+          <div className="p-3 bg-teal-50/50 rounded-lg border border-teal-200/60 space-y-1">
+            <div className="font-bold text-teal-900 text-[11px] uppercase tracking-wide flex items-center justify-between">
+              <span>4. Force Density (f)</span>
+              <span className="font-mono text-teal-700">{(densityFluidAnalysis.forceDensity.forceDensityNm3 / 1000).toFixed(1)} kN/m³</span>
+            </div>
+            <div className="font-mono text-[11px] text-slate-700 space-y-0.5 pt-1">
+              <div>Formula: <span className="font-bold text-teal-800">f = F / V</span></div>
+              <div>Gravity Field f_g: <span className="font-bold">{(currentFluidDensity * 9.81 / 1000).toFixed(1)} kN/m³</span></div>
+              <div>Dimension: <span className="font-bold text-teal-700">N / m³</span></div>
+            </div>
+          </div>
+
+          {/* 5. Environmental Probability */}
+          <div className="p-3 bg-indigo-50/50 rounded-lg border border-indigo-200/60 space-y-1">
+            <div className="font-bold text-indigo-900 text-[11px] uppercase tracking-wide flex items-center justify-between">
+              <span>5. Stochastic Prob</span>
+              <span className="font-mono text-indigo-700">Re={(densityFluidAnalysis.probability.reynoldsNumber / 1000).toFixed(1)}k</span>
+            </div>
+            <div className="font-mono text-[11px] text-slate-700 space-y-0.5 pt-1">
+              <div>Turbulence Prob: <span className="font-bold text-indigo-800">{(densityFluidAnalysis.probability.turbulenceProbability * 100).toFixed(0)}%</span></div>
+              <div>State Shift Prob: <span className="font-bold text-indigo-700">{(densityFluidAnalysis.probability.sinkFloatTransitionProbability * 100).toFixed(1)}%</span></div>
+              <div>Confidence: <span className="font-bold text-emerald-700">{(densityFluidAnalysis.probability.stateConfidence * 100).toFixed(0)}%</span></div>
             </div>
           </div>
         </div>
