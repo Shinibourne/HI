@@ -43,7 +43,8 @@ export type SkillCategory =
   | 'General Physics & Load Intelligence'
   | 'Physics & Scientific Mass Variations'
   | 'Kinetic & Potential Energy Dynamics'
-  | 'Density, Fluid Forces & Environmental Probability';
+  | 'Density, Fluid Forces & Environmental Probability'
+  | 'Quantum Physics & Skill Acquisition';
 
 export interface MotionSkillDefinition {
   id: number;
@@ -373,6 +374,13 @@ export const SKILL_HIERARCHY: SkillHierarchyBranch[] = [
         name: 'Density, Fluid Forces & Environmental Probability',
         description: 'Matter Density (ρ=m/V), Buoyant Upthrust (F_b=ρgV), Hydrostatic Pressure (P=P_0+ρgh), Sinking/Floating Equilibrium, Force Density (f=F/V), Environmental Variables, and Environmental Probability distributions.',
         skills: [77, 78, 79, 80, 81, 82, 83],
+        autoInvokes: [],
+      },
+      {
+        id: 'quantum-physics-skill-acquisition',
+        name: 'Quantum Physics & Skill Acquisition',
+        description: 'Wave-Particle Duality, Superposition (Beginner\'s Mind), Heisenberg Uncertainty (Overthinking / Choking), Quantum Entanglement (Skill Transfer), Quantum Tunneling, Quantum Leaps, Quantum Coherence, and Quantum Parallel Computing.',
+        skills: [84, 85, 86, 87, 88, 89, 90, 91],
         autoInvokes: [],
       },
     ],
@@ -2273,8 +2281,193 @@ export const EXPANDED_46_MOTION_SKILLS: MotionSkillDefinition[] = [
       'Stochastic buoyant force variance matches expected environmental wave probability distribution',
     ],
   },
+  {
+    id: 84,
+    slug: 'quantum-leaps-discrete-states',
+    name: '84. Quantum Leaps & Discrete Skill States',
+    category: 'Quantum Physics & Skill Acquisition',
+    priority: 'CRITICAL',
+    summary:
+      'Governs non-linear skill acquisition characterized by extended performance plateaus punctuated by discrete, high-amplitude breakthroughs (ΔE = hν).',
+    causalQuestion: 'Has the learner accumulated sufficient structural practice energy to trigger a discrete eigenstate quantum leap?',
+    biomechanicalRules: [
+      'Skill progression does not follow smooth continuous linear gradients.',
+      'Frustrating plateaus represent neural state reorganization before discrete eigenstate snaps.',
+      'Breakthrough energy transitions skip intermediate incomplete execution states.',
+    ],
+    failureModesPrevented: [
+      'Assuming linear progress models for non-linear skill acquisition',
+      'Abandoning practice during plateau state reorganization before energy threshold completion',
+    ],
+    verificationMetrics: [
+      'Practice accumulation energy progress calculated continuously against leap threshold',
+      'Discrete state transition executed upon reaching 100% threshold',
+    ],
+  },
+  {
+    id: 85,
+    slug: 'superposition-beginners-mind',
+    name: '85. Superposition & Beginner\'s Mind Potential',
+    category: 'Quantum Physics & Skill Acquisition',
+    priority: 'CRITICAL',
+    summary:
+      'Preserves a multi-dimensional state space (|ψ⟩ = Σ c_i |ϕ_i⟩) during initial learning, preventing premature over-specialization.',
+    causalQuestion: 'Is the learner maintaining high entropy potential options before collapsing into a specific execution technique?',
+    biomechanicalRules: [
+      'Preserve multi-directional option space before premature technique specialization.',
+      'High von Neumann entropy S(ρ) maximizes adaptability to dynamic environmental variations.',
+      'Delayed state collapse yields broader skill transfer and creative problem-solving potential.',
+    ],
+    failureModesPrevented: [
+      'Premature over-specialization collapsing option space early',
+      'Rigid single-track execution incapable of handling novel scenarios',
+    ],
+    verificationMetrics: [
+      'von Neumann entropy S(ρ) maintained above 0.8 during exploration phase',
+      'State probabilities normalized so Σ |c_i|² = 1.0',
+    ],
+  },
+  {
+    id: 86,
+    slug: 'wave-particle-duality-skill-execution',
+    name: '86. Wave-Particle Duality in Skill Execution',
+    category: 'Quantum Physics & Skill Acquisition',
+    priority: 'CRITICAL',
+    summary:
+      'Balances fluid, intuitive adaptability (wave state λ = h/p) with precise, rigid macro-execution (particle state E = ℏω, p = ℏk).',
+    causalQuestion: 'Does the character/learner transition seamlessly from fluid environmental reading (wave) to crisp strike execution (particle)?',
+    biomechanicalRules: [
+      'Pre-execution operates in fluid wave state to absorb unpredictable environmental dynamics.',
+      'Execution collapses into particle state at impact frame for maximum momentum transfer.',
+      'Mastery synthesizes both states rather than locking rigidly into one.',
+    ],
+    failureModesPrevented: [
+      'Rigid particle execution in unpredictable dynamic environments',
+      'Floppy wave execution lacking impact momentum density',
+    ],
+    verificationMetrics: [
+      'Seamless mode shift from high wave adaptability to crisp particle impact precision',
+      'Group velocity matching movement trajectory speed',
+    ],
+  },
+  {
+    id: 87,
+    slug: 'observer-effect-performance-interference',
+    name: '87. Observer Effect & Performance Interference (Overthinking)',
+    category: 'Quantum Physics & Skill Acquisition',
+    priority: 'CRITICAL',
+    summary:
+      'Models performance degradation caused by hyper-conscious micro-monitoring of automated motor programs (Δx · Δp ≥ ℏ/2).',
+    causalQuestion: 'Does excessive conscious measurement disrupt automated muscle memory and cause choking?',
+    biomechanicalRules: [
+      'Hyper-focusing on joint position (Δx → 0) forces high momentum uncertainty (Δp → ∞).',
+      'Conscious micro-monitoring disrupts automated cerebellar motor execution, causing hitching and choking.',
+      'Peak performance requires releasing conscious observation into unhindered flow.',
+    ],
+    failureModesPrevented: [
+      'Overthinking and micro-managing automated motor programs',
+      'Performance choking under intense conscious inspection',
+    ],
+    verificationMetrics: [
+      'Uncertainty product Δx · Δp verified against minimum ℏ/2 bound',
+      'Choking risk telemetry calculated from micro-focus position uncertainty',
+    ],
+  },
+  {
+    id: 88,
+    slug: 'quantum-entanglement-skill-transfer',
+    name: '88. Quantum Entanglement & Interconnected Skill Transfer',
+    category: 'Quantum Physics & Skill Acquisition',
+    priority: 'HIGH',
+    summary:
+      'Quantifies non-local skill transfer where mastering one domain instantly elevates a structurally linked secondary domain (|Φ+⟩).',
+    causalQuestion: 'How does mastering fundamental structural principles in Skill A elevate performance in entangled Skill B?',
+    biomechanicalRules: [
+      'Skills sharing deep structural invariants (rhythm, spatial timing, weight transfer) exhibit non-zero quantum mutual information.',
+      'Mastering Skill A induces non-local transfer gains in Skill B without direct repetition in Skill B.',
+      'Cross-domain elevation optimizes total learning efficiency across complex skill trees.',
+    ],
+    failureModesPrevented: [
+      'Treating connected skills as isolated independent silos',
+      'Wasting repetition on redundant skill mechanics already mastered in linked domains',
+    ],
+    verificationMetrics: [
+      'Quantum mutual information I(A:B) > 0 for linked skill pairs',
+      'Entanglement concurrence C(ρ) calculated across structural correlation matrix',
+    ],
+  },
+  {
+    id: 89,
+    slug: 'quantum-tunneling-skill-barriers',
+    name: '89. Quantum Tunneling Through Skill Barriers',
+    category: 'Quantum Physics & Skill Acquisition',
+    priority: 'HIGH',
+    summary:
+      'Governs overcoming seemingly insurmountable skill or creative barriers through probability density penetration (T ≈ e^(-2KL)).',
+    causalQuestion: 'Can the learner tunnel through a high potential energy barrier despite having insufficient classical energy?',
+    biomechanicalRules: [
+      'When classical energy E < V_0, deep structural focus maintains non-zero wavefunction amplitude across the barrier.',
+      'Tunneling allows breakthrough solutions without requiring brute-force energy scaling.',
+      'Barrier transmission probability scales exponentially with barrier thickness and energy deficit.',
+    ],
+    failureModesPrevented: [
+      'Giving up when classical energy is lower than perceived obstacle height',
+      'Brute-force burnout against high technical skill barriers',
+    ],
+    verificationMetrics: [
+      'Transmission coefficient T calculated via WKB approximation',
+      'Non-zero breakthrough probability density maintained inside barrier',
+    ],
+  },
+  {
+    id: 90,
+    slug: 'quantum-coherence-flow-retention',
+    name: '90. Quantum Coherence, Decoherence & Flow Retention',
+    category: 'Quantum Physics & Skill Acquisition',
+    priority: 'HIGH',
+    summary:
+      'Measures flow state duration and environmental decoherence rate (τ_dec) during athletic and cognitive performance.',
+    causalQuestion: 'How long can a character maintain phase-coherent flow before environmental noise causes decoherence?',
+    biomechanicalRules: [
+      'Flow state represents phase-coherent superposition of cognitive and motor states.',
+      'Environmental distractions and anxiety induce rapid decoherence into chaotic classical attempts.',
+      'Mindfulness and environmental isolation extend coherence time τ_dec.',
+    ],
+    failureModesPrevented: [
+      'Rapid flow state decay caused by unmitigated environmental noise',
+      'Decoherence collapsing smooth execution into disjointed erratic attempts',
+    ],
+    verificationMetrics: [
+      'Decoherence timescale τ_dec tracked against environmental noise level',
+      'Flow state purity score calculated continuously',
+    ],
+  },
+  {
+    id: 91,
+    slug: 'quantum-parallel-computing-mental-exploration',
+    name: '91. Quantum Parallel Computing & Mental Exploration',
+    category: 'Quantum Physics & Skill Acquisition',
+    priority: 'HIGH',
+    summary:
+      'Models parallel cognitive evaluation of multiple action trajectories via quantum superposition gates (H, QFT).',
+    causalQuestion: 'How does parallel mental simulation evaluate 2^N option pathways simultaneously before initiating movement?',
+    biomechanicalRules: [
+      'Qubits and superposition gates evaluate 2^N option pathways simultaneously in parallel.',
+      'Constructive mental interference amplifies optimal action vectors while cancelling high-risk paths.',
+      'Provides quadratic (Grover √N) or exponential speedups in tactical strategy selection.',
+    ],
+    failureModesPrevented: [
+      'Sequential trial-and-error bottlenecks during high-speed combat',
+      'Suboptimal action selection caused by incomplete option space evaluation',
+    ],
+    verificationMetrics: [
+      '2^N simultaneous state evaluation capacity verified for N qubits',
+      'Grover speedup factor √N satisfied during option search',
+    ],
+  },
 ];
 
+export const EXPANDED_91_MOTION_SKILLS = EXPANDED_46_MOTION_SKILLS;
 export const EXPANDED_83_MOTION_SKILLS = EXPANDED_46_MOTION_SKILLS;
 export const EXPANDED_76_MOTION_SKILLS = EXPANDED_46_MOTION_SKILLS;
 export const EXPANDED_68_MOTION_SKILLS = EXPANDED_46_MOTION_SKILLS;

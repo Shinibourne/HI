@@ -27,6 +27,7 @@ import {
   FLUID_DENSITY_OIL,
   FLUID_DENSITY_MERCURY,
 } from '../../lib/physics/densityFluidEnvironmentSolver';
+import { calculateUnifiedQuantumAnalysis } from '../../lib/physics/quantumPhysicsSolver';
 
 interface PhysicsIntelligenceTabProps {
   generalPhysicsConfig: GeneralGeneratorConfig;
@@ -102,6 +103,21 @@ export const PhysicsIntelligenceTab: React.FC<PhysicsIntelligenceTabProps> = ({
     flowVelocityMps: fluidFlowVelocityMps,
   });
 
+  // Quantum Physics & Skill Acquisition State (Skills #84–#91)
+  const [quantumFocusConscious, setQuantumFocusConscious] = useState<boolean>(false);
+  const [quantumDxMeters, setQuantumDxMeters] = useState<number>(0.05);
+  const [quantumPracticeJoules, setQuantumPracticeJoules] = useState<number>(85.0);
+  const [quantumQubits, setQuantumQubits] = useState<number>(4);
+
+  const quantumAnalysis = calculateUnifiedQuantumAnalysis({
+    massKg: scientificMassKg,
+    velocityMps: energyVelocityMps,
+    isConsciousFocusHigh: quantumFocusConscious,
+    positionUncertaintyMeters: quantumDxMeters,
+    practiceEnergyJoules: quantumPracticeJoules,
+    qubitCount: quantumQubits,
+  });
+
   const scenarios: { type: PhysicsScenarioType; label: string; icon: string; desc: string }[] = [
     {
       type: 'LIFT_HEAVY_VS_LIGHT',
@@ -157,11 +173,11 @@ export const PhysicsIntelligenceTab: React.FC<PhysicsIntelligenceTabProps> = ({
               <span className="px-2 py-0.5 text-[10px] font-mono uppercase bg-indigo-500/20 text-indigo-300 rounded border border-indigo-500/30">
                 Core Engine Primitives
               </span>
-              <span className="text-xs text-indigo-200">Skills #54–#83 Active</span>
+              <span className="text-xs text-indigo-200">Skills #54–#91 Active</span>
             </div>
-            <h2 className="text-lg font-bold mt-1 text-white">General Physics &amp; Biomechanical Intelligence Lab</h2>
+            <h2 className="text-lg font-bold mt-1 text-white">General Physics &amp; Quantum Skill Acquisition Lab</h2>
             <p className="text-xs text-slate-300 mt-0.5">
-              Domain-agnostic causal physics: Mass ratios, lever-arm torques, dynamic balance, and force chains.
+              Domain-agnostic causal physics: Mass ratios, torques, fluid dynamics, and Quantum Mechanics Skill Acquisition models.
             </p>
           </div>
           <button
@@ -510,6 +526,157 @@ export const PhysicsIntelligenceTab: React.FC<PhysicsIntelligenceTabProps> = ({
               <div>Turbulence Prob: <span className="font-bold text-indigo-800">{(densityFluidAnalysis.probability.turbulenceProbability * 100).toFixed(0)}%</span></div>
               <div>State Shift Prob: <span className="font-bold text-indigo-700">{(densityFluidAnalysis.probability.sinkFloatTransitionProbability * 100).toFixed(1)}%</span></div>
               <div>Confidence: <span className="font-bold text-emerald-700">{(densityFluidAnalysis.probability.stateConfidence * 100).toFixed(0)}%</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Quantum Physics & Skill Acquisition Live Telemetry Panel (Skills #84–#91) */}
+      <div className="bg-white p-4 rounded-xl border border-violet-200 shadow-xs space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-violet-100 pb-3">
+          <div className="flex items-center gap-2">
+            <Atom className="w-4 h-4 text-violet-600 shrink-0" />
+            <div>
+              <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
+                Quantum Physics &amp; Skill Acquisition Engine (Skills #84–#91)
+              </h3>
+              <p className="text-[11px] text-slate-500">
+                Wave-Particle Duality, Superposition (Beginner's Mind), Uncertainty (Overthinking), Entanglement (Skill Transfer), Tunneling, Leaps &amp; Parallel Sim
+              </p>
+            </div>
+          </div>
+          <div className="flex flex-wrap items-center gap-3">
+            <button
+              type="button"
+              onClick={() => setQuantumFocusConscious(!quantumFocusConscious)}
+              className={`px-2.5 py-1 text-xs font-mono font-bold rounded border transition-colors cursor-pointer ${
+                quantumFocusConscious
+                  ? 'bg-rose-100 text-rose-800 border-rose-300'
+                  : 'bg-emerald-100 text-emerald-800 border-emerald-300'
+              }`}
+            >
+              Mode: {quantumFocusConscious ? 'Hyper-Conscious (Choking Risk)' : 'Intuitive Flow State'}
+            </button>
+            <div className="flex items-center gap-1.5">
+              <label className="text-[11px] font-mono text-slate-600">Practice E:</label>
+              <input
+                type="range"
+                min="10"
+                max="120"
+                step="5"
+                value={quantumPracticeJoules}
+                onChange={(e) => setQuantumPracticeJoules(parseFloat(e.target.value))}
+                className="w-20 accent-violet-600 cursor-pointer"
+              />
+              <span className="text-xs font-mono font-bold text-violet-700 w-12">
+                {quantumPracticeJoules}J
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+          {/* 1. Wave-Particle Duality */}
+          <div className="p-3 bg-violet-50/50 rounded-lg border border-violet-200/60 space-y-1">
+            <div className="font-bold text-violet-900 text-[11px] uppercase tracking-wide flex items-center justify-between">
+              <span>1. Wave-Particle Duality</span>
+              <span className="font-mono text-violet-700 font-bold">{quantumAnalysis.waveParticle.stateMode}</span>
+            </div>
+            <div className="font-mono text-[11px] text-slate-700 space-y-0.5 pt-1">
+              <div>Adaptability (Wave): <span className="font-bold text-violet-800">{quantumAnalysis.waveParticle.adaptabilityScore.toFixed(0)}%</span></div>
+              <div>Precision (Particle): <span className="font-bold">{quantumAnalysis.waveParticle.executionPrecisionScore.toFixed(0)}%</span></div>
+              <div>λ_deBroglie: <span className="font-bold text-violet-700">{quantumAnalysis.waveParticle.deBroglieWavelengthMeters.toExponential(2)} m</span></div>
+            </div>
+          </div>
+
+          {/* 2. Superposition */}
+          <div className="p-3 bg-indigo-50/50 rounded-lg border border-indigo-200/60 space-y-1">
+            <div className="font-bold text-indigo-900 text-[11px] uppercase tracking-wide flex items-center justify-between">
+              <span>2. Superposition Mind</span>
+              <span className="font-mono text-indigo-700">{quantumAnalysis.superposition.beginnersMindPotentialScore.toFixed(0)}/100</span>
+            </div>
+            <div className="font-mono text-[11px] text-slate-700 space-y-0.5 pt-1">
+              <div>Entropy S(ρ): <span className="font-bold text-indigo-800">{quantumAnalysis.superposition.vonNeumannEntropy.toFixed(3)}</span></div>
+              <div>State Option Space: <span className="font-bold">{quantumAnalysis.superposition.stateCoefficients.length} Active Options</span></div>
+              <div>State Collapse: <span className="font-bold text-indigo-700">{quantumAnalysis.superposition.isCollapsed ? 'COLLAPSED' : 'SUPERPOSITION'}</span></div>
+            </div>
+          </div>
+
+          {/* 3. Uncertainty & Choking */}
+          <div className="p-3 bg-rose-50/50 rounded-lg border border-rose-200/60 space-y-1">
+            <div className="font-bold text-rose-900 text-[11px] uppercase tracking-wide flex items-center justify-between">
+              <span>3. Observer / Overthinking</span>
+              <span className="font-mono text-rose-700 font-bold">{quantumAnalysis.uncertainty.chokingRiskLevel} RISK</span>
+            </div>
+            <div className="font-mono text-[11px] text-slate-700 space-y-0.5 pt-1">
+              <div>Δx · Δp Product: <span className="font-bold text-rose-800">{quantumAnalysis.uncertainty.uncertaintyProduct.toFixed(2)}</span></div>
+              <div>Micro-Focus Δx: <span className="font-bold">{quantumAnalysis.uncertainty.positionUncertaintyMeters.toFixed(2)} m</span></div>
+              <div>Choking Score: <span className="font-bold text-rose-700">{quantumAnalysis.uncertainty.overthinkingInterferenceScore.toFixed(0)}%</span></div>
+            </div>
+          </div>
+
+          {/* 4. Quantum Entanglement */}
+          <div className="p-3 bg-purple-50/50 rounded-lg border border-purple-200/60 space-y-1">
+            <div className="font-bold text-purple-900 text-[11px] uppercase tracking-wide flex items-center justify-between">
+              <span>4. Quantum Entanglement</span>
+              <span className="font-mono text-purple-700">C={quantumAnalysis.entanglement.concurrence.toFixed(2)}</span>
+            </div>
+            <div className="font-mono text-[11px] text-slate-700 space-y-0.5 pt-1">
+              <div>Bell State: <span className="font-bold text-purple-800">{quantumAnalysis.entanglement.bellStateName}</span></div>
+              <div>Skill Transfer Gain: <span className="font-bold text-purple-700">+{quantumAnalysis.entanglement.transferGainPercentage.toFixed(1)}% Gain</span></div>
+              <div>Mutual Info I(A:B): <span className="font-bold">{quantumAnalysis.entanglement.quantumMutualInformation.toFixed(2)}</span></div>
+            </div>
+          </div>
+
+          {/* 5. Quantum Tunneling */}
+          <div className="p-3 bg-cyan-50/50 rounded-lg border border-cyan-200/60 space-y-1">
+            <div className="font-bold text-cyan-900 text-[11px] uppercase tracking-wide flex items-center justify-between">
+              <span>5. Quantum Tunneling</span>
+              <span className="font-mono text-cyan-700 font-bold">{quantumAnalysis.tunneling.plateauPiercingLikelihood}</span>
+            </div>
+            <div className="font-mono text-[11px] text-slate-700 space-y-0.5 pt-1">
+              <div>Transmission T: <span className="font-bold text-cyan-800">{quantumAnalysis.tunneling.transmissionCoefficientT.toExponential(2)}</span></div>
+              <div>Barrier V_0 - E: <span className="font-bold">{(quantumAnalysis.tunneling.barrierHeightJoules - quantumAnalysis.tunneling.particleEnergyJoules).toFixed(1)} J</span></div>
+              <div>Piercing Success: <span className="font-bold text-cyan-700">{quantumAnalysis.tunneling.tunnelingSuccessPercentage.toFixed(1)}%</span></div>
+            </div>
+          </div>
+
+          {/* 6. Quantum Leaps */}
+          <div className="p-3 bg-amber-50/50 rounded-lg border border-amber-200/60 space-y-1">
+            <div className="font-bold text-amber-900 text-[11px] uppercase tracking-wide flex items-center justify-between">
+              <span>6. Quantum Leaps (ΔE=hν)</span>
+              <span className="font-mono text-amber-700 font-bold">{quantumAnalysis.quantumLeap.isLeapTriggered ? 'LEAP TRIGGERED' : 'PLATEAU'}</span>
+            </div>
+            <div className="font-mono text-[11px] text-slate-700 space-y-0.5 pt-1">
+              <div>Accumulated Progress: <span className="font-bold text-amber-800">{(quantumAnalysis.quantumLeap.practiceAccumulationProgress * 100).toFixed(0)}%</span></div>
+              <div>Target Level: <span className="font-bold">Level {quantumAnalysis.quantumLeap.finalLevel}</span></div>
+              <div>Transition State: <span className="font-bold text-amber-700">{quantumAnalysis.quantumLeap.breakthroughStateName}</span></div>
+            </div>
+          </div>
+
+          {/* 7. Quantum Coherence */}
+          <div className="p-3 bg-emerald-50/50 rounded-lg border border-emerald-200/60 space-y-1">
+            <div className="font-bold text-emerald-900 text-[11px] uppercase tracking-wide flex items-center justify-between">
+              <span>7. Quantum Coherence</span>
+              <span className="font-mono text-emerald-700">{quantumAnalysis.coherence.flowStatePurityPercentage.toFixed(0)}% FLOW</span>
+            </div>
+            <div className="font-mono text-[11px] text-slate-700 space-y-0.5 pt-1">
+              <div>Coherence Time τ: <span className="font-bold text-emerald-800">{quantumAnalysis.coherence.coherenceTimeSeconds.toFixed(1)} s</span></div>
+              <div>Noise Level: <span className="font-bold">{(quantumAnalysis.coherence.environmentalNoiseLevel * 100).toFixed(0)}%</span></div>
+              <div>Phase Coherent: <span className="font-bold text-emerald-700">{quantumAnalysis.coherence.isFlowCoherent ? 'COHERENT FLOW' : 'DECOHERED'}</span></div>
+            </div>
+          </div>
+
+          {/* 8. Quantum Parallel Computing */}
+          <div className="p-3 bg-blue-50/50 rounded-lg border border-blue-200/60 space-y-1">
+            <div className="font-bold text-blue-900 text-[11px] uppercase tracking-wide flex items-center justify-between">
+              <span>8. Parallel Computing</span>
+              <span className="font-mono text-blue-700">{quantumAnalysis.computing.simultaneousStateDimensions} States</span>
+            </div>
+            <div className="font-mono text-[11px] text-slate-700 space-y-0.5 pt-1">
+              <div>Grover Acceleration: <span className="font-bold text-blue-800">{quantumAnalysis.computing.groverSpeedupFactor.toFixed(1)}x Speedup</span></div>
+              <div>Superposition Gates: <span className="font-bold text-blue-700">Hadamard + QFT Active</span></div>
+              <div>Optimal Option: <span className="font-bold text-blue-900 text-[10px] truncate block">{quantumAnalysis.computing.optimalPathSelected}</span></div>
             </div>
           </div>
         </div>

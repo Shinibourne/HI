@@ -119,10 +119,10 @@ export const SkillsCatalogTab: React.FC<SkillsCatalogTabProps> = ({
                 <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 border-b border-[#E2E8F0] pb-3">
                   <div>
                     <div className="text-xs font-mono text-[#0F172A] font-semibold">
-                      EXPANDED 68-SKILL REUSABLE MOTION LIBRARY
+                      EXPANDED 91-SKILL REUSABLE MOTION LIBRARY
                     </div>
                     <h3 className="text-base font-semibold text-[#0F172A]">
-                      All 68 Human Biomechanics, Kinematics, Timing, Physics &amp; Scientific Mass Variations Skills
+                      All 91 Human Biomechanics, Kinematics, Timing, Physics, Mass Variations &amp; Quantum Skills
                     </h3>
                   </div>
 
@@ -158,6 +158,9 @@ export const SkillsCatalogTab: React.FC<SkillsCatalogTabProps> = ({
                           'Spatial Consistency & Interaction',
                           'General Physics & Load Intelligence',
                           'Physics & Scientific Mass Variations',
+                          'Kinetic & Potential Energy Dynamics',
+                          'Density, Fluid Forces & Environmental Probability',
+                          'Quantum Physics & Skill Acquisition',
                         ].map((cat) => (
                           <option key={cat} value={cat}>
                             Category: {cat}
@@ -180,6 +183,7 @@ export const SkillsCatalogTab: React.FC<SkillsCatalogTabProps> = ({
                         'Spatial Consistency & Interaction',
                         'General Physics & Load Intelligence',
                         'Physics & Scientific Mass Variations',
+                        'Quantum Physics & Skill Acquisition',
                       ].map((cat) => (
                         <button
                           key={cat}
