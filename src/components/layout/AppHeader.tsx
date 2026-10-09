@@ -110,12 +110,12 @@ export const ANIMATION_MODES: {
   },
   {
     id: 'superhero',
-    label: 'Superhero Flight & Sky Cruise (12/24f)',
-    shortLabel: 'Superhero Flight',
-    presetPath: '/downloads/walk_scratch_fly_superhero_24fps.stknds',
+    label: 'Walk ➔ Run ➔ Ground-Propelled Flight (Master 36f)',
+    shortLabel: '🚀 Propelled Flight',
+    presetPath: '/downloads/walk_run_propelled_flight_24fps_71f.stknds',
     fps: 24,
-    badge: 'Zero-G Levitation',
-    tagline: 'Casual walk, head scratch, zero-G levitation, sky cruise & three-point landing',
+    badge: 'Ground Launch',
+    tagline: 'Walk gait, acceleration stride, max sprint, deep compression loading, explosive ground launch & sky cruise',
   },
   {
     id: 'bounce',

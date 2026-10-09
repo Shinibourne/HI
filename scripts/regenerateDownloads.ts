@@ -9,6 +9,7 @@ import {
 } from '../src/lib/stkndsCodec';
 import { synthesizeSitWalkKickStknds } from '../src/lib/sitWalkKickBallFrames';
 import { synthesizeBasketballStknds } from '../src/lib/basketballChoreographyFrames';
+import { synthesizePropelledFlightStknds } from '../src/lib/propelledFlight/propelledFlightExporter';
 
 async function main() {
   const compressed27 = fs.readFileSync('public/templates/rpoject5.stknds');
@@ -136,7 +137,38 @@ async function main() {
   });
   fs.writeFileSync('public/downloads/walk_scratch_fly_superhero_24fps_53f.stknds', hero24Baked);
 
-  // 4. Speed vs Strength (12 FPS 36f, 24 FPS 36f, 24 FPS 71f baked)
+  // 4. Walk -> Run -> Ground-Propelled Flight (12 FPS 36f, 24 FPS 36f, 24 FPS 71f baked)
+  const flight12 = await synthesizePropelledFlightStknds(raw27, {
+    projectName: 'walk_run_propelled_flight',
+    targetFps: 12,
+    interpolate24FpsFrames: false,
+    flightApexY: 135,
+    primaryColorHex: '#1F2937',
+    headColorHex: '#0284C7',
+  });
+  fs.writeFileSync('public/downloads/walk_run_propelled_flight_12fps.stknds', flight12);
+
+  const flight24 = await synthesizePropelledFlightStknds(raw27, {
+    projectName: 'walk_run_propelled_flight',
+    targetFps: 24,
+    interpolate24FpsFrames: false,
+    flightApexY: 135,
+    primaryColorHex: '#1F2937',
+    headColorHex: '#0284C7',
+  });
+  fs.writeFileSync('public/downloads/walk_run_propelled_flight_24fps.stknds', flight24);
+
+  const flight24Baked = await synthesizePropelledFlightStknds(raw27, {
+    projectName: 'walk_run_propelled_flight',
+    targetFps: 24,
+    interpolate24FpsFrames: true,
+    flightApexY: 135,
+    primaryColorHex: '#1F2937',
+    headColorHex: '#0284C7',
+  });
+  fs.writeFileSync('public/downloads/walk_run_propelled_flight_24fps_71f.stknds', flight24Baked);
+
+  // 5. Speed vs Strength (12 FPS 36f, 24 FPS 36f, 24 FPS 71f baked)
   const speed12 = await synthesizeSpeedStrengthStknds(raw27, {
     projectName: 'speed_vs_strength',
     targetFps: 12,
@@ -167,7 +199,7 @@ async function main() {
   });
   fs.writeFileSync('public/downloads/speed_vs_strength_24fps_71f.stknds', speed24Baked);
 
-  // 5. The Phantom Shadowbox (12 FPS 75f, 24 FPS 75f, 24 FPS 147f baked)
+  // 6. The Phantom Shadowbox (12 FPS 75f, 24 FPS 75f, 24 FPS 147f baked)
   const phantom12 = await synthesizePhantomShadowboxStknds(raw27, {
     projectName: 'phantom_shadowbox',
     targetFps: 12,
@@ -207,7 +239,7 @@ async function main() {
   fs.writeFileSync('public/downloads/phantom_shadowbox_24fps_147f.stknds', phantom24Baked);
   fs.writeFileSync('public/downloads/phantom_shadowbox_24fps_79f.stknds', phantom24Baked); // backwards compat
 
-  // 6. The Stroll & Kick (24 FPS 216f Master, 12 FPS 108f)
+  // 7. The Stroll & Kick (24 FPS 216f Master, 12 FPS 108f)
   const strollKick24 = await synthesizeSitWalkKickStknds(raw27, {
     projectName: 'sit_stand_kick_24fps',
     targetFps: 24,
@@ -228,7 +260,8 @@ async function main() {
     enableHitStop: true,
   });
   fs.writeFileSync('public/downloads/sit_stand_kick_12fps_108f.stknds', strollKick12);
-  // 7. Basketball: Walk -> Approach -> Pick Up -> Toss -> Catch -> Dribble (24 Frames Master)
+
+  // 8. Basketball: Walk -> Approach -> Pick Up -> Toss -> Catch -> Dribble (24 Frames Master)
   const basketball24 = await synthesizeBasketballStknds(raw27, {
     projectName: 'basketball_walk_pickup_dribble',
     targetFps: 24,
@@ -240,7 +273,7 @@ async function main() {
   fs.writeFileSync('public/downloads/basketball_walk_pickup_dribble_24f.stknds', basketball24);
   fs.writeFileSync('public/downloads/basketball_walk_pickup_dribble_24fps.stknds', basketball24);
 
-  console.log('Successfully regenerated all .stknds binaries including Basketball (24f Master) in public/downloads/!');
+  console.log('Successfully regenerated all .stknds binaries including Walk-Run-Propelled-Flight in public/downloads/!');
 }
 
 main().catch((err) => {
