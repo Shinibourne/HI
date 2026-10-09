@@ -35,6 +35,12 @@ import {
 } from './lib/stkndsCodec';
 
 import {
+  type PropelledFlightGeneratorConfig,
+  buildAdjustedPropelledFlightFrames,
+  synthesizePropelledFlightStknds,
+} from './lib/propelledFlight/propelledFlightExporter';
+
+import {
   type BasketballGeneratorConfig,
   buildCanonicalBasketballFrames,
   validateBasketballBiomechanics,
@@ -167,10 +173,10 @@ export function App() {
   });
 
   const [heroConfig, setHeroConfig] = useState<SuperheroGeneratorConfig>({
-    projectName: 'walk_scratch_fly_superhero',
-    targetFps: 12,
-    interpolate24FpsFrames: false,
-    flightApexY: 144,
+    projectName: 'walk_run_propelled_flight',
+    targetFps: 24,
+    interpolate24FpsFrames: true,
+    flightApexY: 135,
     scratchAmplitudeDeg: 18,
     landingCompressionPx: 12,
     primaryColorHex: '#1F2937',
@@ -310,7 +316,7 @@ export function App() {
       setActiveAnimationMode('teleport');
     } else if (lower.includes('sneeze')) {
       setActiveAnimationMode('sneeze');
-    } else if (lower.includes('superhero') || lower.includes('fly')) {
+    } else if (lower.includes('superhero') || lower.includes('fly') || lower.includes('propelled')) {
       setActiveAnimationMode('superhero');
     } else if (lower.includes('bounce') || lower.includes('project6')) {
       setActiveAnimationMode('bounce');
@@ -398,8 +404,15 @@ export function App() {
   );
 
   const superheroFrames = useMemo(
-    () => buildAdjustedSuperheroFrames(heroConfig),
-    [heroConfig]
+    () =>
+      buildAdjustedPropelledFlightFrames({
+        targetFps: globalFps,
+        interpolate24FpsFrames: heroConfig.interpolate24FpsFrames,
+        flightApexY: heroConfig.flightApexY,
+        primaryColorHex: heroConfig.primaryColorHex,
+        headColorHex: heroConfig.headColorHex,
+      }),
+    [globalFps, heroConfig]
   );
 
   const liveBiomechanicsAudit = useMemo(
@@ -487,7 +500,13 @@ export function App() {
       } else if (activeAnimationMode === 'superhero') {
         if (!baseTemplate27) return;
         filename = `${heroConfig.projectName}_${globalFps}fps.stknds`;
-        bytes = await synthesizeSuperheroStknds(baseTemplate27, heroConfig);
+        bytes = await synthesizePropelledFlightStknds(baseTemplate27, {
+          targetFps: globalFps,
+          interpolate24FpsFrames: heroConfig.interpolate24FpsFrames,
+          flightApexY: heroConfig.flightApexY,
+          primaryColorHex: heroConfig.primaryColorHex,
+          headColorHex: heroConfig.headColorHex,
+        });
       } else if (activeAnimationMode === 'bounce') {
         if (!baseTemplate22) return;
         filename = `${bounceConfig.projectName}_${globalFps}fps.stknds`;
@@ -1104,19 +1123,19 @@ export function App() {
           </div>
           <div className="flex flex-wrap items-center gap-3 font-mono text-[11px]">
             <a
-              href="/downloads/walk_scratch_fly_superhero_12fps.stknds"
+              href="/downloads/walk_run_propelled_flight_12fps.stknds"
               download
               className="hover:text-slate-900 transition-colors"
             >
-              superhero_12fps.stknds
+              propelled_flight_12fps.stknds
             </a>
             <span aria-hidden="true" className="text-slate-300">·</span>
             <a
-              href="/downloads/walk_scratch_fly_superhero_24fps.stknds"
+              href="/downloads/walk_run_propelled_flight_24fps_71f.stknds"
               download
               className="hover:text-slate-900 transition-colors"
             >
-              superhero_24fps.stknds
+              propelled_flight_24fps_71f.stknds
             </a>
             <span aria-hidden="true" className="text-slate-300">·</span>
             <a
@@ -1134,4 +1153,3 @@ export function App() {
 }
 
 export default App;
-

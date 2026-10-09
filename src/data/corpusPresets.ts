@@ -7,6 +7,24 @@ export interface CorpusPreset {
 
 export const CORPUS_PRESETS: CorpusPreset[] = [
   {
+    label: 'walk_run_propelled_flight_24fps_71f.stknds (24 FPS · 71f · Propelled Flight Master)',
+    path: '/downloads/walk_run_propelled_flight_24fps_71f.stknds',
+    category: 'Generated Animation',
+    note: '24 FPS (@byte 30 = 24), 71 frames: Walk → Run Acceleration → Deep Compression Crouch → Ground-Propelled Explosive Liftoff → Sustained Sky Cruise. Continuous stride expansion, triple extension launch propagation, camera liftoff shake, and 100% biomechanical validation pass.',
+  },
+  {
+    label: 'walk_run_propelled_flight_24fps.stknds (24 FPS · 36f Container)',
+    path: '/downloads/walk_run_propelled_flight_24fps.stknds',
+    category: 'Generated Animation',
+    note: '24 FPS (@byte 30 = 24), 36 frames: Walk → Run → Launch → Flight master 36-frame sequence.',
+  },
+  {
+    label: 'walk_run_propelled_flight_12fps.stknds (12 FPS · 36f Master)',
+    path: '/downloads/walk_run_propelled_flight_12fps.stknds',
+    category: 'Generated Animation',
+    note: '12 FPS (@byte 30 = 12), 36 frames: Native 12 FPS timing for Walk → Acceleration → Sprint → Compression → Launch → Flight.',
+  },
+  {
     label: 'basketball_walk_pickup_dribble_24f.stknds (24 FPS · 24f · Basketball Master)',
     path: '/downloads/basketball_walk_pickup_dribble_24f.stknds',
     category: 'Generated Animation',
@@ -22,7 +40,7 @@ export const CORPUS_PRESETS: CorpusPreset[] = [
     label: 'sit_stand_kick_24fps_216f.stknds (24 FPS · 216f · Storyboard Master)',
     path: '/downloads/sit_stand_kick_24fps_216f.stknds',
     category: 'Generated Animation',
-    note: '24 FPS (@byte 30 = 24), 216 frames (9.0 s): The Stroll & Kick with Full-Body Reactive Movement across all 16 storyboard panels: ① Seated Rest (F0-18), ② Trunk Fold & Plant (F19-33), ③ Squat Launch (F34-43), ④ Stand Extension (F44-71), ⑤ Equilibrium & Shift (F72-81), ⑥-⑦ Relaxed Stroll with Pelvic-Thoracic Counter-Rotation & Dynamic Arm Swing (F82-111), ⑧ Notices Ball & Inertial Brake Plant (F112-129), ⑨ Jump Crouch (F130-135), ⑩ Excited Apex Jump (F136-147), ⑪ Touchdown Cushion (F148-153), ⑫ Sprint with Oblique Pumping (F154-165), ⑬ Plant & Chamber Pre-Stretch (F166-171), ⑭ Kick Impact with Angular Momentum Recoil at (884,735) (F172-174), ⑮ High Follow-Through & Ball Launch (F175-185), ⑯ Fist Pump & Harmonic Damped Hold (F186-215).',
+    note: '24 FPS (@byte 30 = 24), 216 frames (9.0 s): The Stroll & Kick with Full-Body Reactive Movement across all 16 storyboard panels.',
   },
   {
     label: 'sit_stand_kick_12fps_108f.stknds (12 FPS · 108f · Stroll & Kick)',
@@ -34,7 +52,7 @@ export const CORPUS_PRESETS: CorpusPreset[] = [
     label: 'phantom_shadowbox_24fps_75f.stknds (24 FPS · 75f · Storyboard Master)',
     path: '/downloads/phantom_shadowbox_24fps_75f.stknds',
     category: 'Generated Animation',
-    note: '24 FPS (@byte 30 = 24), 75 frames: Complete visual storyboard master across all 10 panels. ① The Focus (F1-30 stillness), ② Teleport 1 (F31 BOOM vanish), ③ Reappearance & Jab (F32-34), ④ The Cross & Retract Twist (F35-37), ⑥ Uppercut Launch (F38-41), ⑦ Teleport 2 (F42 apex vanish), ⑧ Aerial Reappearance (F43 horizontal back), ⑨ Axe Kick Drop & Smear (F44-46), ⑨ Impact & 3-Point Crouch (F47-52 screen shake), ⑩ The Reset (F53-75 slow motion ease-in).',
+    note: '24 FPS (@byte 30 = 24), 75 frames: Complete visual storyboard master across all 10 panels.',
   },
   {
     label: 'phantom_shadowbox_12fps_75f.stknds (12 FPS · 75f · Storyboard Master)',

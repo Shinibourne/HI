@@ -68,23 +68,6 @@ export function validateHumanLeg(
   // Bend angle (0° = straight leg, 90° = right angle bend)
   const bendAngleDeg = Math.acos(clampedDot) * (180 / Math.PI);
 
-  // 2D cross product: v1x * v2y - v1y * v2x
-  // In screen space (Y down):
-  // When facing RIGHT:
-  // Thigh goes down-right (+X, +Y). Knee points right (+X).
-  // Shin bends backward (-X, +Y).
-  // cross product v1x*v2y - v1y*v2x:
-  // e.g. v1=(100, 78), v2=(-20, 120) => 100*120 - 78*(-20) = 12000 + 1560 > 0.
-  // Positive cross means natural backward knee bend!
-  // Negative cross means unnatural forward knee bend (hyperextension / flamingo)!
-  //
-  // When facing LEFT:
-  // Thigh goes down-left (-X, +Y). Knee points left (-X).
-  // Shin bends backward (+X, +Y).
-  // e.g. v1=(-100, 78), v2=(20, 120) => -100*120 - 78*(20) = -12000 - 1560 < 0.
-  // Negative cross means natural backward knee bend!
-  // Positive cross means unnatural forward knee bend (hyperextension / flamingo)!
-
   const cross = v1x * v2y - v1y * v2x;
   let isHyperextended = false;
 
@@ -117,6 +100,8 @@ import {
   buildCanonicalBasketballFrames,
   validateBasketballBiomechanics,
 } from '../src/lib/basketballChoreographyFrames';
+import { buildAdjustedPropelledFlightFrames } from '../src/lib/propelledFlight/propelledFlightGenerator';
+import { validatePropelledFlightBiomechanics } from '../src/lib/propelledFlight/propelledFlightAudit';
 
 export function runBasketballAudit(): boolean {
   console.log('\n================================================================');
@@ -169,12 +154,35 @@ export function runSitWalkKickAudit(): boolean {
   return true;
 }
 
+export function runPropelledFlightAudit(): boolean {
+  console.log('\n================================================================');
+  console.log('RUNNING PROPELLED FLIGHT 36-FRAME MASTER BIOMECHANICS AUDIT');
+  console.log('================================================================\n');
+
+  const frames = buildAdjustedPropelledFlightFrames({ targetFps: 24 });
+  const audit = validatePropelledFlightBiomechanics(frames);
+
+  console.log(`[✓] Biomechanical Score: ${audit.score}/100`);
+  console.log(`[✓] Continuous Acceleration: ${audit.walkToRunVelocityAccel ? 'PASS' : 'FAIL'}`);
+  console.log(`[✓] Stride Frequency Increase: ${audit.strideFrequencyIncrease ? 'PASS' : 'FAIL'}`);
+  console.log(`[✓] Knee Compression Depth: ${audit.kneeCompressionDepthPx.toFixed(1)}px (>= 50px required)`);
+  console.log(`[✓] Launch Displacement: ${audit.launchDisplacementPx.toFixed(1)}px (>= 120px required)`);
+  console.log(`[✓] Airborne Cruising Speed: ${audit.airborneCruisingSpeedPx.toFixed(1)} px/f (>= 65 px/f required)`);
+  console.log(`[✓] Max Joint Delta: ${audit.maxJointDeltaDeg.toFixed(1)}° (< 65° required)`);
+
+  if (!audit.passed) {
+    console.error('FATAL: Propelled flight validation failed! Violations:', audit.violations);
+    return false;
+  }
+  return true;
+}
+
 // Run audit if invoked directly
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (process.argv[1]?.includes('validateBiomechanics.ts')) {
   const basketballSuccess = runBasketballAudit();
   const sitWalkSuccess = runSitWalkKickAudit();
-  if (!basketballSuccess || !sitWalkSuccess) {
+  const flightSuccess = runPropelledFlightAudit();
+  if (!basketballSuccess || !sitWalkSuccess || !flightSuccess) {
     process.exit(1);
   }
 }
-

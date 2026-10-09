@@ -746,10 +746,11 @@ export const AnimationStudioStage: React.FC<AnimationStudioStageProps> = ({
             {activeAnimationMode === 'superhero' &&
               [
                 { label: '1. Walk Gait', frame: 0 },
-                { label: '2. Scratch Head', frame: heroConfig.targetFps === 24 ? 12 : 6 },
-                { label: '3. Zero-G Levitate', frame: heroConfig.targetFps === 24 ? 20 : 10 },
-                { label: '4. Sky Cruise', frame: heroConfig.targetFps === 24 ? 28 : 14 },
-                { label: '5. Landing', frame: heroConfig.targetFps === 24 ? 44 : 22 },
+                { label: '2. Acceleration', frame: heroConfig?.targetFps === 24 ? 14 : 7 },
+                { label: '3. Sprint', frame: heroConfig?.targetFps === 24 ? 32 : 16 },
+                { label: '4. Compression', frame: heroConfig?.targetFps === 24 ? 44 : 22 },
+                { label: '5. Explosive Launch', frame: heroConfig?.targetFps === 24 ? 52 : 26 },
+                { label: '6. Flight Cruise', frame: heroConfig?.targetFps === 24 ? 58 : 29 },
               ].map((jump) => (
                 <button
                   key={jump.label}

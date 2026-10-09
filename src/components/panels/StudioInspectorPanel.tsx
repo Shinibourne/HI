@@ -1038,6 +1038,8 @@ export const StudioInspectorPanel: React.FC<StudioInspectorPanelProps> = ({
           <span>
             {synthesizing
               ? 'Synthesizing GZIP Container…'
+              : activeAnimationMode === 'superhero'
+              ? `Compile & Export PROPELLED FLIGHT (${globalFps} FPS)`
               : `Compile & Export ${activeAnimationMode.toUpperCase()} (${globalFps} FPS)`}
           </span>
         </button>

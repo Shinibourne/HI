@@ -2,9 +2,11 @@ import { ISkill, SkillExecutionResult } from '../core/ISkill';
 import { SkillRegistry } from '../core/SkillRegistry';
 import { FramePose } from '../validation/AnimationQualityAnalyzer';
 import { solveLegLimb, solveArmLimb } from '../ik/kinematicsSolvers';
+import { buildAdjustedPropelledFlightFrames } from '../../src/lib/propelledFlight/propelledFlightGenerator';
+import { validatePropelledFlightBiomechanics } from '../../src/lib/propelledFlight/propelledFlightAudit';
 
 export interface AcrobaticsParams {
-  type: 'jump' | 'roll' | 'landing';
+  type: 'jump' | 'roll' | 'landing' | 'propelled-flight';
   startX: number;
   groundY: number;
   isRightFacing: boolean;
@@ -110,4 +112,50 @@ export const AcrobaticsSkill: ISkill = {
   },
 };
 
+export const PropelledFlightSkill: ISkill = {
+  metadata: {
+    id: 'propelled-flight-skill',
+    name: 'Walk -> Run -> Ground-Propelled Flight Skill',
+    category: 'acrobatics',
+    summary: 'High-Fidelity walk acceleration, crouch compression, ground launch, and aerial sky cruise.',
+    dependencies: ['procedural-acrobatics', 'locomotion-and-gait', 'kinematic-chains'],
+    capabilities: ['walk-run-transition', 'deep-compression-loading', 'triple-extension-launch', 'sustained-sky-cruise'],
+    knowledgeRules: [
+      {
+        id: 'RULE_CONTINUOUS_ACCELERATION',
+        name: 'Continuous Stride & Velocity Expansion',
+        description: 'Velocity must accelerate smoothly from walk (30 px/f) to sprint (84 px/f).',
+        failureModesPrevented: ['Abrupt walk-to-run snapping'],
+      },
+      {
+        id: 'RULE_COMPRESSION_LOADING',
+        name: 'Deep Crouch Energy Storage',
+        description: 'Ground launch must be preceded by knee/hip flexion and CoM drop >= 50px.',
+        failureModesPrevented: ['Pop-up floating launches'],
+      },
+    ],
+  },
+
+  execute(context: any, params?: any): SkillExecutionResult {
+    const generatedSpecs = buildAdjustedPropelledFlightFrames({
+      targetFps: params?.fps || 24,
+      interpolate24FpsFrames: false,
+    });
+    const audit = validatePropelledFlightBiomechanics(generatedSpecs);
+
+    return {
+      success: audit.passed,
+      modifiedContext: { ...context, frames: generatedSpecs },
+      metrics: {
+        totalFramesGenerated: generatedSpecs.length,
+        score: audit.score,
+        compressionDipPx: audit.kneeCompressionDepthPx,
+        launchDisplacementPx: audit.launchDisplacementPx,
+        airborneSpeedPx: audit.airborneCruisingSpeedPx,
+      },
+    };
+  },
+};
+
 SkillRegistry.getInstance().register(AcrobaticsSkill);
+SkillRegistry.getInstance().register(PropelledFlightSkill);
