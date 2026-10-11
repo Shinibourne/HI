@@ -9,11 +9,26 @@
  * 5. Scientific Variations & Sub-categories (Reduced mass μ, Hydrodynamic added mass m_added, Effective lattice mass m*)
  */
 
-export const SPEED_OF_LIGHT_MPS = 299792458; // c in m/s
-export const GRAVITATIONAL_CONSTANT = 6.67430e-11; // G in m^3 kg^-1 s^-2
-export const STANDARD_GRAVITY_MPS2 = 9.80665; // g in m/s^2
-export const JOULES_PER_MEV = 1.602176634e-13; // 1 MeV in Joules
-export const ELECTRON_REST_MASS_KG = 9.1093837015e-31; // electron mass in kg
+/** Helper to read numeric environment variables in either Node.js process.env or Vite import.meta.env environments */
+function getEnvNumber(key: string, defaultValue: number): number {
+  let valStr: string | undefined;
+  if (typeof process !== 'undefined' && process.env && process.env[key] !== undefined) {
+    valStr = process.env[key];
+  } else if (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env[key] !== undefined) {
+    valStr = import.meta.env[key] as string;
+  }
+  if (valStr !== undefined && valStr !== '') {
+    const num = Number(valStr);
+    if (!isNaN(num)) return num;
+  }
+  return defaultValue;
+}
+
+export const SPEED_OF_LIGHT_MPS = getEnvNumber('VITE_PHYSICS_SPEED_OF_LIGHT_MPS', 299792458); // c in m/s
+export const GRAVITATIONAL_CONSTANT = getEnvNumber('VITE_PHYSICS_GRAVITATIONAL_CONSTANT', 6.67430e-11); // G in m^3 kg^-1 s^-2
+export const STANDARD_GRAVITY_MPS2 = getEnvNumber('VITE_PHYSICS_GRAVITY_EARTH_MPS2', 9.80665); // g in m/s^2
+export const JOULES_PER_MEV = getEnvNumber('VITE_JOULES_PER_MEV', 1.602176634e-13); // 1 MeV in Joules
+export const ELECTRON_REST_MASS_KG = getEnvNumber('VITE_MASS_ELECTRON_REST_KG', 9.1093837015e-31); // electron mass in kg
 
 export interface Vector3D {
   x: number;
@@ -91,11 +106,11 @@ export interface UnifiedMassAnalysisReport {
  * Calculates Inertial Mass dynamics (F = ma, p = mv, I = m r^2, τ = I α)
  */
 export function calculateInertialMass(
-  massKg: number,
-  appliedForceN: Vector3D = { x: 10, y: 0, z: 0 },
-  velocityMps: Vector3D = { x: 5, y: 0, z: 0 },
-  radiusMeters = 0.5,
-  appliedTorqueNm = 5.0
+  massKg: number = getEnvNumber('VITE_INERTIAL_MASS_DEFAULT_KG', 70.0),
+  appliedForceN: Vector3D = { x: getEnvNumber('VITE_INERTIAL_APPLIED_FORCE_N', 10.0), y: 0, z: 0 },
+  velocityMps: Vector3D = { x: getEnvNumber('VITE_INERTIAL_VELOCITY_MPS', 5.0), y: 0, z: 0 },
+  radiusMeters = getEnvNumber('VITE_INERTIAL_RADIUS_METERS', 0.5),
+  appliedTorqueNm = getEnvNumber('VITE_INERTIAL_TORQUE_NM', 5.0)
 ): InertialMassReport {
   const safeMass = Math.max(1e-15, massKg);
 
@@ -138,11 +153,11 @@ export function calculateInertialMass(
  * Calculates Gravitational Mass dynamics and Weak Equivalence Principle verification
  */
 export function calculateGravitationalMass(
-  passiveMassKg: number,
-  activeMassKg = 5.972e24, // Earth mass default
-  distanceMeters = 6371000, // Earth radius default
+  passiveMassKg: number = getEnvNumber('VITE_GRAVITATIONAL_MASS_PASSIVE_KG', 70.0),
+  activeMassKg = getEnvNumber('VITE_GRAVITATIONAL_MASS_ACTIVE_EARTH_KG', 5.9722e24), // Earth mass default
+  distanceMeters = getEnvNumber('VITE_GRAVITATIONAL_DISTANCE_METERS', 6371000.0), // Earth radius default
   inertialMassKg?: number,
-  localGMps2 = STANDARD_GRAVITY_MPS2
+  localGMps2 = getEnvNumber('VITE_MASS_GRAVITY_ACCELERATION_G_MPS2', STANDARD_GRAVITY_MPS2)
 ): GravitationalMassReport {
   const safePassive = Math.max(1e-15, passiveMassKg);
   const safeActive = Math.max(1e-15, activeMassKg);
@@ -158,7 +173,8 @@ export function calculateGravitationalMass(
 
   // Equivalence ratio m_i / m_g
   const equivalenceRatio = safeInertial / safePassive;
-  const isEquivalenceVerified = Math.abs(equivalenceRatio - 1.0) < 1e-12;
+  const tolerance = getEnvNumber('VITE_GRAVITATIONAL_EQUIVALENCE_TOLERANCE', 1.0e-12);
+  const isEquivalenceVerified = Math.abs(equivalenceRatio - 1.0) < tolerance;
 
   // Potential energy U = m * g * h (or astrophysical U = -G M m / r)
   const potentialEnergyJoules = -(GRAVITATIONAL_CONSTANT * safeActive * safePassive) / safeDist;
@@ -180,7 +196,7 @@ export function calculateGravitationalMass(
  * Calculates Rest Mass (Invariant Mass) & Mass-Energy Equivalence (E = m0 c^2)
  */
 export function calculateRestInvariantMass(
-  restMassKg: number,
+  restMassKg: number = getEnvNumber('VITE_REST_MASS_KG', 70.0),
   systemParticles?: Array<{ energyJoules: number; momentumKgMps: Vector3D }>,
   boundConstituentMassesKg?: number[]
 ): RestMassReport {
@@ -234,11 +250,14 @@ export function calculateRestInvariantMass(
  * Calculates Relativistic Mass & Lorentz Scaling (m_rel = γ m_0)
  */
 export function calculateRelativisticMass(
-  restMassKg: number,
-  velocityMps: number
+  restMassKg: number = getEnvNumber('VITE_RELATIVISTIC_REST_MASS_KG', 1.0),
+  velocityMps?: number
 ): RelativisticMassReport {
+  const defaultVelFrac = getEnvNumber('VITE_RELATIVISTIC_VELOCITY_FRACTION_C', 0.80);
+  const actualVelMps = velocityMps ?? (defaultVelFrac * SPEED_OF_LIGHT_MPS);
+
   const safeRestMass = Math.max(0, restMassKg);
-  const clampedVel = Math.max(0, Math.min(SPEED_OF_LIGHT_MPS - 1e-6, velocityMps));
+  const clampedVel = Math.max(0, Math.min(SPEED_OF_LIGHT_MPS - 1e-6, actualVelMps));
   const beta = clampedVel / SPEED_OF_LIGHT_MPS; // v / c
 
   const lorentzFactor = 1.0 / Math.sqrt(Math.max(1e-15, 1.0 - beta * beta));
@@ -268,12 +287,12 @@ export function calculateRelativisticMass(
  * Calculates Scientific Mass Variations: Reduced Mass, Hydrodynamic Added Mass, Effective Mass
  */
 export function calculateScientificMassVariations(
-  primaryMass1Kg: number,
-  secondaryMass2Kg = 10.0,
-  fluidDensityKgM3 = 1000.0, // Water density
-  displacedVolumeM3 = 0.05, // 50 Liters
-  addedMassCoeff = 0.5, // Sphere in fluid C_v = 0.5
-  effectiveLatticeRatio = 1.2
+  primaryMass1Kg: number = getEnvNumber('VITE_REDUCED_MASS_PRIMARY_M1_KG', 70.0),
+  secondaryMass2Kg = getEnvNumber('VITE_REDUCED_MASS_SECONDARY_M2_KG', 20.0),
+  fluidDensityKgM3 = getEnvNumber('VITE_FLUID_DENSITY_KG_PER_M3', 1000.0), // Water density
+  displacedVolumeM3 = getEnvNumber('VITE_FLUID_DISPLACED_VOLUME_M3', 0.05), // 50 Liters
+  addedMassCoeff = getEnvNumber('VITE_HYDRODYNAMIC_ADDED_MASS_COEFF', 0.5), // Sphere in fluid C_v = 0.5
+  effectiveLatticeRatio = getEnvNumber('VITE_EFFECTIVE_LATTICE_MASS_RATIO', 1.2)
 ): ScientificMassVariationsReport {
   const m1 = Math.max(1e-15, primaryMass1Kg);
   const m2 = Math.max(1e-15, secondaryMass2Kg);
@@ -307,17 +326,17 @@ export function calculateScientificMassVariations(
  * Performs a unified comprehensive scientific mass analysis across all categories
  */
 export function calculateUnifiedMassAnalysis(params: {
-  massKg: number;
+  massKg?: number;
   appliedForceN?: Vector3D;
   velocityMps?: Vector3D;
   secondaryMassKg?: number;
   speedVelocityMps?: number;
 }): UnifiedMassAnalysisReport {
-  const m = params.massKg || 70.0;
-  const force = params.appliedForceN || { x: 100, y: 0, z: 0 };
-  const vel = params.velocityMps || { x: 10, y: 0, z: 0 };
+  const m = params.massKg ?? getEnvNumber('VITE_MASS_DEFAULT_CHARACTER_KG', 70.0);
+  const force = params.appliedForceN || { x: getEnvNumber('VITE_INERTIAL_APPLIED_FORCE_N', 100), y: 0, z: 0 };
+  const vel = params.velocityMps || { x: getEnvNumber('VITE_INERTIAL_VELOCITY_MPS', 10), y: 0, z: 0 };
   const vMag = params.speedVelocityMps ?? Math.sqrt(vel.x * vel.x + vel.y * vel.y + vel.z * vel.z);
-  const m2 = params.secondaryMassKg || 20.0;
+  const m2 = params.secondaryMassKg ?? getEnvNumber('VITE_MASS_REFERENCE_OBJECT_KG', 20.0);
 
   const inertial = calculateInertialMass(m, force, vel);
   const gravitational = calculateGravitationalMass(m);
