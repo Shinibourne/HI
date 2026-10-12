@@ -44,7 +44,8 @@ export type SkillCategory =
   | 'Physics & Scientific Mass Variations'
   | 'Kinetic & Potential Energy Dynamics'
   | 'Density, Fluid Forces & Environmental Probability'
-  | 'Quantum Physics & Skill Acquisition';
+  | 'Quantum Physics & Skill Acquisition'
+  | 'Fluid Mechanics & Pivotal Dynamics';
 
 export interface MotionSkillDefinition {
   id: number;
@@ -381,6 +382,13 @@ export const SKILL_HIERARCHY: SkillHierarchyBranch[] = [
         name: 'Quantum Physics & Skill Acquisition',
         description: 'Wave-Particle Duality, Superposition (Beginner\'s Mind), Heisenberg Uncertainty (Overthinking / Choking), Quantum Entanglement (Skill Transfer), Quantum Tunneling, Quantum Leaps, Quantum Coherence, and Quantum Parallel Computing.',
         skills: [84, 85, 86, 87, 88, 89, 90, 91],
+        autoInvokes: [],
+      },
+      {
+        id: 'fluid-mechanics-pivotal-dynamics',
+        name: 'Fluid Mechanics & Pivotal Dynamics',
+        description: 'Mass Conservation & Continuity (Q = A v), Bernoulli Energy Metrics, Control Volume Linear Momentum Reaction Forces, Turbomachinery Moment of Momentum (Torque & Shaft Power), Reynolds Flow Thresholds, and Conduit Friction Head Loss.',
+        skills: [92, 93, 94, 95, 96, 97],
         autoInvokes: [],
       },
     ],
@@ -2463,6 +2471,144 @@ export const EXPANDED_46_MOTION_SKILLS: MotionSkillDefinition[] = [
     verificationMetrics: [
       '2^N simultaneous state evaluation capacity verified for N qubits',
       'Grover speedup factor √N satisfied during option search',
+    ],
+  },
+  {
+    id: 92,
+    slug: 'mass-conservation-continuity-dynamics',
+    name: '92. Mass Conservation & Continuity Dynamics',
+    category: 'Fluid Mechanics & Pivotal Dynamics',
+    priority: 'CRITICAL',
+    summary:
+      'Enforces volume flow rate (Q = A v) and mass flow rate (m_dot = \rho A v) conservation across varying conduit cross-sections.',
+    causalQuestion: 'How does changing cross-sectional flow area alter fluid velocity while conserving total mass flow?',
+    biomechanicalRules: [
+      'Volume flow rate Q = A_1 v_1 = A_2 v_2 remains constant in incompressible fluid conduits.',
+      'Mass flow rate m_dot = \rho Q = \rho A v is strictly conserved.',
+      'Reducing cross-sectional area increases local fluid velocity proportionally.',
+    ],
+    failureModesPrevented: [
+      'Mass creation or destruction across conduit reducers',
+      'Velocity discontinuities across varying cross-sections',
+    ],
+    verificationMetrics: [
+      'Continuity error |m_dot_in - m_dot_out| < 1e-12 in closed conduits',
+      'Velocity ratio v_2 / v_1 = A_1 / A_2 satisfied',
+    ],
+  },
+  {
+    id: 93,
+    slug: 'bernoulli-energy-metrics-pressure-head',
+    name: '93. Bernoulli Energy Metrics & Pressure Head',
+    category: 'Fluid Mechanics & Pivotal Dynamics',
+    priority: 'CRITICAL',
+    summary:
+      'Maps conservation of energy along fluid streamlines across static pressure P, dynamic pressure 0.5 \rho v², and hydrostatic head \rho g h.',
+    causalQuestion: 'How does static pressure trade off with dynamic velocity pressure as fluid accelerates?',
+    biomechanicalRules: [
+      'Total pressure P_total = P + 0.5 \rho v² + \rho g h remains constant along lossless streamlines.',
+      'Accelerating fluid velocity causes a corresponding drop in thermodynamic static pressure.',
+      'Elevation head \rho g h trades directly with static and dynamic pressure fields.',
+    ],
+    failureModesPrevented: [
+      'Pressure head non-conservation during fluid acceleration',
+      'Ignoring static pressure drops in high-velocity nozzle streams',
+    ],
+    verificationMetrics: [
+      'Bernoulli total head H = P/(\rho g) + v²/(2g) + h verified invariant along streamlines',
+      'Static and dynamic pressure sum satisfied across nozzle transitions',
+    ],
+  },
+  {
+    id: 94,
+    slug: 'control-volume-linear-momentum-reactions',
+    name: '94. Control Volume Linear Momentum & Reaction Forces',
+    category: 'Fluid Mechanics & Pivotal Dynamics',
+    priority: 'CRITICAL',
+    summary:
+      'Calculates dynamic anchoring reaction forces (F_Rx, F_Ry) on pipe bends, nozzles, and deflector vanes using control volume momentum balance.',
+    causalQuestion: 'What anchoring force is required to hold structural joints stable against dynamic fluid momentum changes?',
+    biomechanicalRules: [
+      'Control volume force balance: \sum F = m_dot (\beta v_out - \beta v_in).',
+      'Anchoring forces F_Rx and F_Ry must resist pressure thrust, fluid weight, and directional momentum change.',
+      'Momentum correction factor \beta accounts for velocity profile non-uniformity.',
+    ],
+    failureModesPrevented: [
+      'Unanchored pipe joint displacement under high dynamic flow',
+      'Ignoring pressure thrust forces on elbow bends',
+    ],
+    verificationMetrics: [
+      'Reaction forces F_Rx, F_Ry satisfy Newton\'s 2nd Law on control volume',
+      'Resultant anchoring force F_R matches vector sum of pressure, weight, and momentum flux',
+    ],
+  },
+  {
+    id: 95,
+    slug: 'turbomachinery-dynamics-moment-of-momentum',
+    name: '95. Turbomachinery Dynamics & Moment of Momentum',
+    category: 'Fluid Mechanics & Pivotal Dynamics',
+    priority: 'HIGH',
+    summary:
+      'Computes shaft torque T = m_dot (r_out v_t,out - r_in v_t,in) and shaft power W_dot = T \Omega in pumps, impellers, and pivotal turbines.',
+    causalQuestion: 'How does fluid momentum transfer across rotating blades to produce or absorb mechanical torque?',
+    biomechanicalRules: [
+      'Euler Turbomachine Equation dictates shaft torque T = m_dot (r_out v_t,out - r_in v_t,in).',
+      'Fluid power W_dot = T \Omega converts between mechanical shaft work and fluid angular momentum flux.',
+      'Tangential velocity components dictate mechanical power output or absorption in centrifugal impellers.',
+    ],
+    failureModesPrevented: [
+      'Power discrepancies between shaft mechanical work and fluid momentum flux',
+      'Inaccurate torque calculations on rotating turbomachinery pivots',
+    ],
+    verificationMetrics: [
+      'Euler shaft torque T matched to fluid moment of momentum change',
+      'Shaft power W_dot = T \Omega verified against fluid energy delta',
+    ],
+  },
+  {
+    id: 96,
+    slug: 'reynolds-number-flow-regime-thresholds',
+    name: '96. Reynolds Number & Flow Regime Classification',
+    category: 'Fluid Mechanics & Pivotal Dynamics',
+    priority: 'HIGH',
+    summary:
+      'Classifies flow behavior into Laminar (Re <= 2100), Transitional (2100 < Re <= 4000), or Turbulent (Re > 4000) regimes based on ratio of inertial to viscous forces.',
+    causalQuestion: 'Is fluid flow dominated by smooth viscous streamlines or chaotic turbulent eddies?',
+    biomechanicalRules: [
+      'Reynolds number Re = \rho v D / \mu governs fluid stability and friction behavior.',
+      'Laminar flow (Re <= 2100) exhibits smooth parallel streamlines and linear friction scaling.',
+      'Turbulent flow (Re > 4000) features chaotic eddies, high mixing, and non-linear pressure drops.',
+    ],
+    failureModesPrevented: [
+      'Applying laminar shear formulas to chaotic turbulent flow regimes',
+      'Ignoring flow regime transitions in fluid friction modeling',
+    ],
+    verificationMetrics: [
+      'Exact Reynolds number threshold evaluation (2100 and 4000)',
+      'Flow regime classification verified against fluid viscosity and velocity',
+    ],
+  },
+  {
+    id: 97,
+    slug: 'conduit-friction-darcy-weisbach-head-loss',
+    name: '97. Conduit Friction & Darcy-Weisbach Head Loss',
+    category: 'Fluid Mechanics & Pivotal Dynamics',
+    priority: 'HIGH',
+    summary:
+      'Models viscous friction head losses h_f = f (L/D) (v² / 2g) and pressure drops in fluid pipelines and channels.',
+    causalQuestion: 'How much pressure head is dissipated due to wall friction along pipe conduits?',
+    biomechanicalRules: [
+      'Darcy-Weisbach equation models major head loss h_f = f (L/D) (v² / 2g).',
+      'Friction factor f depends on Reynolds number and pipe wall roughness.',
+      'Friction pressure drop \Delta P_f = \rho g h_f reduces available static pressure along extended pipelines.',
+    ],
+    failureModesPrevented: [
+      'Assuming zero friction losses in extended fluid conveyance systems',
+      'Inaccurate pressure drop estimates in pipeline distribution networks',
+    ],
+    verificationMetrics: [
+      'Darcy-Weisbach head loss h_f verified against flow velocity and pipe geometry',
+      'Pressure drop \Delta P_f = \rho g h_f satisfied along pipeline length',
     ],
   },
 ];

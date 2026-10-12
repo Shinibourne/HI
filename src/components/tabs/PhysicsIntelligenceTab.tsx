@@ -28,6 +28,7 @@ import {
   FLUID_DENSITY_MERCURY,
 } from '../../lib/physics/densityFluidEnvironmentSolver';
 import { calculateUnifiedQuantumAnalysis } from '../../lib/physics/quantumPhysicsSolver';
+import { calculateUnifiedFluidPivotalAnalysis } from '../../lib/physics/fluidMechanicsPivotalSolver';
 
 interface PhysicsIntelligenceTabProps {
   generalPhysicsConfig: GeneralGeneratorConfig;
@@ -118,6 +119,23 @@ export const PhysicsIntelligenceTab: React.FC<PhysicsIntelligenceTabProps> = ({
     qubitCount: quantumQubits,
   });
 
+  // Fluid Mechanics & Pivotal Dynamics State (Skills #92–#97)
+  const [pivotalVel1Mps, setPivotalVel1Mps] = useState<number>(3.5);
+  const [pivotalPressure1Kpa, setPivotalPressure1Kpa] = useState<number>(250);
+  const [pivotalBendAngleDeg, setPivotalBendAngleDeg] = useState<number>(60);
+  const [pivotalRpm, setPivotalRpm] = useState<number>(1450);
+
+  const fluidPivotalAnalysis = calculateUnifiedFluidPivotalAnalysis({
+    densityKgM3: currentFluidDensity,
+    area1M2: 0.05,
+    area2M2: 0.02,
+    velocity1Mps: pivotalVel1Mps,
+    staticPressure1Pa: pivotalPressure1Kpa * 1000,
+    deflectionAngleDeg: pivotalBendAngleDeg,
+    shaftRpm: pivotalRpm,
+    pipeLengthMeters: 45.0,
+  });
+
   const scenarios: { type: PhysicsScenarioType; label: string; icon: string; desc: string }[] = [
     {
       type: 'LIFT_HEAVY_VS_LIGHT',
@@ -173,11 +191,11 @@ export const PhysicsIntelligenceTab: React.FC<PhysicsIntelligenceTabProps> = ({
               <span className="px-2 py-0.5 text-[10px] font-mono uppercase bg-indigo-500/20 text-indigo-300 rounded border border-indigo-500/30">
                 Core Engine Primitives
               </span>
-              <span className="text-xs text-indigo-200">Skills #54–#91 Active</span>
+              <span className="text-xs text-indigo-200">Skills #54–#97 Active</span>
             </div>
-            <h2 className="text-lg font-bold mt-1 text-white">General Physics &amp; Quantum Skill Acquisition Lab</h2>
+            <h2 className="text-lg font-bold mt-1 text-white">General Physics, Fluid Mechanics &amp; Quantum Lab</h2>
             <p className="text-xs text-slate-300 mt-0.5">
-              Domain-agnostic causal physics: Mass ratios, torques, fluid dynamics, and Quantum Mechanics Skill Acquisition models.
+              Domain-agnostic causal physics: Mass ratios, torques, fluid mechanics, pivotal turbomachinery, and Quantum Mechanics Skill Acquisition models.
             </p>
           </div>
           <button
@@ -309,6 +327,150 @@ export const PhysicsIntelligenceTab: React.FC<PhysicsIntelligenceTabProps> = ({
             <span>20 px (Chest Hold)</span>
             <span>50 px (Mid Hold)</span>
             <span>85 px (Outstretched)</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Fluid Mechanics & Pivotal Dynamics Live Telemetry Panel (Skills #92–#97) */}
+      <div className="bg-white p-4 rounded-xl border border-blue-200 shadow-xs space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-blue-100 pb-3">
+          <div className="flex items-center gap-2">
+            <RotateCcw className="w-4 h-4 text-blue-600 shrink-0" />
+            <div>
+              <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
+                Fluid Mechanics &amp; Pivotal Dynamics Engine (Skills #92–#97)
+              </h3>
+              <p className="text-[11px] text-slate-500">
+                Continuity Mass Conservation (Q=Av), Bernoulli Energy Metrics, Control Volume Momentum Anchoring (F_Rx, F_Ry), Turbomachinery Dynamics &amp; Reynolds Flow Regimes
+              </p>
+            </div>
+          </div>
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="flex items-center gap-1.5">
+              <label className="text-[11px] font-mono text-slate-600">Vel v1:</label>
+              <input
+                type="range"
+                min="0.5"
+                max="15.0"
+                step="0.5"
+                value={pivotalVel1Mps}
+                onChange={(e) => setPivotalVel1Mps(parseFloat(e.target.value))}
+                className="w-20 accent-blue-600 cursor-pointer"
+              />
+              <span className="text-xs font-mono font-bold text-blue-700 w-10">
+                {pivotalVel1Mps}m/s
+              </span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <label className="text-[11px] font-mono text-slate-600">Bend θ:</label>
+              <input
+                type="range"
+                min="0"
+                max="180"
+                step="15"
+                value={pivotalBendAngleDeg}
+                onChange={(e) => setPivotalBendAngleDeg(parseFloat(e.target.value))}
+                className="w-20 accent-indigo-600 cursor-pointer"
+              />
+              <span className="text-xs font-mono font-bold text-indigo-700 w-10">
+                {pivotalBendAngleDeg}°
+              </span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <label className="text-[11px] font-mono text-slate-600">RPM:</label>
+              <input
+                type="range"
+                min="300"
+                max="3600"
+                step="150"
+                value={pivotalRpm}
+                onChange={(e) => setPivotalRpm(parseFloat(e.target.value))}
+                className="w-20 accent-purple-600 cursor-pointer"
+              />
+              <span className="text-xs font-mono font-bold text-purple-700 w-12">
+                {pivotalRpm}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3 text-xs">
+          {/* 1. Continuity */}
+          <div className="p-3 bg-blue-50/50 rounded-lg border border-blue-200/60 space-y-1">
+            <div className="font-bold text-blue-900 text-[11px] uppercase tracking-wide flex items-center justify-between">
+              <span>1. Continuity (Q)</span>
+              <span className="font-mono text-blue-700">{fluidPivotalAnalysis.continuity.volumeFlowRateLitersPerSec.toFixed(0)} L/s</span>
+            </div>
+            <div className="font-mono text-[11px] text-slate-700 space-y-0.5 pt-1">
+              <div>Flow Q: <span className="font-bold text-blue-800">{fluidPivotalAnalysis.continuity.volumeFlowRateQM3s.toFixed(3)} m³/s</span></div>
+              <div>Mass Flow m_dot: <span className="font-bold">{fluidPivotalAnalysis.continuity.massFlowRateKgS.toFixed(1)} kg/s</span></div>
+              <div>Speed v1 → v2: <span className="font-bold text-blue-700">{fluidPivotalAnalysis.continuity.velocity1Mps.toFixed(1)} → {fluidPivotalAnalysis.continuity.velocity2Mps.toFixed(1)} m/s</span></div>
+            </div>
+          </div>
+
+          {/* 2. Bernoulli Pressure Metrics */}
+          <div className="p-3 bg-cyan-50/50 rounded-lg border border-cyan-200/60 space-y-1">
+            <div className="font-bold text-cyan-900 text-[11px] uppercase tracking-wide flex items-center justify-between">
+              <span>2. Bernoulli Metrics</span>
+              <span className="font-mono text-cyan-700">{fluidPivotalAnalysis.bernoulli.totalHead1Meters.toFixed(1)} m Head</span>
+            </div>
+            <div className="font-mono text-[11px] text-slate-700 space-y-0.5 pt-1">
+              <div>P1 Static: <span className="font-bold text-cyan-800">{(fluidPivotalAnalysis.bernoulli.staticPressure1Pa / 1000).toFixed(0)} kPa</span></div>
+              <div>P2 Static: <span className="font-bold">{(fluidPivotalAnalysis.bernoulli.staticPressure2Pa / 1000).toFixed(0)} kPa</span></div>
+              <div>Dynamic ½ρv²: <span className="font-bold text-cyan-700">{(fluidPivotalAnalysis.bernoulli.dynamicPressure2Pa / 1000).toFixed(1)} kPa</span></div>
+            </div>
+          </div>
+
+          {/* 3. Control Volume Reactions */}
+          <div className="p-3 bg-indigo-50/50 rounded-lg border border-indigo-200/60 space-y-1">
+            <div className="font-bold text-indigo-900 text-[11px] uppercase tracking-wide flex items-center justify-between">
+              <span>3. Joint Anchor (F_R)</span>
+              <span className="font-mono text-indigo-700 font-bold">{fluidPivotalAnalysis.reaction.resultantReactionForceN.toFixed(0)} N</span>
+            </div>
+            <div className="font-mono text-[11px] text-slate-700 space-y-0.5 pt-1">
+              <div>Reaction F_Rx: <span className="font-bold text-indigo-800">{fluidPivotalAnalysis.reaction.reactionForceXN.toFixed(0)} N</span></div>
+              <div>Reaction F_Ry: <span className="font-bold">{fluidPivotalAnalysis.reaction.reactionForceYN.toFixed(0)} N</span></div>
+              <div>Deflection Angle: <span className="font-bold text-indigo-700">{pivotalBendAngleDeg}° Bend</span></div>
+            </div>
+          </div>
+
+          {/* 4. Turbomachinery Dynamics */}
+          <div className="p-3 bg-purple-50/50 rounded-lg border border-purple-200/60 space-y-1">
+            <div className="font-bold text-purple-900 text-[11px] uppercase tracking-wide flex items-center justify-between">
+              <span>4. Turbomachinery</span>
+              <span className="font-mono text-purple-700 font-bold">{fluidPivotalAnalysis.turbomachinery.shaftPowerHp.toFixed(1)} HP</span>
+            </div>
+            <div className="font-mono text-[11px] text-slate-700 space-y-0.5 pt-1">
+              <div>Shaft Torque T: <span className="font-bold text-purple-800">{fluidPivotalAnalysis.turbomachinery.shaftTorqueNm.toFixed(1)} N·m</span></div>
+              <div>Shaft Power: <span className="font-bold">{(fluidPivotalAnalysis.turbomachinery.shaftPowerWatts / 1000).toFixed(1)} kW</span></div>
+              <div>Speed Ω: <span className="font-bold text-purple-700">{pivotalRpm} RPM</span></div>
+            </div>
+          </div>
+
+          {/* 5. Reynolds Flow Regime */}
+          <div className="p-3 bg-emerald-50/50 rounded-lg border border-emerald-200/60 space-y-1">
+            <div className="font-bold text-emerald-900 text-[11px] uppercase tracking-wide flex items-center justify-between">
+              <span>5. Reynolds Regime</span>
+              <span className="font-mono text-emerald-700 font-bold">{fluidPivotalAnalysis.reynolds.flowRegime}</span>
+            </div>
+            <div className="font-mono text-[11px] text-slate-700 space-y-0.5 pt-1">
+              <div>Reynolds Re: <span className="font-bold text-emerald-800">{(fluidPivotalAnalysis.reynolds.reynoldsNumber / 1000).toFixed(0)}k</span></div>
+              <div>Pipe Diam D: <span className="font-bold">{(fluidPivotalAnalysis.reynolds.characteristicDiameterMeters * 100).toFixed(0)} cm</span></div>
+              <div>Viscosity μ: <span className="font-bold text-emerald-700">1.0 mPa·s</span></div>
+            </div>
+          </div>
+
+          {/* 6. Pipeline Friction Head Loss */}
+          <div className="p-3 bg-amber-50/50 rounded-lg border border-amber-200/60 space-y-1">
+            <div className="font-bold text-amber-900 text-[11px] uppercase tracking-wide flex items-center justify-between">
+              <span>6. Friction Head Loss</span>
+              <span className="font-mono text-amber-700">{fluidPivotalAnalysis.friction.headLossMeters.toFixed(2)} m</span>
+            </div>
+            <div className="font-mono text-[11px] text-slate-700 space-y-0.5 pt-1">
+              <div>Friction Factor f: <span className="font-bold text-amber-800">{fluidPivotalAnalysis.friction.darcyFrictionFactor.toFixed(4)}</span></div>
+              <div>Friction Drop ΔP: <span className="font-bold">{(fluidPivotalAnalysis.friction.frictionPressureDropPa / 1000).toFixed(1)} kPa</span></div>
+              <div>Pipe Length L: <span className="font-bold text-amber-700">{fluidPivotalAnalysis.friction.pipeLengthMeters} m</span></div>
+            </div>
           </div>
         </div>
       </div>
