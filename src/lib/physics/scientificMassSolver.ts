@@ -12,10 +12,11 @@
 /** Helper to read numeric environment variables in either Node.js process.env or Vite import.meta.env environments */
 function getEnvNumber(key: string, defaultValue: number): number {
   let valStr: string | undefined;
+  const metaEnv = (import.meta as unknown as { env?: Record<string, string> }).env;
   if (typeof process !== 'undefined' && process.env && process.env[key] !== undefined) {
     valStr = process.env[key];
-  } else if (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env[key] !== undefined) {
-    valStr = import.meta.env[key] as string;
+  } else if (metaEnv && metaEnv[key] !== undefined) {
+    valStr = metaEnv[key];
   }
   if (valStr !== undefined && valStr !== '') {
     const num = Number(valStr);

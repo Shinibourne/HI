@@ -11,7 +11,9 @@ import {
   ChevronDown,
 } from 'lucide-react';
 
+import { Zap } from 'lucide-react';
 import { KinematicsIkTab } from '../tabs/KinematicsIkTab';
+import { FluidMovementTab } from '../tabs/FluidMovementTab';
 import { FullBodyReactivityTab } from '../tabs/FullBodyReactivityTab';
 import { ProceduralKinematicsTab } from '../tabs/ProceduralKinematicsTab';
 import { SpatialInteractionTab } from '../tabs/SpatialInteractionTab';
@@ -119,14 +121,15 @@ export interface EngineeringSuiteProps {
 
 export const ENGINEERING_TABS = [
   { id: 'kinematics-ik', label: '1. Kinematics & Limb IK', shortLabel: 'Limb IK', icon: Target },
-  { id: 'full-body-reactivity', label: '2. Full-Body Reactivity', shortLabel: 'Reactivity', icon: Sparkles },
-  { id: 'procedural-kinematics', label: '3. Procedural Kinematics', shortLabel: 'Kinematics', icon: GitBranch },
-  { id: 'spatial-interaction', label: '4. Spatial Consistency', shortLabel: 'Spatial', icon: Compass },
-  { id: 'procedural-motion', label: '5. Locomotion & Gait', shortLabel: 'Locomotion', icon: Activity },
-  { id: 'skills', label: '6. 53-Skill Library & QC', shortLabel: '53-Skills', icon: ShieldCheck },
-  { id: 'frames', label: '7. Act Mechanics', shortLabel: 'Acts', icon: Layers },
-  { id: 'bone-hierarchy', label: '8. Bone Transform Table', shortLabel: 'Bones (FK)', icon: GitBranch },
-  { id: 'methodology', label: '9. Binary Spec & Inspector', shortLabel: 'Binary Spec', icon: FileCode2 },
+  { id: 'fluid-movement', label: '2. Fluid Movement & Constraints', shortLabel: 'Fluid Motion', icon: Zap },
+  { id: 'full-body-reactivity', label: '3. Full-Body Reactivity', shortLabel: 'Reactivity', icon: Sparkles },
+  { id: 'procedural-kinematics', label: '4. Procedural Kinematics', shortLabel: 'Kinematics', icon: GitBranch },
+  { id: 'spatial-interaction', label: '5. Spatial Consistency', shortLabel: 'Spatial', icon: Compass },
+  { id: 'procedural-motion', label: '6. Locomotion & Gait', shortLabel: 'Locomotion', icon: Activity },
+  { id: 'skills', label: '7. 53-Skill Library & QC', shortLabel: '53-Skills', icon: ShieldCheck },
+  { id: 'frames', label: '8. Act Mechanics', shortLabel: 'Acts', icon: Layers },
+  { id: 'bone-hierarchy', label: '9. Bone Transform Table', shortLabel: 'Bones (FK)', icon: GitBranch },
+  { id: 'methodology', label: '10. Binary Spec & Inspector', shortLabel: 'Binary Spec', icon: FileCode2 },
 ];
 
 export const EngineeringSuite: React.FC<EngineeringSuiteProps> = ({
@@ -327,6 +330,10 @@ export const EngineeringSuite: React.FC<EngineeringSuiteProps> = ({
             ikFootPlanted={ikFootPlanted}
             setIkFootPlanted={setIkFootPlanted}
           />
+        )}
+
+        {activeDocTab === 'fluid-movement' && (
+          <FluidMovementTab />
         )}
 
         {activeDocTab === 'full-body-reactivity' && (
