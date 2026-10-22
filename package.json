@@ -11,7 +11,8 @@
     "test:motion": "tsx scripts/test-motion-core.ts",
     "test:locomotion": "tsx scripts/test-contact-aware-locomotion.ts",
     "test:poses": "tsx scripts/test-pose-presets.ts",
-    "test:quality": "tsx scripts/test-animation-quality.ts"
+    "test:quality": "tsx scripts/test-animation-quality.ts",
+    "test:fluid": "tsx scripts/test-fluid-movement.ts"
   },
   "dependencies": {
     "lucide-react": "^0.475.0",
